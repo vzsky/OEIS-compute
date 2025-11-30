@@ -18,6 +18,13 @@ public:
   const BigInt& operator+=(const BigInt&);
   const BigInt& operator-=(const BigInt&);
   const BigInt& operator*=(const BigInt&);
+  const BigInt& operator%=(const BigInt&);
+
+  BigInt operator+(const BigInt&);
+  BigInt operator-(const BigInt&);
+  BigInt operator*(const BigInt&);
+  BigInt operator%(const BigInt&);
+
   std::strong_ordering operator<=>(const BigInt& other) const;
   bool operator==(const BigInt& other) const = default;
 

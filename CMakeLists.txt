@@ -25,9 +25,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
+file(GLOB children RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*)
 
-add_subdirectory(utils)
-add_subdirectory(A123132)
-add_subdirectory(A309370)
-add_subdirectory(A002326)
-add_subdirectory(A007504)
+foreach(child ${children})
+  set(child_path "${CMAKE_SOURCE_DIR}/${child}")
+  if(IS_DIRECTORY ${child_path})
+    # Check if the subdirectory contains a CMakeLists.txt
+    if(EXISTS "${child_path}/CMakeLists.txt")
+      message(STATUS "Adding subdirectory: ${child}")
+      add_subdirectory(${child})
+    endif()
+  endif()
+endforeach()

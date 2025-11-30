@@ -22,10 +22,10 @@ fi
 
 if [ "$TARGET" = "test" ]; then
   if [ -z "$2" ]; then
-    ninja -C "$BUILD_DIR" testall
-    exit $?
+    echo "Usage: $0 test <target>"
+    exit 1
   fi
-  TARGET="${2}_tests"
+  TARGET="${2}_test"
   TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
 fi
 

@@ -1,5 +1,5 @@
-#include "../utils/MoreMath.h"
 #include <gtest/gtest.h>
+#include <utils/MoreMath.h>
 
 TEST(MoreMathTest, PowBasic)
 {

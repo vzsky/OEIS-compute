@@ -1,5 +1,5 @@
-#include "../BigInt.h"
 #include <gtest/gtest.h>
+#include <utils/BigInt.h>
 
 TEST(BigIntTest, Construction)
 {

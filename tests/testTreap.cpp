@@ -1,5 +1,5 @@
-#include "../Treap.h"
 #include <gtest/gtest.h>
+#include <utils/Treap.h>
 #include <vector>
 
 TEST(TreapTest, BasicInsertAndAccess)

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include <semaphore>
 #include <thread>

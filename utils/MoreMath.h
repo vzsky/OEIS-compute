@@ -1,3 +1,5 @@
+#pragma once
+
 #include <type_traits>
 
 int pow(int base, int k, int mod);

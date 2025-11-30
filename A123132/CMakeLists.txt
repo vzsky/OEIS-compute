@@ -1,7 +1,15 @@
-add_executable(A123132
+set(DEPENDENCIES
+  prime
+  bigint
+  math
+  utils)
+
+set(FILES
   main.cpp
 )
 
-target_link_libraries(A123132
-  PRIVATE bigint prime
-)
+get_filename_component(EXEC_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+add_library(${EXEC_NAME}_lib STATIC ${FILES})
+add_executable(${EXEC_NAME} ${FILES})
+target_link_libraries(${EXEC_NAME}_lib PUBLIC ${DEPENDENCIES})
+target_link_libraries(${EXEC_NAME} PRIVATE ${EXEC_NAME}_lib)

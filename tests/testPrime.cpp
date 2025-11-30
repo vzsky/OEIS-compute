@@ -1,5 +1,5 @@
-#include "../Prime.h"
 #include <gtest/gtest.h>
+#include <utils/Prime.h>
 
 TEST(PrimeTest, SmallNumbers)
 {

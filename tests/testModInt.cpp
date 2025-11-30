@@ -1,5 +1,5 @@
-#include "../ModInt.h"
 #include <gtest/gtest.h>
+#include <utils/ModInt.h>
 
 TEST(ModIntTest, Construction)
 {

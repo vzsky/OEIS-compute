@@ -181,6 +181,42 @@ const BigInt& BigInt::operator*=(const BigInt& other)
   return *this;
 }
 
+const BigInt& BigInt::operator%=(const BigInt& other)
+{
+  while (*this >= 0)
+    *this -= other;
+  *this += other;
+  return *this;
+}
+
+BigInt BigInt::operator+(const BigInt& o)
+{
+  BigInt n = *this;
+  n += o;
+  return n;
+}
+
+BigInt BigInt::operator-(const BigInt& o)
+{
+  BigInt n = *this;
+  n -= o;
+  return n;
+}
+
+BigInt BigInt::operator*(const BigInt& o)
+{
+  BigInt n = *this;
+  n *= o;
+  return n;
+}
+
+BigInt BigInt::operator%(const BigInt& o)
+{
+  BigInt n = *this;
+  n %= o;
+  return n;
+}
+
 std::strong_ordering BigInt::operator<=>(const BigInt& other) const
 {
   if (mIsNegative != other.mIsNegative)
