@@ -2,7 +2,7 @@
 
 #include "Prime.h"
 #include <iostream>
-#include <map>
+#include <stdexcept>
 
 class PrimeInt
 {
@@ -20,7 +20,8 @@ public:
   }
   PrimeInt(size_t v)
   {
-    assert(v >= 1);
+    if (v == 0)
+      throw std::invalid_argument("PrimeInt doesn't support zero");
     if (v > 1)
       mFactors = factorizer.vector_factors_freq(v);
   }
