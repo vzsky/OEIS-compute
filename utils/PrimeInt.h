@@ -2,7 +2,8 @@
 
 #include "Prime.h"
 #include <cassert>
-#include <iostream>
+#include <cstdint>
+#include <ostream>
 #include <stdexcept>
 
 class PrimeInt
