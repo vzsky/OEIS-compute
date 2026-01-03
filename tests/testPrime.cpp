@@ -3,7 +3,7 @@
 
 TEST(PrimeTest, SmallNumbers)
 {
-  Prime<20> pf;
+  Prime<20> pf{};
 
   auto factors7 = pf.factors(7);
   ASSERT_EQ(factors7.size(), 1);

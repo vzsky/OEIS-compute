@@ -7,7 +7,7 @@
 template <size_t N> class Prime
 {
 public:
-  Prime() : mLowestPrime(N)
+  Prime()
   {
     sieve();
   }
@@ -23,7 +23,7 @@ public:
   std::vector<int> all_primes() const;
 
 private:
-  std::vector<int> mLowestPrime{N}; // lowest prime divisor of i
+  std::vector<int> mLowestPrime = std::vector<int>(N + 1); // lowest prime divisor of i
 };
 
 template <size_t N> void Prime<N>::sieve()
