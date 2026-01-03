@@ -10,15 +10,6 @@
 namespace utils
 {
 
-inline void print_progress(long long i, long long total)
-{
-  if (i % (total / 100 + 1) == 0 || i == total - 1)
-  {
-    int percent = static_cast<int>(100.0 * i / total);
-    std::cout << "\rProgress: " << percent << "% " << std::flush;
-  }
-}
-
 template <typename Iterator, typename Predicate>
 bool par_all_of(Iterator begin, Iterator end, Predicate pred,
                 size_t max_threads = std::thread::hardware_concurrency())
