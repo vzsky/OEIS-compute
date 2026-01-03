@@ -2,6 +2,7 @@
 
 #include "Prime.h"
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <ostream>
 #include <stdexcept>
