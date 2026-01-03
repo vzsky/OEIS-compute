@@ -68,6 +68,9 @@ DecBackend::DecBackend(const std::string& s)
 //
 void DecBackend::normalize()
 {
+  if (mDigits.size() == 0)
+    mDigits = {0};
+
   while (mDigits.size() > 1 && mDigits.back() == 0)
     mDigits.pop_back();
 
