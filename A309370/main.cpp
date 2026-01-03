@@ -94,8 +94,6 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
   // and ensure we get all the smaller N solutions
   for (uint64_t i = 0; i < (1 << N); i++)
   {
-    if (show_progress)
-      utils::print_progress(i, 1 << N);
     if (show_smaller_output && i == (1 << smaller_output_cnt))
     {
       std::cout << "#============================" << std::endl;

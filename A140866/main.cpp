@@ -65,8 +65,6 @@ int main()
   //   long long N = 1e11;
   //   std::unordered_set<int> harshad;
   //   for (long long i = 1; i < N; i++) {
-  //     print_progress(i, N);
-  //
   //     if (is_harshad_fast(i)) harshad.insert(i);
   //     bool found = false;
   //     for (auto x : harshad) {
