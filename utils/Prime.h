@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cassert>
 #include <map>
+#include <stdexcept>
 #include <vector>
 
 template <size_t N> class Prime
