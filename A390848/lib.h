@@ -4,24 +4,19 @@
 #include <utils/Utils.h>
 #include <vector>
 
-template <int N> struct A389544
+// this is confusingly named A389544 because it compute that.
+template <uint64_t N> struct A389544
 {
-
   using Int = PrimeInt;
 
   std::vector<Int> integerMap = std::vector<Int>(N + 1);
-  std::vector<int> sequence = {2};
+  std::vector<uint64_t> sequence;
   Prime<N> primeFactorizer{};
 
   A389544()
   {
-    for (int i = 2; i <= N; i++)
+    for (size_t i = 2; i <= N; i++)
       integerMap[i] = primeFactorizer.vector_factors_freq(i);
-  }
-
-  void add_to_seqeunce(int v)
-  {
-    sequence.push_back(v);
   }
 
   bool has_duplicate_product(const Int& targetProduct) const
@@ -45,8 +40,9 @@ template <int N> struct A389544
     return false;
   }
 
-  std::vector<int> get_sequence_until_N()
+  std::vector<uint64_t> get_sequence_until_N()
   {
+    sequence = {2};
     size_t ind = 1;
 
     for (uint64_t n = 3; n <= N; n++)
@@ -79,14 +75,35 @@ template <int N> struct A389544
       if (utils::par_all_of(begin(productsToCheck), end(productsToCheck),
                             [&](const Int& target) { return !has_duplicate_product(target); }))
       {
-        add_to_seqeunce(n);
+        sequence.push_back(n);
       }
       else
       {
         std::cout << ind++ << ' ' << n << std::endl;
       }
     }
-
     return sequence;
+  }
+
+  int is_interesting(uint64_t skippedElement) const
+  {
+    return !has_duplicate_product(integerMap[skippedElement]);
+  }
+
+  void print_interesting(std::vector<uint64_t> skipped)
+  {
+    sequence.clear();
+    size_t j = 0;
+    for (uint64_t i = 1; i <= N; i++)
+    {
+      if (i == skipped[j])
+      {
+        if (is_interesting(skipped[j]))
+          std::cout << "interesting skip " << skipped[j] << std::endl;
+        j++;
+        continue;
+      }
+      sequence.push_back(i);
+    }
   }
 };

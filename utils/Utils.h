@@ -1,9 +1,14 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <future>
 #include <iostream>
 #include <iterator>
+#include <source_location>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
@@ -62,6 +67,39 @@ template <typename Func> auto timeit(Func f)
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start).count();
   std::cout << "Time elapsed: " << duration / 1000 << "." << duration % 1000 << "s" << std::endl;
+}
+
+template <typename T>
+[[nodiscard]] inline std::vector<T>
+read_bfile(const std::string& relative_path,
+           const std::source_location& loc = std::source_location::current())
+{
+  namespace fs = std::filesystem;
+
+  fs::path base = fs::path(loc.file_name()).parent_path();
+  fs::path path = base / relative_path;
+
+  std::ifstream in(path);
+  if (!in)
+    throw std::runtime_error("cannot open file");
+
+  std::vector<T> out;
+  T n, a;
+
+  std::string line;
+  while (std::getline(in, line))
+  {
+    if (line.empty() || line[0] == '#')
+      continue;
+
+    std::istringstream iss(line);
+    T n, a;
+
+    if (iss >> n >> a)
+      out.push_back(a);
+  }
+
+  return out;
 }
 
 } // namespace utils
