@@ -47,6 +47,8 @@ template <int N> struct A389544
 
   std::vector<int> get_sequence_until_N()
   {
+    size_t ind = 1;
+
     for (uint64_t n = 3; n <= N; n++)
     { // adding n
 
@@ -58,7 +60,7 @@ template <int N> struct A389544
       if (has_duplicate_product(integerMap[n]))
       {
         // uninteresting skip
-        std::cout << n << std::endl;
+        std::cout << ind++ << ' ' << n << std::endl;
         continue;
       }
 
@@ -81,7 +83,7 @@ template <int N> struct A389544
       }
       else
       {
-        std::cout << "interesting skip: " << n << std::endl;
+        std::cout << ind++ << ' ' << n << std::endl;
       }
     }
 
