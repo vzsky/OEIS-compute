@@ -194,7 +194,6 @@ int main()
   };
 
   /*
-  timeit([&]() {
     { auto v = allElems<1>();
       auto setFree = frontierSearchCapSet<1>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
@@ -211,16 +210,13 @@ int main()
       auto setFree = frontierSearchCapSet<4>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
       std::cout << setFree.size() << std::endl; }
-  });
   */
 
-  timeit(
-      [&]()
-      {
-        constexpr int Dim = 5;
-        auto v = allElems<Dim>();
-        auto setFree = frontierSearchCapSet<Dim>(score_to_order(heuristic), prune);
-        assert(!hasSet(setFree));
-        std::cout << setFree.size() << std::endl;
-      });
+  {
+    constexpr int Dim = 5;
+    auto v = allElems<Dim>();
+    auto setFree = frontierSearchCapSet<Dim>(score_to_order(heuristic), prune);
+    assert(!hasSet(setFree));
+    std::cout << setFree.size() << std::endl;
+  }
 }

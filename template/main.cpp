@@ -3,7 +3,4 @@
 
 int main()
 {
-  timeit([](){
-
-  });
 }

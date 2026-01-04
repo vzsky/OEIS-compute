@@ -157,38 +157,35 @@ Elems<N> breed_cross(const Elems<N>& mother, const Elems<N>& father, int mother_
 
 int main()
 {
-  timeit(
-      []()
-      {
-        constexpr int N = 15;
+  {
+    constexpr int N = 15;
 
-        int clock = 0;
-        // prune is called at every tick
-        auto prune = [&clock](auto& frontier)
-        {
-          clock++;
+    int clock = 0;
+    // prune is called at every tick
+    auto prune = [&clock](auto& frontier)
+    {
+      clock++;
 
-          constexpr int SIZE_KEEP = 20000;
-          constexpr int SIZE_LIMIT = 200000;
-          if (frontier.size() < SIZE_LIMIT)
-            return;
-          frontier.restrict(SIZE_KEEP);
-        };
+      constexpr int SIZE_KEEP = 20000;
+      constexpr int SIZE_LIMIT = 200000;
+      if (frontier.size() < SIZE_LIMIT)
+        return;
+      frontier.restrict(SIZE_KEEP);
+    };
 
-        // note: heuristic shouldn't change over time! Treap ordering needs to be
-        // the same! that means we shouldn't be able to use mLastUsed or other
-        // fields we which to mutate in this calculation. this includes clock. const
-        // int64_t SIZE_MULT = 200; const int64_t DATE_CREATED_MULT = 1;
-        auto heuristic = [](const auto& v) -> int64_t
-        {
-          // return v.size() * SIZE_MULT + v.mCreated * DATE_CREATED_MULT;
-          return v.size();
-        };
+    // note: heuristic shouldn't change over time! Treap ordering needs to be
+    // the same! that means we shouldn't be able to use mLastUsed or other
+    // fields we which to mutate in this calculation. this includes clock. const
+    // int64_t SIZE_MULT = 200; const int64_t DATE_CREATED_MULT = 1;
+    auto heuristic = [](const auto& v) -> int64_t
+    {
+      // return v.size() * SIZE_MULT + v.mCreated * DATE_CREATED_MULT;
+      return v.size();
+    };
 
-        auto result = find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
+    auto result = find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
 
-        assert(check(result));
-        std::cout << result << std::endl;
-      });
-  return 0;
+    assert(check(result));
+    std::cout << result << std::endl;
+  }
 }

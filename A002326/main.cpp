@@ -3,7 +3,7 @@
 
 int main()
 {
-  timeit(
+  utils::timeit(
       []()
       {
         constexpr int N = 1e5;
@@ -12,7 +12,7 @@ int main()
           a.get_answer(i);
       });
 
-  timeit(
+  utils::timeit(
       []()
       {
         constexpr int N = 1e5;

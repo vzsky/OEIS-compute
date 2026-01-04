@@ -52,10 +52,6 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
   return true;
 }
 
-} // namespace utils
-
-inline auto size_comparer = [](auto const& a, auto const& b) { return a.size() < b.size(); };
-
 template <typename Func> auto timeit(Func f)
 {
   using namespace std::chrono;
@@ -67,3 +63,5 @@ template <typename Func> auto timeit(Func f)
   auto duration = duration_cast<milliseconds>(end - start).count();
   std::cout << "Time elapsed: " << duration / 1000 << "." << duration % 1000 << "s" << std::endl;
 }
+
+} // namespace utils

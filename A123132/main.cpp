@@ -39,35 +39,33 @@ private:
 
 int main()
 {
-  timeit(
-      []()
+  {
+    constexpr int N = 1e7;
+    A123132<N> a;
+    auto factorizer = a.getFactorizer();
+
+    int cnt = 0;
+    for (int n = 2; n <= N; ++n)
+    {
+      if (n % 2 == 0)
+        continue; // focusing on ==, it's impossible
+      if (n % 5 == 0)
+        continue; // focusing on ==, it's impossible
+      if (factorizer.factors_freq(n).size() == 1)
+        continue; // same
+
+      if (n >= a.describe_prime_factors(n))
       {
-        constexpr int N = 1e7;
-        A123132<N> a;
-        auto factorizer = a.getFactorizer();
+        cnt++;
+        std::cout << n << " -> ";
 
-        int cnt = 0;
-        for (int n = 2; n <= N; ++n)
+        for (auto& [p, c] : factorizer.factors_freq(n))
         {
-          if (n % 2 == 0)
-            continue; // focusing on ==, it's impossible
-          if (n % 5 == 0)
-            continue; // focusing on ==, it's impossible
-          if (factorizer.factors_freq(n).size() == 1)
-            continue; // same
-
-          if (n >= a.describe_prime_factors(n))
-          {
-            cnt++;
-            std::cout << n << " -> ";
-
-            for (auto& [p, c] : factorizer.factors_freq(n))
-            {
-              std::cout << p << ':' << c << ' ';
-            }
-            std::cout << std::endl;
-          }
+          std::cout << p << ':' << c << ' ';
         }
-        std::cout << "total: " << cnt << std::endl;
-      });
+        std::cout << std::endl;
+      }
+    }
+    std::cout << "total: " << cnt << std::endl;
+  }
 }

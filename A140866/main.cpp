@@ -30,25 +30,23 @@ bool is_harshad_fast(long long n)
 int main()
 {
 
-  timeit(
-      []()
+  {
+    int N = 1e5;
+    int cnt = 0;
+    int current_n = 0;
+    for (int i = 1; i <= N; i++)
+    {
+      if (is_harshad(i))
+        cnt++;
+      if (i == std::pow(10, current_n))
       {
-        int N = 1e5;
-        int cnt = 0;
-        int current_n = 0;
-        for (int i = 1; i <= N; i++)
-        {
-          if (is_harshad(i))
-            cnt++;
-          if (i == std::pow(10, current_n))
-          {
-            std::cout << current_n << ' ' << cnt << std::endl;
-            current_n++;
-          }
-        }
-      });
+        std::cout << current_n << ' ' << cnt << std::endl;
+        current_n++;
+      }
+    }
+  }
 
-  // timeit([](){
+  // {
   //   long long N = 1e10;
   //   int cnt = 0;
   //   int current_n = 0;
@@ -59,9 +57,9 @@ int main()
   //       current_n++;
   //     }
   //   }
-  // });
+  // }
 
-  // timeit([](){
+  // {
   //   long long N = 1e11;
   //   std::unordered_set<int> harshad;
   //   for (long long i = 1; i < N; i++) {
@@ -72,5 +70,5 @@ int main()
   //     }
   //     if (!found) std::cout << i << std::endl;
   //   }
-  // });
+  // }
 }
