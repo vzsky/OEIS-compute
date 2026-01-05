@@ -1,27 +1,30 @@
 ninja: Entering directory `./build'
-[0/1] Re-running CMake...
--- Adding subdirectory: A002326
--- Adding subdirectory: A045345
--- Adding subdirectory: A090245
--- Adding subdirectory: A123132
--- Adding subdirectory: A140866
--- Adding subdirectory: A309370
--- Adding subdirectory: A388850
--- Adding subdirectory: A389544
--- Adding subdirectory: A390848
--- Adding subdirectory: benchmark
--- git version: v1.8.3 normalized to 1.8.3
--- Google Benchmark version: 1.8.3
--- Enabling additional flags: -DINCLUDE_DIRECTORIES=/Users/mb99n/Desktop/OEIS/build/_deps/benchmark-src/include
--- Performing Test HAVE_THREAD_SAFETY_ATTRIBUTES -- success
--- Performing Test HAVE_STD_REGEX -- success
--- Performing Test HAVE_GNU_POSIX_REGEX -- failed to compile
--- Performing Test HAVE_POSIX_REGEX -- success
--- Performing Test HAVE_STEADY_CLOCK -- success
--- Performing Test HAVE_PTHREAD_AFFINITY -- failed to compile
--- Adding subdirectory: template
--- Adding subdirectory: tests
--- Adding subdirectory: utils
--- Configuring incomplete, errors occurred!
-FAILED: [code=1] build.ninja /Users/mb99n/Desktop/OEIS/build/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/googlemock/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/googletest/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A002326/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A045345/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A090245/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A123132/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A140866/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A309370/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A388850/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A389544/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/A390848/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/benchmark/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/benchmark-build/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/benchmark-build/src/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/_deps/benchmark-build/test/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/template/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/tests/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/utils/cmake_install.cmake /Users/mb99n/Desktop/OEIS/build/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/googlemock/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/_deps/googletest-build/googletest/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/_deps/benchmark-build/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/_deps/benchmark-build/test/CTestTestfile.cmake /Users/mb99n/Desktop/OEIS/build/tests/CTestTestfile.cmake 
-/opt/homebrew/bin/cmake --regenerate-during-build -S/Users/mb99n/Desktop/OEIS -B/Users/mb99n/Desktop/OEIS/build
+ninja: no work to do.
+Compilation success
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+BM_add/10               21.4 ns         21.4 ns     34552715
+BM_add/64                152 ns          152 ns      4586585
+BM_add/512              2020 ns         2020 ns       342915
+BM_add/1000             4426 ns         4426 ns       158605
+BM_sub/10               26.1 ns         26.1 ns     27326457
+BM_sub/64               50.7 ns         50.7 ns     12867174
+BM_sub/512               513 ns          513 ns      1303393
+BM_sub/1000             1279 ns         1279 ns       544832
+BM_mul/10               37.1 ns         37.1 ns     18456509
+BM_mul/64                332 ns          332 ns      2128294
+BM_mul/512             77578 ns        77575 ns         9082
+BM_mul/1000           407548 ns       407542 ns         1730
+BM_cmp/10               3.29 ns         3.26 ns    218292268
+BM_cmp/64               25.5 ns         25.3 ns     27960966
+BM_cmp/512               302 ns          302 ns      2306372
+BM_cmp/1000              649 ns          649 ns      1082787
+BM_copy_ctor/10          692 ns          692 ns      1075451
+BM_copy_ctor/64        20746 ns        20746 ns        32037
+BM_copy_ctor/512     2372422 ns      2372376 ns          295
+BM_copy_ctor/2000   52201404 ns     52199692 ns           13
+BM_move_ctor/10          657 ns          657 ns      1099678
+BM_move_ctor/64        20712 ns        20712 ns        32604
+BM_move_ctor/512     2370330 ns      2370283 ns          297
+BM_move_ctor/2000   52196811 ns     52195846 ns           13
