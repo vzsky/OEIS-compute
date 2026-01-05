@@ -1,8 +1,8 @@
-#include "DecBigInt.h"
 #include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <stdexcept>
+#include <utils/DecBigInt.h>
 #include <vector>
 
 //
@@ -240,23 +240,4 @@ void DecBackend::shr(int k)
   }
   mDigits.erase(mDigits.begin(), mDigits.begin() + k);
   normalize();
-}
-
-//
-// cmp: signed comparison
-//
-std::strong_ordering DecBackend::cmp(const DecBackend& o) const
-{
-  if (mIsNeg != o.mIsNeg)
-    return mIsNeg ? std::strong_ordering::less : std::strong_ordering::greater;
-
-  int c = abs_cmp(*this, o);
-  if (c == 0)
-    return std::strong_ordering::equal;
-
-  bool less_abs = (c < 0);
-  if (!mIsNeg)
-    return less_abs ? std::strong_ordering::less : std::strong_ordering::greater;
-  else
-    return less_abs ? std::strong_ordering::greater : std::strong_ordering::less;
 }

@@ -1,5 +1,5 @@
-#include "../A002326/lib.h"
-#include "../A045345/lib.h"
+#include <A002326/lib.h>
+#include <A045345/lib.h>
 #include <gtest/gtest.h>
 #include <vector>
 

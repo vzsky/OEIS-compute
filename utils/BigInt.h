@@ -98,14 +98,30 @@ public:
 
   std::strong_ordering operator<=>(const BigInt& o) const
   {
-    return mBack.cmp(o.mBack);
+    if (mBack.mIsNeg != o.mBack.mIsNeg)
+      return mBack.mIsNeg ? std::strong_ordering::less : std::strong_ordering::greater;
+
+    int c = Backend::abs_cmp(mBack, o.mBack);
+    if (c == 0)
+      return std::strong_ordering::equal;
+
+    bool less_abs = (c < 0);
+    if (!mBack.mIsNeg)
+      return less_abs ? std::strong_ordering::less : std::strong_ordering::greater;
+    else
+      return less_abs ? std::strong_ordering::greater : std::strong_ordering::less;
   }
-  bool operator==(const BigInt&) const = default;
+
+  bool operator==(const BigInt& o) const
+  {
+    return (*this <=> o) == 0;
+  }
 
   bool isNegative() const
   {
     return mBack.mIsNeg;
   }
+
   const auto& digits() const
   {
     return mBack.mDigits;

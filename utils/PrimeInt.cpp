@@ -1,4 +1,4 @@
-#include "PrimeInt.h"
+#include <utils/PrimeInt.h>
 
 const Prime<PrimeInt::SmallN> PrimeInt::factorizer{};
 

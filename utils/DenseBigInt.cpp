@@ -1,6 +1,6 @@
-#include "DenseBigInt.h"
 #include <algorithm>
 #include <cassert>
+#include <utils/DenseBigInt.h>
 #include <vector>
 
 //
@@ -208,23 +208,4 @@ void DenseBackend::shr(int k)
   }
   mDigits.erase(mDigits.begin(), mDigits.begin() + k);
   normalize();
-}
-
-//
-// compare
-//
-std::strong_ordering DenseBackend::cmp(const DenseBackend& o) const
-{
-  if (mIsNeg != o.mIsNeg)
-    return mIsNeg ? std::strong_ordering::less : std::strong_ordering::greater;
-
-  int c = abs_cmp(*this, o);
-  if (c == 0)
-    return std::strong_ordering::equal;
-
-  bool less = c < 0;
-  if (!mIsNeg)
-    return less ? std::strong_ordering::less : std::strong_ordering::greater;
-  else
-    return less ? std::strong_ordering::greater : std::strong_ordering::less;
 }

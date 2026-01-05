@@ -29,13 +29,6 @@ private:
   void shl(int);
   void shr(int);
 
-  std::strong_ordering cmp(const DenseBackend&) const;
-
-  bool operator==(const DenseBackend& o) const
-  {
-    return cmp(o) == std::strong_ordering::equal;
-  }
-
   friend inline std::ostream& operator<<(std::ostream& os, const DenseBackend& b)
   {
     if (b.mIsNeg)

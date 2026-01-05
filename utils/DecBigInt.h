@@ -17,8 +17,8 @@ private:
   DecBackend(const std::string&);
 
   void normalize();
-  void abs_add(const DecBackend&);
-  void abs_sub(const DecBackend&);
+  void abs_add(const DecBackend&); // ignore sign
+  void abs_sub(const DecBackend&); // ignore sign
   static int abs_cmp(const DecBackend&, const DecBackend&);
 
   void add(const DecBackend&);
@@ -28,13 +28,6 @@ private:
 
   void shl(int);
   void shr(int);
-
-  std::strong_ordering cmp(const DecBackend&) const;
-
-  bool operator==(const DecBackend& o) const
-  {
-    return cmp(o) == std::strong_ordering::equal;
-  }
 
   friend inline std::ostream& operator<<(std::ostream& os, const DecBackend& b)
   {
