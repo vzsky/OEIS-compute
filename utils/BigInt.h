@@ -92,7 +92,7 @@ public:
   BigInt operator%(const BigInt& rhs) const
   {
     BigInt r = *this;
-    r *= rhs;
+    r %= rhs;
     return r;
   }
 

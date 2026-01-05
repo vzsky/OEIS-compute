@@ -5,19 +5,9 @@
 int main()
 {
   constexpr int N = 1e5;
-  Prime<N> p;
-  auto primes = p.all_primes();
-  std::vector<DecBigInt> sum(primes.size());
-  for (int i = 1; i < primes.size(); i++)
+  std::vector<int> result = A045345::answers_upto<N>();
+  for (auto x : result)
   {
-    sum[i] = sum[i - 1] + primes[i - 1];
-  }
-
-  for (int i = 1; i < primes.size(); i++)
-  {
-    if (sum[i] % i == 0)
-    {
-      std::cout << i << ' ' << sum[i] << std::endl;
-    }
+    std::cout << x << std::endl;
   }
 }
