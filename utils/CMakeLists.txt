@@ -37,8 +37,3 @@ foreach(i RANGE 0 ${_utils_len} 2)
         ${PROJECT_SOURCE_DIR}
   )
 endforeach()
-
-target_sources(bigint PRIVATE
-  DecBigInt.cpp
-  DenseBigInt.cpp
-)

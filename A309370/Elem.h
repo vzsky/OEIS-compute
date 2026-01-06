@@ -8,38 +8,22 @@ template <int N> struct Elem
 {
   uint64_t mUnd;
 
-  Elem() : mUnd{0}
-  {
-  }
-  Elem(uint64_t bin) : mUnd{bin}
-  {
-  }
+  Elem() : mUnd{0} {}
+  Elem(uint64_t bin) : mUnd{bin} {}
 
-  operator int() const
-  {
-    return mUnd;
-  }
-  uint64_t operator[](const int idx) const
-  {
-    return (mUnd >> idx) & 1;
-  }
+  operator int() const { return mUnd; }
+  uint64_t operator[](const int idx) const { return (mUnd >> idx) & 1; }
 
-  bool operator==(const Elem<N>& o) const
-  {
-    return mUnd == o.mUnd;
-  }
-  bool operator<(const Elem<N>& o) const
-  {
-    return mUnd < o.mUnd;
-  }
+  bool operator==(const Elem<N> &o) const { return mUnd == o.mUnd; }
+  bool operator<(const Elem<N> &o) const { return mUnd < o.mUnd; }
 
-  void print(int n = N, std::ostream& os = std::cout) const
+  void print(int n = N, std::ostream &os = std::cout) const
   {
     for (int i = 0; i < n; i++)
       os << ((mUnd >> i) & 1);
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const Elem& e)
+  friend std::ostream &operator<<(std::ostream &os, const Elem &e)
   {
     e.print(N, os);
     return os;
@@ -52,93 +36,55 @@ template <int N> struct Elems
   size_t mCreated;
   size_t mLastUsed;
 
-  Elems() : mVec{}, mCreated{0}, mLastUsed{0}
-  {
-  }
+  Elems() : mVec{}, mCreated{0}, mLastUsed{0} {}
 
-  size_t size() const
-  {
-    return mVec.size();
-  }
-  void push_back(const Elem<N>& x)
-  {
-    mVec.push_back(x);
-  }
-  void push_back(Elem<N>&& x)
-  {
-    mVec.push_back(std::move(x));
-  }
-  void pop_back()
-  {
-    mVec.pop_back();
-  }
-  void resize(size_t size)
-  {
-    mVec.resize(size);
-  }
+  size_t size() const { return mVec.size(); }
+  void push_back(const Elem<N> &x) { mVec.push_back(x); }
+  void push_back(Elem<N> &&x) { mVec.push_back(std::move(x)); }
+  void pop_back() { mVec.pop_back(); }
+  void resize(size_t size) { mVec.resize(size); }
 
-  auto begin()
-  {
-    return mVec.begin();
-  }
-  auto end()
-  {
-    return mVec.end();
-  }
-  auto begin() const
-  {
-    return mVec.begin();
-  }
-  auto end() const
-  {
-    return mVec.end();
-  }
+  auto begin() { return mVec.begin(); }
+  auto end() { return mVec.end(); }
+  auto begin() const { return mVec.begin(); }
+  auto end() const { return mVec.end(); }
 
-  auto back() const
-  {
-    return mVec.back();
-  }
+  auto back() const { return mVec.back(); }
 
-  Elem<N>& operator[](size_t i)
-  {
-    return mVec[i];
-  }
-  const Elem<N>& operator[](size_t i) const
-  {
-    return mVec[i];
-  }
+  Elem<N> &operator[](size_t i) { return mVec[i]; }
+  const Elem<N> &operator[](size_t i) const { return mVec[i]; }
 
-  void print(int n = N, std::ostream& os = std::cout) const
+  void print(int n = N, std::ostream &os = std::cout) const
   {
     os << "size: " << size() << "\n";
-    for (const auto& x : *this)
+    for (const auto &x : *this)
     {
       x.print(n, os);
       os << '\n';
     }
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const Elems<N>& v)
+  friend std::ostream &operator<<(std::ostream &os, const Elems<N> &v)
   {
     v.print(N, os);
     return os;
   }
 
-  friend bool operator>(const Elems& a, const Elems& b)
+  friend bool operator>(const Elems &a, const Elems &b)
   {
     return a.mVec > b.mVec;
   }
 
-  bool contains(const Elem<N>& x) const
+  bool contains(const Elem<N> &x) const
   {
-    for (const auto& e : mVec)
+    for (const auto &e : mVec)
       if (e == x)
         return true;
     return false;
   }
 };
 
-template <int N> Elems<N> parse_from_file(const std::string& filename)
+template <int N> Elems<N> parse_from_file(const std::string &filename)
 {
 
   std::ifstream fin(filename);
@@ -153,12 +99,13 @@ template <int N> Elems<N> parse_from_file(const std::string& filename)
   {
     if (line.empty())
       continue;
-    while (!line.empty() && (line.back() == '\n' || line.back() == '\r' || line.back() == ' '))
+    while (!line.empty() &&
+           (line.back() == '\n' || line.back() == '\r' || line.back() == ' '))
       line.pop_back();
     if (line.size() != N)
     {
-      std::cerr << "Skipping line: incorrect length = " << line.size() << ", expected " << N
-                << "\n";
+      std::cerr << "Skipping line: incorrect length = " << line.size()
+                << ", expected " << N << "\n";
       continue;
     }
 

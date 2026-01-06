@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <utils/DecBigInt.h>
+#include <utils/BigInt.h>
 #include <utils/Prime.h>
 #include <utils/Utils.h>
 
@@ -13,7 +13,7 @@ public:
   {
     std::map freq = factorizer.factors_freq(x);
     std::string out;
-    for (auto& [p, cnt] : freq)
+    for (auto &[p, cnt] : freq)
     {
       out += std::to_string(cnt);
       out += std::to_string(p);
@@ -28,10 +28,7 @@ public:
     return static_cast<int>(std::log10(std::abs(x))) + 1;
   }
 
-  const Prime<N>& getFactorizer() const
-  {
-    return factorizer;
-  }
+  const Prime<N> &getFactorizer() const { return factorizer; }
 
 private:
   Prime<N> factorizer;
@@ -59,7 +56,7 @@ int main()
         cnt++;
         std::cout << n << " -> ";
 
-        for (auto& [p, c] : factorizer.factors_freq(n))
+        for (auto &[p, c] : factorizer.factors_freq(n))
         {
           std::cout << p << ':' << c << ' ';
         }

@@ -16,7 +16,7 @@ TEST(PrimeTest, SmallNumbers)
   ASSERT_EQ(freq7.size(), 1);
   EXPECT_EQ(freq7[7], 1);
 
-  auto factors12 = pf.factors(12);
+  auto factors12                = pf.factors(12);
   std::vector<prime> expected12 = {2, 2, 3};
   EXPECT_EQ(factors12, expected12);
 
@@ -25,7 +25,7 @@ TEST(PrimeTest, SmallNumbers)
   EXPECT_EQ(freq12[2], 2);
   EXPECT_EQ(freq12[3], 1);
 
-  auto factors18 = pf.factors(18);
+  auto factors18                = pf.factors(18);
   std::vector<prime> expected18 = {2, 3, 3};
   EXPECT_EQ(factors18, expected18);
 
@@ -43,7 +43,7 @@ TEST(PrimeTest, EdgeCases)
   ASSERT_EQ(factors2.size(), 1);
   EXPECT_EQ(factors2[0], 2);
 
-  auto factors10 = pf.factors(10);
+  auto factors10                = pf.factors(10);
   std::vector<prime> expected10 = {2, 5};
   EXPECT_EQ(factors10, expected10);
 

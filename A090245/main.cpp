@@ -8,7 +8,7 @@
 
 auto score_to_order = [](auto score)
 {
-  return [score](const auto& a, const auto& b) -> bool
+  return [score](const auto &a, const auto &b) -> bool
   {
     auto sa = score(a), sb = score(b);
     if (sa != sb)
@@ -22,9 +22,7 @@ template <int Dim> struct Elem
   std::array<short, Dim> dim;
 
   Elem() = default;
-  Elem(const std::array<short, Dim>& arr) : dim(arr)
-  {
-  }
+  Elem(const std::array<short, Dim> &arr) : dim(arr) {}
 
   template <int D2> Elem<D2> extend(short x) const
   {
@@ -36,7 +34,7 @@ template <int Dim> struct Elem
     return Elem<D2>(out);
   }
 
-  bool operator<(const Elem& o) const
+  bool operator<(const Elem &o) const
   {
     for (int i = 0; i < Dim; i++)
     {
@@ -49,7 +47,8 @@ template <int Dim> struct Elem
 
 template <int Dim> using Elems = std::vector<Elem<Dim>>;
 
-template <int Dim> bool isSet(const Elem<Dim>& a, const Elem<Dim>& b, const Elem<Dim>& c)
+template <int Dim>
+bool isSet(const Elem<Dim> &a, const Elem<Dim> &b, const Elem<Dim> &c)
 {
   for (int i = 0; i < Dim; i++)
   {
@@ -64,7 +63,7 @@ template <int Dim> bool isSet(const Elem<Dim>& a, const Elem<Dim>& b, const Elem
   return true;
 }
 
-template <int Dim> bool hasSet(const Elems<Dim>& v)
+template <int Dim> bool hasSet(const Elems<Dim> &v)
 {
   const size_t n = v.size();
   for (size_t i = 0; i < n; i++)
@@ -83,7 +82,7 @@ template <int Dim> bool hasSet(const Elems<Dim>& v)
   return false;
 }
 
-template <int Dim> bool can_add(const Elems<Dim>& parent, const Elem<Dim>& next)
+template <int Dim> bool can_add(const Elems<Dim> &parent, const Elem<Dim> &next)
 {
   const size_t n = parent.size();
   for (size_t i = 0; i < n; i++)
@@ -104,7 +103,7 @@ template <int Dim> Elems<Dim> allElems()
   Elems<Dim - 1> smaller = allElems<Dim - 1>();
   result.reserve(smaller.size() * 3);
 
-  for (const auto& x : smaller)
+  for (const auto &x : smaller)
   {
     for (short d = 0; d < 3; d++)
     {
@@ -114,10 +113,7 @@ template <int Dim> Elems<Dim> allElems()
   return result;
 }
 
-template <> Elems<0> allElems<0>()
-{
-  return {Elem<0>()};
-}
+template <> Elems<0> allElems<0>() { return {Elem<0>()}; }
 
 template <int Dim> Elems<Dim> greedyCapSet()
 {
@@ -126,7 +122,7 @@ template <int Dim> Elems<Dim> greedyCapSet()
 
   Elems<Dim> out;
 
-  for (auto& x : all)
+  for (auto &x : all)
   {
     out.push_back(x);
     if (hasSet(out))
@@ -137,8 +133,9 @@ template <int Dim> Elems<Dim> greedyCapSet()
 }
 
 template <int Dim, typename Heuristic, typename PruneFunc>
-Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smaller_output = false,
-                                bool show_progress = false)
+Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg,
+                                bool show_smaller_output = false,
+                                bool show_progress       = false)
 {
   using Frontier = Treap<Elems<Dim>, Heuristic>;
 
@@ -146,17 +143,18 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smal
   frontier.insert({});
 
   auto all_elems = allElems<Dim>();
-  std::shuffle(all_elems.begin(), all_elems.end(), std::mt19937{std::random_device{}()});
+  std::shuffle(all_elems.begin(), all_elems.end(),
+               std::mt19937{std::random_device{}()});
 
   int smaller_output_cnt = 1;
 
   // looping from 0 up ensures bit containment ordering.
   // and ensure we get all the smaller N solutions
-  for (Elem<Dim>& next : all_elems)
+  for (Elem<Dim> &next : all_elems)
   {
 
     std::vector to_add = frontier.gather(
-        [&next](const auto& parent)
+        [&next](const auto &parent)
         {
           if (can_add(parent, next))
           {
@@ -168,7 +166,7 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smal
         },
         16, 100);
 
-    for (auto& s : to_add)
+    for (auto &s : to_add)
     {
       if (s.second.has_value())
         frontier.insert(std::move(*s.second));
@@ -176,17 +174,17 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smal
 
     prune_alg(frontier);
   }
-  return frontier.max([](const auto& x) { return x.size(); }, Elems<Dim>());
+  return frontier.max([](const auto &x) { return x.size(); }, Elems<Dim>());
 }
 
 int main()
 {
 
-  auto heuristic = [](const auto& v) -> int64_t { return v.size(); };
+  auto heuristic = [](const auto &v) -> int64_t { return v.size(); };
 
-  auto prune = [](auto& frontier)
+  auto prune = [](auto &frontier)
   {
-    constexpr int SIZE_KEEP = 6000;
+    constexpr int SIZE_KEEP  = 6000;
     constexpr int SIZE_LIMIT = 60000;
     if (frontier.size() < SIZE_LIMIT)
       return;
@@ -214,7 +212,7 @@ int main()
 
   {
     constexpr int Dim = 5;
-    auto v = allElems<Dim>();
+    auto v            = allElems<Dim>();
     auto setFree = frontierSearchCapSet<Dim>(score_to_order(heuristic), prune);
     assert(!hasSet(setFree));
     std::cout << setFree.size() << std::endl;

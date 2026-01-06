@@ -7,22 +7,17 @@
 
 template <int... MODs> class ModInt
 {
-  static_assert((... && (MODs < std::numeric_limits<int>::max())), "All MODs must fit in int");
+  static_assert((... && (MODs < std::numeric_limits<int>::max())),
+                "All MODs must fit in int");
   static_assert((... && (0 < MODs)), "All MODs must be positive");
   static constexpr size_t K = sizeof...(MODs);
 
 public:
-  ModInt()
-  {
-    mVals.fill(0);
-  }
+  ModInt() { mVals.fill(0); }
 
-  ModInt(int v)
-  {
-    set_all(v);
-  }
+  ModInt(int v) { set_all(v); }
 
-  friend std::ostream& operator<<(std::ostream& out, const ModInt& m)
+  friend std::ostream &operator<<(std::ostream &out, const ModInt &m)
   {
     out << '{';
     for (size_t i = 0; i < K; i++)
@@ -40,13 +35,13 @@ public:
     for_each_mod(
         [&](size_t i, int MOD)
         {
-          int x = mVals[i];
+          int x      = mVals[i];
           r.mVals[i] = (x == 0 ? 0 : MOD - x);
         });
     return r;
   }
 
-  const ModInt& operator+=(const ModInt& other)
+  const ModInt &operator+=(const ModInt &other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
@@ -59,7 +54,7 @@ public:
     return *this;
   }
 
-  const ModInt& operator-=(const ModInt& other)
+  const ModInt &operator-=(const ModInt &other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
@@ -72,32 +67,32 @@ public:
     return *this;
   }
 
-  const ModInt& operator*=(const ModInt& other)
+  const ModInt &operator*=(const ModInt &other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
         {
           long long prod = 1LL * mVals[i] * other.mVals[i];
-          mVals[i] = static_cast<int>(prod % MOD);
+          mVals[i]       = static_cast<int>(prod % MOD);
         });
     return *this;
   }
 
-  ModInt operator+(const ModInt& other)
+  ModInt operator+(const ModInt &other)
   {
     ModInt n = *this;
     n += other;
     return n;
   }
 
-  ModInt operator-(const ModInt& other)
+  ModInt operator-(const ModInt &other)
   {
     ModInt n = *this;
     n -= other;
     return n;
   }
 
-  ModInt operator*(const ModInt& other)
+  ModInt operator*(const ModInt &other)
   {
     ModInt n = *this;
     n *= other;
@@ -106,7 +101,7 @@ public:
 
   // returns false => not equal
   // returns true => probably equal
-  bool operator==(const ModInt& other) const
+  bool operator==(const ModInt &other) const
   {
     for (size_t i = 0; i < K; i++)
     {
@@ -117,7 +112,7 @@ public:
   }
 
 private:
-  template <typename F> static void for_each_mod(F&& f)
+  template <typename F> static void for_each_mod(F &&f)
   {
     static constexpr int mods[] = {MODs...};
     for (size_t i = 0; i < K; i++)

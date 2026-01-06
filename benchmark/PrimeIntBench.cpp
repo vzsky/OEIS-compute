@@ -6,10 +6,7 @@
 
 Prime<10000> p{};
 
-PrimeInt pi(int64_t n)
-{
-  return p.vector_factors_freq(n);
-}
+PrimeInt pi(int64_t n) { return p.vector_factors_freq(n); }
 
 std::vector<PrimeInt> numbers = []
 {
@@ -34,19 +31,20 @@ static const std::vector<std::pair<size_t, size_t>> divisible_pairs = []
 // --------------------
 // Multiplication benchmark
 // --------------------
-static void BM_multiply(benchmark::State& state)
+static void BM_multiply(benchmark::State &state)
 {
   for (auto _ : state)
     for (size_t i = 0; i < numbers.size(); ++i)
       for (size_t j = 0; j < numbers.size(); ++j)
         benchmark::DoNotOptimize(numbers[i] * numbers[j]);
 }
-BENCHMARK(BM_multiply)->Name(("Multiply - " + std::to_string(n_all_pairs) + " pairs").c_str());
+BENCHMARK(BM_multiply)
+    ->Name(("Multiply - " + std::to_string(n_all_pairs) + " pairs").c_str());
 
 // --------------------
 // Division benchmark
 // --------------------
-static void BM_divide(benchmark::State& state)
+static void BM_divide(benchmark::State &state)
 {
   for (auto _ : state)
     for (auto [i, j] : divisible_pairs)
@@ -58,7 +56,7 @@ BENCHMARK(BM_divide)->Name(
 // --------------------
 // Divisibility benchmark
 // --------------------
-static void BM_is_divisible(benchmark::State& state)
+static void BM_is_divisible(benchmark::State &state)
 {
   for (auto _ : state)
     for (size_t i = 0; i < numbers.size(); ++i)

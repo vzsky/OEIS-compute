@@ -18,7 +18,8 @@ public:
   std::vector<size_t> all_primes() const;
 
 private:
-  std::vector<size_t> mLowestPrimeDiv = std::vector<size_t>(N + 1); // lowest prime divisor of i
+  std::vector<size_t> mLowestPrimeDiv =
+      std::vector<size_t>(N + 1); // lowest prime divisor of i
   std::vector<size_t> mAllPrimes;
 };
 
@@ -84,7 +85,7 @@ template <size_t N> std::vector<size_t> Prime<N>::factors(size_t n) const
 
   std::vector<size_t> result;
 
-  auto checkDivisor = [&](size_t& n, size_t d)
+  auto checkDivisor = [&](size_t &n, size_t d)
   {
     if (n == 1)
       return;
@@ -131,7 +132,8 @@ template <size_t N> std::vector<size_t> Prime<N>::fast_factors(size_t n) const
   return f;
 }
 
-template <size_t N> std::map<size_t, size_t> Prime<N>::factors_freq(size_t n) const
+template <size_t N>
+std::map<size_t, size_t> Prime<N>::factors_freq(size_t n) const
 {
   std::map<size_t, size_t> freq;
   for (size_t p : factors(n))
@@ -140,7 +142,8 @@ template <size_t N> std::map<size_t, size_t> Prime<N>::factors_freq(size_t n) co
 }
 
 template <size_t N>
-std::vector<std::pair<size_t, size_t>> Prime<N>::vector_factors_freq(size_t n) const
+std::vector<std::pair<size_t, size_t>>
+Prime<N>::vector_factors_freq(size_t n) const
 {
   std::vector<std::pair<size_t, size_t>> freq;
   for (size_t p : factors(n))

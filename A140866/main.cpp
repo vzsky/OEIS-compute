@@ -1,6 +1,6 @@
 #include "lib.h"
 #include <cmath>
-#include <utils/DecBigInt.h>
+#include <utils/BigInt.h>
 #include <utils/Utils.h>
 
 bool is_harshad(DecBigInt n)
@@ -22,17 +22,14 @@ long long sum_digit(int n)
   return sum;
 }
 
-bool is_harshad_fast(long long n)
-{
-  return ((n % sum_digit(n)) == 0);
-}
+bool is_harshad_fast(long long n) { return ((n % sum_digit(n)) == 0); }
 
 int main()
 {
 
   {
-    int N = 1e5;
-    int cnt = 0;
+    int N         = 1e5;
+    int cnt       = 0;
     int current_n = 0;
     for (int i = 1; i <= N; i++)
     {

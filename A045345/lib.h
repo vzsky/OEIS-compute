@@ -1,4 +1,4 @@
-#include <utils/DecBigInt.h>
+#include <utils/BigInt.h>
 #include <utils/Prime.h>
 #include <vector>
 

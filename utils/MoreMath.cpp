@@ -17,7 +17,7 @@ int pow(int base, int k)
 int pow(int base, int k, int mod)
 {
   long long result = 1;
-  long long b = base % mod;
+  long long b      = base % mod;
   while (k > 0)
   {
     if (k & 1)
@@ -33,13 +33,10 @@ int gcd(int a, int b)
   while (b != 0)
   {
     int r = a % b;
-    a = b;
-    b = r;
+    a     = b;
+    b     = r;
   }
   return a;
 }
 
-int lcm(int a, int b)
-{
-  return a * b / gcd(a, b);
-}
+int lcm(int a, int b) { return a * b / gcd(a, b); }

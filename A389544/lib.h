@@ -19,10 +19,10 @@ template <uint64_t N> struct A389544
       integerMap[i] = primeFactorizer.vector_factors_freq(i);
   }
 
-  bool has_duplicate_product(const Int& targetProduct) const
+  bool has_duplicate_product(const Int &targetProduct) const
   {
     Int candidate = 1;
-    size_t l = 0;
+    size_t l      = 0;
 
     for (size_t r = 0; r < sequence.size(); r++)
     {
@@ -42,7 +42,7 @@ template <uint64_t N> struct A389544
 
   std::vector<uint64_t> get_sequence_until_N()
   {
-    sequence = {2};
+    sequence   = {2};
     size_t ind = 1;
 
     for (uint64_t n = 3; n <= N; n++)
@@ -61,13 +61,16 @@ template <uint64_t N> struct A389544
         if (primeFactorizer.is_prime(sequence[trail]))
           break;
         if (productsToCheck.empty())
-          productsToCheck.push_back(integerMap[n] * integerMap[sequence[trail]]);
+          productsToCheck.push_back(integerMap[n] *
+                                    integerMap[sequence[trail]]);
         else
-          productsToCheck.push_back(productsToCheck.back() * integerMap[sequence[trail]]);
+          productsToCheck.push_back(productsToCheck.back() *
+                                    integerMap[sequence[trail]]);
       }
 
       if (utils::par_all_of(begin(productsToCheck), end(productsToCheck),
-                            [&](const Int& target) { return !has_duplicate_product(target); }))
+                            [&](const Int &target)
+                            { return !has_duplicate_product(target); }))
         sequence.push_back(n);
     }
     return sequence;

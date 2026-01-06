@@ -20,6 +20,6 @@ TEST(TestExSeq, testA002326)
 TEST(TestExSeq, testA045345)
 {
   constexpr int N = 1000;
-  auto answers = A045345::answers_upto<N>();
+  auto answers    = A045345::answers_upto<N>();
   EXPECT_EQ(answers, std::vector({1, 23, 53}));
 }

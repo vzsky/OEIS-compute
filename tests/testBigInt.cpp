@@ -1,46 +1,35 @@
 #include <gtest/gtest.h>
-#include <utils/DecBigInt.h>
-#include <utils/DenseBigInt.h>
-
-using BigIntTypes = ::testing::Types<DecBigInt, DenseBigInt>;
+#include <utils/BigInt.h>
 
 template <typename T> class BigIntTest : public ::testing::Test
 {
-public:
-  using BI = T;
 };
 
+using BigIntTypes = ::testing::Types<DecBigInt, DenseBigInt>;
 TYPED_TEST_SUITE(BigIntTest, BigIntTypes);
 
-TEST(DecBigIntTest, Construction)
+TYPED_TEST(BigIntTest, Construction)
 {
-  DecBigInt a{};
-  EXPECT_EQ(a, 0);
+  using BI = TypeParam;
 
-  DecBigInt b("12345");
-  EXPECT_EQ(b, 12345);
-
-  DecBigInt c("-987");
-  EXPECT_EQ(c, -987);
-
-  DecBigInt d("00123");
-  EXPECT_EQ(d, DecBigInt(123));
-
-  DecBigInt e("-00456");
-  EXPECT_EQ(e, DecBigInt(-456));
-
-  DecBigInt f("+789");
-  EXPECT_EQ(f, DecBigInt(789));
+  EXPECT_EQ(BI{}, 0);
+  EXPECT_EQ(BI("12345"), BI(12345));
+  EXPECT_EQ(BI("-987"), BI(-987));
+  EXPECT_EQ(BI("000123"), BI(123));
+  EXPECT_EQ(BI("-00456"), BI(-456));
+  EXPECT_EQ(BI("+78900"), BI(78900));
 }
 
-TEST(DecBigIntTest, StreamOutput)
+TYPED_TEST(BigIntTest, StreamOutput)
 {
-  DecBigInt a("00123");
-  DecBigInt b("-0456");
+  using BI = TypeParam;
 
   std::stringstream ss;
-  ss << a << " " << b;
-  EXPECT_EQ(ss.str(), "123 -456");
+  ss << BI("000123") << " " << BI(-456);
+  if constexpr (BI::Base == 10)
+    EXPECT_EQ(ss.str(), "(1)(2)(3) -(4)(5)(6)");
+  else
+    EXPECT_EQ(ss.str(), "(123) -(1)(200)");
 }
 
 TYPED_TEST(BigIntTest, Comparison)
@@ -66,7 +55,6 @@ TYPED_TEST(BigIntTest, AdditionAssignment)
   using BI = TypeParam;
 
   BI a(123);
-
   a += BI(456);
   EXPECT_EQ(a, 579);
 
@@ -84,7 +72,6 @@ TYPED_TEST(BigIntTest, SubtractionAssignment)
   using BI = TypeParam;
 
   BI a(123);
-
   a -= BI(456);
   EXPECT_EQ(a, -333);
 
@@ -102,7 +89,6 @@ TYPED_TEST(BigIntTest, MultiplicationAssignment)
   using BI = TypeParam;
 
   BI a(123);
-
   a *= BI(456);
   EXPECT_EQ(a, 56088);
 

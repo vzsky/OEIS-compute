@@ -16,7 +16,8 @@ Prime<5000000> p;
 // prime: 2131^2 = 4541161  -> 6 4541155
 // prime: 2131^2 = 4541161  -> 7 4541154
 // prime: 8663^2 = 75047569 -> 8 75047565
-// it seems that all answers so far are (p^2 - k) where p is the largest prime divisor
+// it seems that all answers so far are (p^2 - k) where p is the largest prime
+// divisor
 
 struct MaxPrime
 {
@@ -28,7 +29,7 @@ struct MaxPrime
     mult = factors.back().second;
   }
 
-  const MaxPrime& operator*=(const MaxPrime& other)
+  const MaxPrime &operator*=(const MaxPrime &other)
   {
     if (other.maxP == maxP)
       mult += other.mult;
@@ -70,7 +71,7 @@ void find_short_sequence()
       if (prod.mult >= 2)
       {
         std::cout << "prime: " << prod.maxP << "^" << prod.mult << " = "
-                  << (long long) std::pow(prod.maxP, prod.mult) << std::endl;
+                  << (long long)std::pow(prod.maxP, prod.mult) << std::endl;
         std::cout << distance << ' ' << u << std::endl;
         break;
       }
@@ -87,7 +88,7 @@ void find_upper_bound(int width)
       continue;
 
     uint64_t firstTerm = 0;
-    uint64_t psqr = prime * prime;
+    uint64_t psqr      = prime * prime;
 
     for (uint64_t start = psqr - width; start <= psqr; ++start)
     {

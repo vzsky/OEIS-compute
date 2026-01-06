@@ -24,11 +24,11 @@ private:
 
   int order_of_2_mod_p(int prime)
   {
-    int n = prime;
-    int phi_n = prime - 1;
+    int n       = prime;
+    int phi_n   = prime - 1;
     auto primes = factorizer.factors_freq(phi_n);
-    int ans = 1;
-    for (auto& [p, k] : primes)
+    int ans     = 1;
+    for (auto &[p, k] : primes)
     {
       int x = min_p_needed(phi_n, p, k, n);
       ans *= pow(p, x);
@@ -42,8 +42,8 @@ private:
       return order_of_2_mod_p(p);
     int cur = order_of_2_mod_p(p);
     int mod = pow(p, power);
-    int l = 0;
-    int r = power - 1;
+    int l   = 0;
+    int r   = power - 1;
     while (l < r)
     {
       int mid = (l + r) / 2;
@@ -62,11 +62,11 @@ public:
       return 1;
     n -= 1;
     auto factors = factorizer.factors_freq(2 * n + 1);
-    int ans = 1;
-    for (auto& [p, k] : factors)
+    int ans      = 1;
+    for (auto &[p, k] : factors)
     {
       auto res = order_of_2_mod_prime_power(p, k);
-      ans = lcm(ans, res);
+      ans      = lcm(ans, res);
     }
     return ans;
   }
@@ -76,8 +76,8 @@ public:
     std::vector<int> all_answers(until - 1);
     for (int ind = 2; ind <= until; ind++)
     {
-      int n = 2 * ind - 1;
-      int ans = 1;
+      int n        = 2 * ind - 1;
+      int ans      = 1;
       auto factors = factorizer.factors_freq(n);
       if (factors.size() == 1)
       {
@@ -88,14 +88,14 @@ public:
         else
         {
           int prev_ind = pow(p, k - 1) / 2 - 1;
-          ans = all_answers[prev_ind];
+          ans          = all_answers[prev_ind];
           if (pow(2, all_answers[prev_ind], n) != 1)
             ans *= p;
         }
       }
       else
       {
-        for (auto& [p, k] : factors)
+        for (auto &[p, k] : factors)
         {
           ans = lcm(ans, all_answers[pow(p, k) / 2 - 1]);
         }

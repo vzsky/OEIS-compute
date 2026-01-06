@@ -7,7 +7,7 @@
 
 auto score_to_order = [](auto score)
 {
-  return [score](const auto& a, const auto& b) -> bool
+  return [score](const auto &a, const auto &b) -> bool
   {
     auto sa = score(a), sb = score(b);
     if (sa != sb)
@@ -16,7 +16,7 @@ auto score_to_order = [](auto score)
   };
 };
 
-template <int N> bool check(const Elems<N>& cands)
+template <int N> bool check(const Elems<N> &cands)
 {
   for (size_t i = 0; i < cands.size(); i++)
   {
@@ -26,10 +26,10 @@ template <int N> bool check(const Elems<N>& cands)
       {
         if (k == i || k == j)
           continue;
-        const Elem<N>& c = cands[k];
+        const Elem<N> &c = cands[k];
 
         uint64_t result = 0;
-        bool valid = true;
+        bool valid      = true;
         for (int ind = 0; ind < N; ind++)
         {
           int bit = (cands[i][ind] + cands[j][ind] - cands[k][ind]);
@@ -51,7 +51,7 @@ template <int N> bool check(const Elems<N>& cands)
 // and sidon_set is ordered increasingly (only weakly order of bit containment
 // needed) and next is greater than all of sidon_set in that bit containment
 // ordering
-template <int N> bool can_add(const Elems<N>& sidon_set, const Elem<N>& next)
+template <int N> bool can_add(const Elems<N> &sidon_set, const Elem<N> &next)
 {
   if (sidon_set.size() != 0 && next == sidon_set.back())
     return false;
@@ -80,8 +80,9 @@ template <int N> bool can_add(const Elems<N>& sidon_set, const Elem<N>& next)
 }
 
 template <int N, typename Heuristic, typename PruneFunc>
-Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller_output = false,
-                             bool show_progress = false)
+Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg,
+                             bool show_smaller_output = false,
+                             bool show_progress       = false)
 {
   using Frontier = Treap<Elems<N>, Heuristic>;
 
@@ -98,7 +99,8 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
     {
       std::cout << "#============================" << std::endl;
       std::cout << "N = " << smaller_output_cnt << std::endl;
-      auto result = frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
+      auto result =
+          frontier.max([](const auto &x) { return x.size(); }, Elems<N>());
       result.print(smaller_output_cnt);
       assert(check(result));
       std::cout << std::flush;
@@ -108,7 +110,7 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
     Elem<N> next{i};
 
     std::vector to_add = frontier.gather(
-        [&next, &i](const auto& parent)
+        [&next, &i](const auto &parent)
         {
           if (can_add(parent, next))
           {
@@ -121,7 +123,7 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
         },
         16, 100);
 
-    for (auto& s : to_add)
+    for (auto &s : to_add)
     {
       if (s.second.has_value())
         frontier.insert(std::move(*s.second));
@@ -131,7 +133,7 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
   }
   if (show_progress)
     std::cout << "\rDone!            " << std::endl;
-  return frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
+  return frontier.max([](const auto &x) { return x.size(); }, Elems<N>());
 }
 
 // ####################################
@@ -139,7 +141,8 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
 // ####################################
 
 template <int N>
-Elems<N> breed_cross(const Elems<N>& mother, const Elems<N>& father, int mother_size)
+Elems<N> breed_cross(const Elems<N> &mother, const Elems<N> &father,
+                     int mother_size)
 {
   Elems<N> child = mother;
 
@@ -162,11 +165,11 @@ int main()
 
     int clock = 0;
     // prune is called at every tick
-    auto prune = [&clock](auto& frontier)
+    auto prune = [&clock](auto &frontier)
     {
       clock++;
 
-      constexpr int SIZE_KEEP = 20000;
+      constexpr int SIZE_KEEP  = 20000;
       constexpr int SIZE_LIMIT = 200000;
       if (frontier.size() < SIZE_LIMIT)
         return;
@@ -177,13 +180,14 @@ int main()
     // the same! that means we shouldn't be able to use mLastUsed or other
     // fields we which to mutate in this calculation. this includes clock. const
     // int64_t SIZE_MULT = 200; const int64_t DATE_CREATED_MULT = 1;
-    auto heuristic = [](const auto& v) -> int64_t
+    auto heuristic = [](const auto &v) -> int64_t
     {
       // return v.size() * SIZE_MULT + v.mCreated * DATE_CREATED_MULT;
       return v.size();
     };
 
-    auto result = find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
+    auto result =
+        find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
 
     assert(check(result));
     std::cout << result << std::endl;

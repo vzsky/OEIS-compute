@@ -78,7 +78,7 @@ TEST(TreapTest, GatherIterateAndMap)
   std::sort(gathered.begin(), gathered.end());
   std::vector<int> double_gather(gathered.size());
   std::transform(gathered.begin(), gathered.end(), double_gather.begin(),
-                 [](const auto& p) { return p.second; });
+                 [](const auto &p) { return p.second; });
   ASSERT_EQ(double_gather, expected);
 }
 
