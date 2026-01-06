@@ -15,26 +15,26 @@ class PrimeInt
 
 public:
   PrimeInt() = default;
-  PrimeInt(std::vector<std::pair<size_t, size_t>> &&f) : mFactors(std::move(f))
+  PrimeInt(std::vector<std::pair<size_t, size_t>>&& f) : mFactors(std::move(f))
   {
   }
-  PrimeInt(const std::vector<std::pair<size_t, size_t>> &f) : mFactors(f) {}
+  PrimeInt(const std::vector<std::pair<size_t, size_t>>& f) : mFactors(f) {}
   PrimeInt(size_t v)
   {
     if (v == 0) throw std::invalid_argument("PrimeInt doesn't support zero");
     if (v > 1) mFactors = factorizer.vector_factors_freq(v);
   }
 
-  friend std::ostream &operator<<(std::ostream &out, const PrimeInt &m);
+  friend std::ostream& operator<<(std::ostream& out, const PrimeInt& m);
 
-  const PrimeInt &operator*=(const PrimeInt &other);
-  PrimeInt operator*(const PrimeInt &other) const;
+  const PrimeInt& operator*=(const PrimeInt& other);
+  PrimeInt operator*(const PrimeInt& other) const;
 
-  const PrimeInt &operator/=(const PrimeInt &other);
-  PrimeInt operator/(const PrimeInt &other) const;
+  const PrimeInt& operator/=(const PrimeInt& other);
+  PrimeInt operator/(const PrimeInt& other) const;
 
-  bool is_divisible_by(const PrimeInt &other) const;
-  bool operator==(const PrimeInt &other) const;
+  bool is_divisible_by(const PrimeInt& other) const;
+  bool operator==(const PrimeInt& other) const;
 
   uint64_t unsafe_to_int() const
   {

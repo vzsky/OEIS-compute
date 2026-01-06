@@ -76,7 +76,7 @@ template <size_t N> std::vector<size_t> Prime<N>::factors(size_t n) const
 
   std::vector<size_t> result;
 
-  auto checkDivisor = [&](size_t &n, size_t d)
+  auto checkDivisor = [&](size_t& n, size_t d)
   {
     if (n == 1) return;
 

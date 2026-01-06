@@ -3,24 +3,24 @@
 
 Prime<105000> p;
 
-static void BM_is_prime_until(benchmark::State &state)
+static void BM_is_prime_until(benchmark::State& state)
 {
   for (auto _ : state)
     for (int i = 2; i <= state.range(0); ++i)
       benchmark::DoNotOptimize(p.is_prime(i));
 }
 
-static void BM_factors(benchmark::State &state)
+static void BM_factors(benchmark::State& state)
 {
   for (auto _ : state) benchmark::DoNotOptimize(p.factors(state.range(0)));
 }
 
-static void BM_factors_freq(benchmark::State &state)
+static void BM_factors_freq(benchmark::State& state)
 {
   for (auto _ : state) benchmark::DoNotOptimize(p.factors_freq(state.range(0)));
 }
 
-static void BM_vector_factors_freq(benchmark::State &state)
+static void BM_vector_factors_freq(benchmark::State& state)
 {
   for (auto _ : state)
     benchmark::DoNotOptimize(p.vector_factors_freq(state.range(0)));

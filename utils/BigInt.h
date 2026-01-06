@@ -21,7 +21,7 @@ private:
   }
 
   // compare the underlying without sign change
-  static int abs_cmp(const BigInt &a, const BigInt &b)
+  static int abs_cmp(const BigInt& a, const BigInt& b)
   {
     if (a.mDigits.size() != b.mDigits.size())
       return a.mDigits.size() < b.mDigits.size() ? -1 : 1;
@@ -35,7 +35,7 @@ private:
   }
 
   // modify the underlying without sign change
-  void abs_add(const BigInt &o)
+  void abs_add(const BigInt& o)
   {
     size_t n = std::max(mDigits.size(), o.mDigits.size());
     mDigits.resize(n, 0);
@@ -53,7 +53,7 @@ private:
   }
 
   // modify the underlying without sign change
-  void abs_sub(const BigInt &o)
+  void abs_sub(const BigInt& o)
   {
     int64_t carry = 0;
     for (size_t i = 0; i < o.mDigits.size() || carry; ++i)
@@ -88,7 +88,7 @@ public:
     }
   }
 
-  BigInt(const std::string &s)
+  BigInt(const std::string& s)
   {
     mDigits = {0};
     for (char c : s)
@@ -115,7 +115,7 @@ public:
     return r;
   }
 
-  BigInt &operator+=(const BigInt &o)
+  BigInt& operator+=(const BigInt& o)
   {
     if (mIsNeg == o.mIsNeg)
       abs_add(o);
@@ -123,7 +123,10 @@ public:
     {
       int c = abs_cmp(*this, o);
       if (c == 0)
-        return 0;
+      {
+        mDigits = {0};
+        mIsNeg  = false;
+      }
       else if (c > 0)
         abs_sub(o);
       else
@@ -136,13 +139,13 @@ public:
     return *this;
   }
 
-  BigInt &operator-=(const BigInt &o)
+  BigInt& operator-=(const BigInt& o)
   {
     *this += -o;
     return *this;
   }
 
-  BigInt &operator*=(const BigInt &o)
+  BigInt& operator*=(const BigInt& o)
   {
     std::vector<uint64_t> tmp(mDigits.size() + o.mDigits.size(), 0);
 
@@ -165,35 +168,35 @@ public:
     return *this;
   }
 
-  BigInt &operator%=(const BigInt &o)
+  BigInt& operator%=(const BigInt& o)
   {
     while (mIsNeg) *this += o;
     while (abs_cmp(*this, o) >= 0) abs_sub(o);
     return *this;
   }
 
-  BigInt operator+(const BigInt &o)
+  BigInt operator+(const BigInt& o)
   {
     BigInt r = *this;
     return r += o;
   }
-  BigInt operator-(const BigInt &o)
+  BigInt operator-(const BigInt& o)
   {
     BigInt r = *this;
     return r -= o;
   }
-  BigInt operator*(const BigInt &o)
+  BigInt operator*(const BigInt& o)
   {
     BigInt r = *this;
     return r *= o;
   }
-  BigInt operator%(const BigInt &o)
+  BigInt operator%(const BigInt& o)
   {
     BigInt r = *this;
     return r %= o;
   }
 
-  std::strong_ordering operator<=>(const BigInt &o) const
+  std::strong_ordering operator<=>(const BigInt& o) const
   {
     if (mIsNeg != o.mIsNeg)
       return mIsNeg ? std::strong_ordering::less
@@ -209,12 +212,21 @@ public:
       return less ? std::strong_ordering::greater : std::strong_ordering::less;
   }
 
-  bool operator==(const BigInt &o) const
+  bool operator==(const BigInt& o) const
   {
     return (*this <=> o) == std::strong_ordering::equal;
   };
 
-  friend std::ostream &operator<<(std::ostream &os, const BigInt &b);
+  friend std::ostream& operator<<(std::ostream& os, const BigInt& b)
+  {
+    if (b.mIsNeg) os << "-";
+    for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
+      if constexpr (Base <= 10)
+        os << *it;
+      else
+        os << "(" << *it << ")";
+    return os;
+  }
 
   const std::vector<Digit> digits() const { return mDigits; }
 
@@ -222,18 +234,6 @@ private:
   bool mIsNeg{false};
   std::vector<Digit> mDigits;
 };
-
-template <uint16_t Base>
-std::ostream &operator<<(std::ostream &os, const BigInt<Base> &b)
-{
-  if (b.mIsNeg) os << "-";
-  for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
-    if constexpr (Base <= 10)
-      os << *it;
-    else
-      os << "(" << *it << ")";
-  return os;
-}
 
 using DecBigInt   = BigInt<10>;
 using DenseBigInt = BigInt<256>;

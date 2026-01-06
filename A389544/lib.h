@@ -19,7 +19,7 @@ template <uint64_t N> struct A389544
       integerMap[i] = primeFactorizer.vector_factors_freq(i);
   }
 
-  bool has_duplicate_product(const Int &targetProduct) const
+  bool has_duplicate_product(const Int& targetProduct) const
   {
     Int candidate = 1;
     size_t l      = 0;
@@ -66,7 +66,7 @@ template <uint64_t N> struct A389544
       }
 
       if (utils::par_all_of(begin(productsToCheck), end(productsToCheck),
-                            [&](const Int &target)
+                            [&](const Int& target)
                             { return !has_duplicate_product(target); }))
         sequence.push_back(n);
     }

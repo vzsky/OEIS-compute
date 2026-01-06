@@ -29,7 +29,7 @@ static const std::vector<std::pair<size_t, size_t>> divisible_pairs = []
 // --------------------
 // Multiplication benchmark
 // --------------------
-static void BM_multiply(benchmark::State &state)
+static void BM_multiply(benchmark::State& state)
 {
   for (auto _ : state)
     for (size_t i = 0; i < numbers.size(); ++i)
@@ -42,7 +42,7 @@ BENCHMARK(BM_multiply)
 // --------------------
 // Division benchmark
 // --------------------
-static void BM_divide(benchmark::State &state)
+static void BM_divide(benchmark::State& state)
 {
   for (auto _ : state)
     for (auto [i, j] : divisible_pairs)
@@ -54,7 +54,7 @@ BENCHMARK(BM_divide)->Name(
 // --------------------
 // Divisibility benchmark
 // --------------------
-static void BM_is_divisible(benchmark::State &state)
+static void BM_is_divisible(benchmark::State& state)
 {
   for (auto _ : state)
     for (size_t i = 0; i < numbers.size(); ++i)

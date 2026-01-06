@@ -10,7 +10,7 @@ static TestInt make_big(int n)
   return x;
 }
 
-static void BM_add(benchmark::State &state)
+static void BM_add(benchmark::State& state)
 {
   int n     = state.range(0);
   TestInt a = make_big(n);
@@ -23,7 +23,7 @@ static void BM_add(benchmark::State &state)
   }
 }
 
-static void BM_sub(benchmark::State &state)
+static void BM_sub(benchmark::State& state)
 {
   int n     = state.range(0);
   TestInt a = make_big(n);
@@ -36,7 +36,7 @@ static void BM_sub(benchmark::State &state)
   }
 }
 
-static void BM_mul(benchmark::State &state)
+static void BM_mul(benchmark::State& state)
 {
   int n     = state.range(0);
   TestInt a = make_big(n / 4);
@@ -49,7 +49,7 @@ static void BM_mul(benchmark::State &state)
   }
 }
 
-static void BM_cmp(benchmark::State &state)
+static void BM_cmp(benchmark::State& state)
 {
   int n     = state.range(0);
   TestInt a = make_big(n);
@@ -62,7 +62,7 @@ static void BM_cmp(benchmark::State &state)
   }
 }
 
-static void BM_copy_ctor(benchmark::State &state)
+static void BM_copy_ctor(benchmark::State& state)
 {
   int n = state.range(0);
 
@@ -75,7 +75,7 @@ static void BM_copy_ctor(benchmark::State &state)
   }
 }
 
-static void BM_move_ctor(benchmark::State &state)
+static void BM_move_ctor(benchmark::State& state)
 {
   int n = state.range(0);
 

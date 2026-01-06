@@ -49,7 +49,7 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
     block_start = block_end;
   }
 
-  for (auto &f : futures)
+  for (auto& f : futures)
   {
     if (!f.get()) return false;
   }
@@ -72,8 +72,8 @@ template <typename Func> auto timeit(Func f)
 
 template <typename T>
 [[nodiscard]] inline std::vector<T>
-read_bfile(const std::string &relative_path,
-           const std::source_location &loc = std::source_location::current())
+read_bfile(const std::string& relative_path,
+           const std::source_location& loc = std::source_location::current())
 {
   namespace fs = std::filesystem;
 

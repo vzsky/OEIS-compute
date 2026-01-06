@@ -28,7 +28,7 @@ private:
     int phi_n   = prime - 1;
     auto primes = factorizer.factors_freq(phi_n);
     int ans     = 1;
-    for (auto &[p, k] : primes)
+    for (auto& [p, k] : primes)
     {
       int x = min_p_needed(phi_n, p, k, n);
       ans *= pow(p, x);
@@ -61,7 +61,7 @@ public:
     n -= 1;
     auto factors = factorizer.factors_freq(2 * n + 1);
     int ans      = 1;
-    for (auto &[p, k] : factors)
+    for (auto& [p, k] : factors)
     {
       auto res = order_of_2_mod_prime_power(p, k);
       ans      = lcm(ans, res);
@@ -92,7 +92,7 @@ public:
       }
       else
       {
-        for (auto &[p, k] : factors)
+        for (auto& [p, k] : factors)
         {
           ans = lcm(ans, all_answers[pow(p, k) / 2 - 1]);
         }

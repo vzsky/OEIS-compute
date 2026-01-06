@@ -47,34 +47,34 @@ private:
   comparator mCmp;
 
   // functions can't be static because of these
-  inline bool value_lt(const value_type &a, const value_type &b) const
+  inline bool value_lt(const value_type& a, const value_type& b) const
   {
     return mCmp(a, b);
   }
-  inline bool value_gt(const value_type &a, const value_type &b) const
+  inline bool value_gt(const value_type& a, const value_type& b) const
   {
     return mCmp(b, a);
   }
-  inline bool value_le(const value_type &a, const value_type &b) const
+  inline bool value_le(const value_type& a, const value_type& b) const
   {
     return !mCmp(b, a);
   }
-  inline bool value_ge(const value_type &a, const value_type &b) const
+  inline bool value_ge(const value_type& a, const value_type& b) const
   {
     return !mCmp(a, b);
   }
-  inline bool value_eq(const value_type &a, const value_type &b) const
+  inline bool value_eq(const value_type& a, const value_type& b) const
   {
     return value_le(a, b) && value_ge(a, b);
   }
 
-  inline size_type sz(const node_ptr &t) const { return t ? t->sz : 0; }
-  inline void upd(node_ptr &t) const
+  inline size_type sz(const node_ptr& t) const { return t ? t->sz : 0; }
+  inline void upd(node_ptr& t) const
   {
     if (t) t->sz = sz(t->l) + sz(t->r) + 1;
   }
 
-  template <typename Func> void inorder(Func f, const node_ptr &t) const
+  template <typename Func> void inorder(Func f, const node_ptr& t) const
   {
     if (!t) return;
     inorder(f, t->l);
@@ -84,7 +84,7 @@ private:
 
   // Func f needs to be thread-safe
   template <typename Func>
-  void idx_traversal(const node_ptr &t, Func f, std::counting_semaphore<> &sem,
+  void idx_traversal(const node_ptr& t, Func f, std::counting_semaphore<>& sem,
                      size_t min_tree_size, size_t base_idx = 0) const
   {
     if (!t) return;
@@ -113,7 +113,7 @@ private:
   }
 
   // split a treap into 2 treaps based on values
-  void split(node_ptr &l, node_ptr &r, node_ptr &&t, value_type val) const
+  void split(node_ptr& l, node_ptr& r, node_ptr&& t, value_type val) const
   { // <= val in l
     if (!t)
     {
@@ -139,7 +139,7 @@ private:
   }
 
   // split treap into 2 treaps based on number of elements
-  void splitat(node_ptr &l, node_ptr &r, node_ptr &&t, size_type pos) const
+  void splitat(node_ptr& l, node_ptr& r, node_ptr&& t, size_type pos) const
   { // first pos elements at l
     if (!t)
     {
@@ -165,7 +165,7 @@ private:
   }
 
   // find kth value in a treap
-  value_type &kth(const node_ptr &t, size_type k) const
+  value_type& kth(const node_ptr& t, size_type k) const
   {
     if (!t) throw std::out_of_range("cannot find element");
     if (sz(t->l) == k - 1) return t->val;
@@ -176,7 +176,7 @@ private:
   }
 
   // check if key is in treap
-  void find(const node_ptr &t, value_type key, bool &found) const
+  void find(const node_ptr& t, value_type key, bool& found) const
   {
     if (!t) return;
     if (value_eq(t->val, key))
@@ -189,8 +189,8 @@ private:
     else
       return find(t->l, key, found);
   }
-  void find(const node_ptr &t, value_type key, bool &found,
-            size_type &ind) const
+  void find(const node_ptr& t, value_type key, bool& found,
+            size_type& ind) const
   {
     if (!t) return;
     if (value_eq(t->val, key))
@@ -209,7 +209,7 @@ private:
   }
 
   // insert new node (only for fresh node l=r=nullptr)
-  void insert(node_ptr &t, node_ptr &&n) const
+  void insert(node_ptr& t, node_ptr&& n) const
   {
     if (!t)
     {
@@ -229,7 +229,7 @@ private:
   }
 
   // concat two treaps
-  void concat(node_ptr &t, node_ptr &&l, node_ptr &&r) const
+  void concat(node_ptr& t, node_ptr&& l, node_ptr&& r) const
   {
     if (!l)
     {
@@ -255,7 +255,7 @@ private:
   }
 
   // merge two treaps
-  void merge(node_ptr &t, node_ptr &&l, node_ptr &&r)
+  void merge(node_ptr& t, node_ptr&& l, node_ptr&& r)
   {
     if (!l)
     {
@@ -278,7 +278,7 @@ private:
 
 public:
   Treap(Compare c) : mCmp{c}, mTop{nullptr} { srand(time(NULL)); }
-  Treap(Treap<Value, Compare> &&t)
+  Treap(Treap<Value, Compare>&& t)
       : mCmp{std::move(t.mCmp)}, mTop{std::move(t.mTop)}
   {
     srand(time(NULL));
@@ -286,7 +286,7 @@ public:
 
   size_type size() const { return sz(mTop); }
 
-  void insert(value_type &&v)
+  void insert(value_type&& v)
   {
     insert(mTop, std::make_unique<node>(std::move(v)));
   }
@@ -302,14 +302,14 @@ public:
     mTop = std::move(l);
   }
 
-  bool contains(const value_type &v) const
+  bool contains(const value_type& v) const
   {
     bool found = false;
     find(mTop, v, found);
     return found;
   }
 
-  int indexOf(const value_type &v) const
+  int indexOf(const value_type& v) const
   {
     bool found    = false;
     size_type ind = 0;
@@ -318,9 +318,9 @@ public:
     return ind;
   }
 
-  const value_type &operator[](size_type k) const { return kth(mTop, k + 1); }
+  const value_type& operator[](size_type k) const { return kth(mTop, k + 1); }
 
-  void merge(Treap<Value, Compare> &&other)
+  void merge(Treap<Value, Compare>&& other)
   {
     merge(mTop, std::move(mTop), std::move(other.mTop));
   }
@@ -337,7 +337,7 @@ public:
     std::mutex mtx;
     std::vector<std::pair<size_t, ResultType>> results;
 
-    auto store = [&](const value_type &val, size_t idx)
+    auto store = [&](const value_type& val, size_t idx)
     {
       auto r = f(val);
       std::lock_guard<std::mutex> lock(mtx);
@@ -359,19 +359,19 @@ public:
 
     auto results = gather(f, max_thread, min_tree_size);
     std::sort(results.begin(), results.end(),
-              [](auto &a, auto &b) { return a.first < b.first; });
+              [](auto& a, auto& b) { return a.first < b.first; });
 
     mapped.reserve(results.size());
-    for (auto &p : results) mapped.push_back(std::move(p.second));
+    for (auto& p : results) mapped.push_back(std::move(p.second));
     return mapped;
   }
 
   template <typename Func>
-  const value_type &max(Func f, const value_type &def) const
+  const value_type& max(Func f, const value_type& def) const
   {
-    const value_type *best = &def;
+    const value_type* best = &def;
     inorder(
-        [&](const value_type &v)
+        [&](const value_type& v)
         {
           if (f(v) > f(*best)) best = &v;
         },
@@ -379,9 +379,9 @@ public:
     return *best;
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const Treap &t)
+  friend std::ostream& operator<<(std::ostream& os, const Treap& t)
   {
-    t.inorder([&os](const value_type &v) { os << v << ' '; }, t.mTop);
+    t.inorder([&os](const value_type& v) { os << v << ' '; }, t.mTop);
     return os;
   }
 

@@ -29,7 +29,7 @@ struct MaxPrime
     mult = factors.back().second;
   }
 
-  const MaxPrime &operator*=(const MaxPrime &other)
+  const MaxPrime& operator*=(const MaxPrime& other)
   {
     if (other.maxP == maxP) mult += other.mult;
     if (other.maxP > maxP)

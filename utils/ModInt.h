@@ -17,7 +17,7 @@ public:
 
   ModInt(int v) { set_all(v); }
 
-  friend std::ostream &operator<<(std::ostream &out, const ModInt &m)
+  friend std::ostream& operator<<(std::ostream& out, const ModInt& m)
   {
     out << '{';
     for (size_t i = 0; i < K; i++)
@@ -40,7 +40,7 @@ public:
     return r;
   }
 
-  const ModInt &operator+=(const ModInt &other)
+  const ModInt& operator+=(const ModInt& other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
@@ -52,7 +52,7 @@ public:
     return *this;
   }
 
-  const ModInt &operator-=(const ModInt &other)
+  const ModInt& operator-=(const ModInt& other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
@@ -64,7 +64,7 @@ public:
     return *this;
   }
 
-  const ModInt &operator*=(const ModInt &other)
+  const ModInt& operator*=(const ModInt& other)
   {
     for_each_mod(
         [&](size_t i, int MOD)
@@ -75,21 +75,21 @@ public:
     return *this;
   }
 
-  ModInt operator+(const ModInt &other)
+  ModInt operator+(const ModInt& other)
   {
     ModInt n = *this;
     n += other;
     return n;
   }
 
-  ModInt operator-(const ModInt &other)
+  ModInt operator-(const ModInt& other)
   {
     ModInt n = *this;
     n -= other;
     return n;
   }
 
-  ModInt operator*(const ModInt &other)
+  ModInt operator*(const ModInt& other)
   {
     ModInt n = *this;
     n *= other;
@@ -98,7 +98,7 @@ public:
 
   // returns false => not equal
   // returns true => probably equal
-  bool operator==(const ModInt &other) const
+  bool operator==(const ModInt& other) const
   {
     for (size_t i = 0; i < K; i++)
     {
@@ -108,7 +108,7 @@ public:
   }
 
 private:
-  template <typename F> static void for_each_mod(F &&f)
+  template <typename F> static void for_each_mod(F&& f)
   {
     static constexpr int mods[] = {MODs...};
     for (size_t i = 0; i < K; i++)
