@@ -11,8 +11,7 @@ auto score_to_order = [](auto score)
   return [score](const auto &a, const auto &b) -> bool
   {
     auto sa = score(a), sb = score(b);
-    if (sa != sb)
-      return sa > sb;
+    if (sa != sb) return sa > sb;
     return a > b;
   };
 };
@@ -28,8 +27,7 @@ template <int Dim> struct Elem
   {
     static_assert(D2 == Dim + 1);
     std::array<short, D2> out{};
-    for (int i = 0; i < Dim; i++)
-      out[i] = dim[i];
+    for (int i = 0; i < Dim; i++) out[i] = dim[i];
     out[Dim] = x;
     return Elem<D2>(out);
   }
@@ -38,8 +36,7 @@ template <int Dim> struct Elem
   {
     for (int i = 0; i < Dim; i++)
     {
-      if (dim[i] != o.dim[i])
-        return dim[i] < o.dim[i];
+      if (dim[i] != o.dim[i]) return dim[i] < o.dim[i];
     }
     return false;
   }
@@ -57,8 +54,7 @@ bool isSet(const Elem<Dim> &a, const Elem<Dim> &b, const Elem<Dim> &c)
     const bool allDifferent =
         (a.dim[i] != b.dim[i] && b.dim[i] != c.dim[i] && a.dim[i] != c.dim[i]);
 
-    if (!allEqual && !allDifferent)
-      return false;
+    if (!allEqual && !allDifferent) return false;
   }
   return true;
 }
@@ -72,10 +68,8 @@ template <int Dim> bool hasSet(const Elems<Dim> &v)
     {
       for (size_t k = j + 1; k < n; k++)
       {
-        if (i == j || j == k || i == k)
-          continue;
-        if (isSet(v[i], v[j], v[k]))
-          return true;
+        if (i == j || j == k || i == k) continue;
+        if (isSet(v[i], v[j], v[k])) return true;
       }
     }
   }
@@ -89,8 +83,7 @@ template <int Dim> bool can_add(const Elems<Dim> &parent, const Elem<Dim> &next)
   {
     for (int j = i + 1; j < n; j++)
     {
-      if (isSet(parent[i], parent[j], next))
-        return false;
+      if (isSet(parent[i], parent[j], next)) return false;
     }
   }
   return true;
@@ -125,8 +118,7 @@ template <int Dim> Elems<Dim> greedyCapSet()
   for (auto &x : all)
   {
     out.push_back(x);
-    if (hasSet(out))
-      out.pop_back();
+    if (hasSet(out)) out.pop_back();
   }
 
   return out;
@@ -168,8 +160,7 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg,
 
     for (auto &s : to_add)
     {
-      if (s.second.has_value())
-        frontier.insert(std::move(*s.second));
+      if (s.second.has_value()) frontier.insert(std::move(*s.second));
     }
 
     prune_alg(frontier);
@@ -186,8 +177,7 @@ int main()
   {
     constexpr int SIZE_KEEP  = 6000;
     constexpr int SIZE_LIMIT = 60000;
-    if (frontier.size() < SIZE_LIMIT)
-      return;
+    if (frontier.size() < SIZE_LIMIT) return;
     frontier.restrict(SIZE_KEEP);
   };
 

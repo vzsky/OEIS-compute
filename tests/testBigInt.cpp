@@ -27,7 +27,7 @@ TYPED_TEST(BigIntTest, StreamOutput)
   std::stringstream ss;
   ss << BI("000123") << " " << BI(-456);
   if constexpr (BI::Base == 10)
-    EXPECT_EQ(ss.str(), "(1)(2)(3) -(4)(5)(6)");
+    EXPECT_EQ(ss.str(), "123 -456");
   else
     EXPECT_EQ(ss.str(), "(123) -(1)(200)");
 }
@@ -110,8 +110,7 @@ TYPED_TEST(BigIntTest, MultiplicationAssignment)
   e *= 123456;
 
   BI f(123456);
-  for (int i = 0; i < 18; i++)
-    f *= 10;
+  for (int i = 0; i < 18; i++) f *= 10;
   f += 123456;
   EXPECT_EQ(e, f);
 }

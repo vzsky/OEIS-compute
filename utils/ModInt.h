@@ -23,8 +23,7 @@ public:
     for (size_t i = 0; i < K; i++)
     {
       out << m.mVals[i];
-      if (i + 1 < K)
-        out << ", ";
+      if (i + 1 < K) out << ", ";
     }
     return out << '}';
   }
@@ -47,8 +46,7 @@ public:
         [&](size_t i, int MOD)
         {
           int x = mVals[i] + other.mVals[i];
-          if (x >= MOD)
-            x -= MOD;
+          if (x >= MOD) x -= MOD;
           mVals[i] = x;
         });
     return *this;
@@ -60,8 +58,7 @@ public:
         [&](size_t i, int MOD)
         {
           int x = mVals[i] - other.mVals[i];
-          if (x < 0)
-            x += MOD;
+          if (x < 0) x += MOD;
           mVals[i] = x;
         });
     return *this;
@@ -105,8 +102,7 @@ public:
   {
     for (size_t i = 0; i < K; i++)
     {
-      if (mVals[i] != other.mVals[i])
-        return false;
+      if (mVals[i] != other.mVals[i]) return false;
     }
     return true;
   }
@@ -124,8 +120,7 @@ private:
   static int normalize(long long x, int MOD)
   {
     x %= MOD;
-    if (x < 0)
-      x += MOD;
+    if (x < 0) x += MOD;
     return static_cast<int>(x);
   }
 

@@ -12,14 +12,12 @@ static void BM_is_prime_until(benchmark::State &state)
 
 static void BM_factors(benchmark::State &state)
 {
-  for (auto _ : state)
-    benchmark::DoNotOptimize(p.factors(state.range(0)));
+  for (auto _ : state) benchmark::DoNotOptimize(p.factors(state.range(0)));
 }
 
 static void BM_factors_freq(benchmark::State &state)
 {
-  for (auto _ : state)
-    benchmark::DoNotOptimize(p.factors_freq(state.range(0)));
+  for (auto _ : state) benchmark::DoNotOptimize(p.factors_freq(state.range(0)));
 }
 
 static void BM_vector_factors_freq(benchmark::State &state)

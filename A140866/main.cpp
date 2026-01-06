@@ -6,8 +6,7 @@
 bool is_harshad(DecBigInt n)
 {
   long long sum = 0;
-  for (auto x : n.digits())
-    sum += x;
+  for (auto x : n.digits()) sum += x;
   return (n % sum == 0);
 }
 
@@ -33,8 +32,7 @@ int main()
     int current_n = 0;
     for (int i = 1; i <= N; i++)
     {
-      if (is_harshad(i))
-        cnt++;
+      if (is_harshad(i)) cnt++;
       if (i == std::pow(10, current_n))
       {
         std::cout << current_n << ' ' << cnt << std::endl;

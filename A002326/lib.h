@@ -38,8 +38,7 @@ private:
 
   int order_of_2_mod_prime_power(int p, int power)
   {
-    if (power == 1)
-      return order_of_2_mod_p(p);
+    if (power == 1) return order_of_2_mod_p(p);
     int cur = order_of_2_mod_p(p);
     int mod = pow(p, power);
     int l   = 0;
@@ -58,8 +57,7 @@ private:
 public:
   int get_answer(int n)
   {
-    if (n == 1)
-      return 1;
+    if (n == 1) return 1;
     n -= 1;
     auto factors = factorizer.factors_freq(2 * n + 1);
     int ans      = 1;
@@ -89,8 +87,7 @@ public:
         {
           int prev_ind = pow(p, k - 1) / 2 - 1;
           ans          = all_answers[prev_ind];
-          if (pow(2, all_answers[prev_ind], n) != 1)
-            ans *= p;
+          if (pow(2, all_answers[prev_ind], n) != 1) ans *= p;
         }
       }
       else

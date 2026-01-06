@@ -10,8 +10,7 @@ auto score_to_order = [](auto score)
   return [score](const auto &a, const auto &b) -> bool
   {
     auto sa = score(a), sb = score(b);
-    if (sa != sb)
-      return sa > sb;
+    if (sa != sb) return sa > sb;
     return a > b;
   };
 };
@@ -24,8 +23,7 @@ template <int N> bool check(const Elems<N> &cands)
     {
       for (size_t k = 0; k < cands.size(); k++)
       {
-        if (k == i || k == j)
-          continue;
+        if (k == i || k == j) continue;
         const Elem<N> &c = cands[k];
 
         uint64_t result = 0;
@@ -33,14 +31,11 @@ template <int N> bool check(const Elems<N> &cands)
         for (int ind = 0; ind < N; ind++)
         {
           int bit = (cands[i][ind] + cands[j][ind] - cands[k][ind]);
-          if (bit != 0 && bit != 1)
-            valid = false;
+          if (bit != 0 && bit != 1) valid = false;
           result |= bit << ind;
         }
-        if (!valid)
-          continue;
-        if (cands.contains(Elem<N>{result}))
-          return false;
+        if (!valid) continue;
+        if (cands.contains(Elem<N>{result})) return false;
       }
     }
   }
@@ -53,10 +48,8 @@ template <int N> bool check(const Elems<N> &cands)
 // ordering
 template <int N> bool can_add(const Elems<N> &sidon_set, const Elem<N> &next)
 {
-  if (sidon_set.size() != 0 && next == sidon_set.back())
-    return false;
-  if (sidon_set.size() < 3)
-    return true;
+  if (sidon_set.size() != 0 && next == sidon_set.back()) return false;
+  if (sidon_set.size() < 3) return true;
   // check if a + b - c for all c<a<b is next or not
 
   for (int i = 0; i < sidon_set.size(); i++)
@@ -71,8 +64,7 @@ template <int N> bool can_add(const Elems<N> &sidon_set, const Elem<N> &next)
         auto L1 = sidon_set[j].mUnd ^ sidon_set[k].mUnd;
         auto L2 = sidon_set[j].mUnd & sidon_set[k].mUnd;
 
-        if (L1 == R1 && L2 == R2)
-          return false;
+        if (L1 == R1 && L2 == R2) return false;
       }
     }
   }
@@ -125,14 +117,12 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg,
 
     for (auto &s : to_add)
     {
-      if (s.second.has_value())
-        frontier.insert(std::move(*s.second));
+      if (s.second.has_value()) frontier.insert(std::move(*s.second));
     }
 
     prune_alg(frontier);
   }
-  if (show_progress)
-    std::cout << "\rDone!            " << std::endl;
+  if (show_progress) std::cout << "\rDone!            " << std::endl;
   return frontier.max([](const auto &x) { return x.size(); }, Elems<N>());
 }
 
@@ -150,8 +140,7 @@ Elems<N> breed_cross(const Elems<N> &mother, const Elems<N> &father,
   for (auto gene : father)
   {
     child.push_back(gene);
-    if (!check(child))
-      child.pop_back();
+    if (!check(child)) child.pop_back();
   }
 
   std::sort(child.begin(), child.end());
@@ -171,8 +160,7 @@ int main()
 
       constexpr int SIZE_KEEP  = 20000;
       constexpr int SIZE_LIMIT = 200000;
-      if (frontier.size() < SIZE_LIMIT)
-        return;
+      if (frontier.size() < SIZE_LIMIT) return;
       frontier.restrict(SIZE_KEEP);
     };
 

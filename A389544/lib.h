@@ -34,8 +34,7 @@ template <uint64_t N> struct A389544
         l++;
       }
 
-      if (candidate == targetProduct)
-        return true;
+      if (candidate == targetProduct) return true;
     }
     return false;
   }
@@ -51,15 +50,13 @@ template <uint64_t N> struct A389544
       if (n % 1000 == 0)
         std::cout << "==== Progress: " << n << " / " << N << std::endl;
 
-      if (has_duplicate_product(integerMap[n]))
-        continue; // uninteresting skip
+      if (has_duplicate_product(integerMap[n])) continue; // uninteresting skip
 
       std::vector<Int> productsToCheck = {};
 
       for (size_t trail = sequence.size(); trail-- > 0;)
       {
-        if (primeFactorizer.is_prime(sequence[trail]))
-          break;
+        if (primeFactorizer.is_prime(sequence[trail])) break;
         if (productsToCheck.empty())
           productsToCheck.push_back(integerMap[n] *
                                     integerMap[sequence[trail]]);

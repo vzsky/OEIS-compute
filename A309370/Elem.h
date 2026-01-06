@@ -19,8 +19,7 @@ template <int N> struct Elem
 
   void print(int n = N, std::ostream &os = std::cout) const
   {
-    for (int i = 0; i < n; i++)
-      os << ((mUnd >> i) & 1);
+    for (int i = 0; i < n; i++) os << ((mUnd >> i) & 1);
   }
 
   friend std::ostream &operator<<(std::ostream &os, const Elem &e)
@@ -78,8 +77,7 @@ template <int N> struct Elems
   bool contains(const Elem<N> &x) const
   {
     for (const auto &e : mVec)
-      if (e == x)
-        return true;
+      if (e == x) return true;
     return false;
   }
 };
@@ -97,8 +95,7 @@ template <int N> Elems<N> parse_from_file(const std::string &filename)
 
   while (std::getline(fin, line))
   {
-    if (line.empty())
-      continue;
+    if (line.empty()) continue;
     while (!line.empty() &&
            (line.back() == '\n' || line.back() == '\r' || line.back() == ' '))
       line.pop_back();

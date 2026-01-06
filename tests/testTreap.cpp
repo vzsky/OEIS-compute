@@ -32,15 +32,13 @@ TEST(TreapTest, Duplicates)
 TEST(TreapTest, RestrictKeepsSmallest)
 {
   Treap<int, std::less<int>> t(std::less<int>{});
-  for (int i = 1; i <= 10; ++i)
-    t.insert(std::move(i));
+  for (int i = 1; i <= 10; ++i) t.insert(std::move(i));
 
   t.restrict(5); // keep first 5 smallest
   ASSERT_EQ(t.size(), 5);
 
   std::vector<int> expected{1, 2, 3, 4, 5};
-  for (int i = 0; i < t.size(); ++i)
-    ASSERT_EQ(t[i], expected[i]);
+  for (int i = 0; i < t.size(); ++i) ASSERT_EQ(t[i], expected[i]);
 }
 
 TEST(TreapTest, ContainsWorks)
@@ -100,8 +98,7 @@ TEST(TreapTest, MergeTwoTreaps)
   ASSERT_EQ(t1.size(), 6);
 
   std::vector<int> expected{1, 2, 3, 4, 5, 6};
-  for (int i = 0; i < t1.size(); ++i)
-    ASSERT_EQ(t1[i], expected[i]);
+  for (int i = 0; i < t1.size(); ++i) ASSERT_EQ(t1[i], expected[i]);
 }
 
 TEST(TreapTest, LargeInsertPerformance)
@@ -109,8 +106,7 @@ TEST(TreapTest, LargeInsertPerformance)
   Treap<int, std::less<int>> t(std::less<int>{});
   const int N = 10000;
 
-  for (int i = 0; i < N; ++i)
-    t.insert(std::move(i));
+  for (int i = 0; i < N; ++i) t.insert(std::move(i));
 
   ASSERT_EQ(t.size(), N);
   ASSERT_EQ(t[0], 0);

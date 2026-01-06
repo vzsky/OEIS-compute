@@ -16,13 +16,11 @@ public:
 private:
   void normalize()
   {
-    while (mDigits.size() > 1 && mDigits.back() == 0)
-      mDigits.pop_back();
-
-    if (mDigits.size() == 1 && mDigits[0] == 0)
-      mIsNeg = false;
+    while (mDigits.size() > 1 && mDigits.back() == 0) mDigits.pop_back();
+    if (mDigits.size() == 1 && mDigits[0] == 0) mIsNeg = false;
   }
 
+  // compare the underlying without sign change
   static int abs_cmp(const BigInt &a, const BigInt &b)
   {
     if (a.mDigits.size() != b.mDigits.size())
@@ -36,6 +34,7 @@ private:
     return 0;
   }
 
+  // modify the underlying without sign change
   void abs_add(const BigInt &o)
   {
     size_t n = std::max(mDigits.size(), o.mDigits.size());
@@ -44,8 +43,7 @@ private:
     uint64_t carry = 0;
     for (size_t i = 0; i < n || carry; ++i)
     {
-      if (i == mDigits.size())
-        mDigits.push_back(0);
+      if (i == mDigits.size()) mDigits.push_back(0);
 
       uint64_t sum =
           carry + mDigits[i] + (i < o.mDigits.size() ? o.mDigits[i] : 0);
@@ -54,6 +52,7 @@ private:
     }
   }
 
+  // modify the underlying without sign change
   void abs_sub(const BigInt &o)
   {
     int64_t carry = 0;
@@ -62,8 +61,7 @@ private:
       int64_t cur = int64_t(mDigits[i]) -
                     (i < o.mDigits.size() ? o.mDigits[i] : 0) - carry;
       carry = cur < 0;
-      if (carry)
-        cur += Base;
+      if (carry) cur += Base;
       mDigits[i] = cur;
     }
     normalize();
@@ -75,8 +73,7 @@ public:
   BigInt(int v)
   {
     mIsNeg = v < 0;
-    if (mIsNeg)
-      v = -v;
+    if (v < 0) v = -v;
 
     if (v == 0)
     {
@@ -96,8 +93,7 @@ public:
     mDigits = {0};
     for (char c : s)
     {
-      if (c < '0' || c > '9')
-        continue;
+      if (c < '0' || c > '9') continue;
       *this *= 10;
       *this += (c - '0');
     }
@@ -113,30 +109,23 @@ public:
 
   BigInt operator-() const
   {
+    if (*this == 0) return *this;
     BigInt r = *this;
-    if (!(mDigits.size() == 1 && mDigits[0] == 0))
-      r.mIsNeg = !r.mIsNeg;
+    r.mIsNeg = !r.mIsNeg;
     return r;
   }
 
   BigInt &operator+=(const BigInt &o)
   {
     if (mIsNeg == o.mIsNeg)
-    {
       abs_add(o);
-    }
     else
     {
       int c = abs_cmp(*this, o);
       if (c == 0)
-      {
-        mDigits = {0};
-        mIsNeg  = false;
-      }
+        return 0;
       else if (c > 0)
-      {
         abs_sub(o);
-      }
       else
       {
         BigInt tmp = o;
@@ -178,10 +167,8 @@ public:
 
   BigInt &operator%=(const BigInt &o)
   {
-    while (mIsNeg)
-      *this += o;
-    while (abs_cmp(*this, o) >= 0)
-      abs_sub(o);
+    while (mIsNeg) *this += o;
+    while (abs_cmp(*this, o) >= 0) abs_sub(o);
     return *this;
   }
 
@@ -213,8 +200,7 @@ public:
                     : std::strong_ordering::greater;
 
     int c = abs_cmp(*this, o);
-    if (c == 0)
-      return std::strong_ordering::equal;
+    if (c == 0) return std::strong_ordering::equal;
 
     bool less = c < 0;
     if (!mIsNeg)
@@ -228,14 +214,7 @@ public:
     return (*this <=> o) == std::strong_ordering::equal;
   };
 
-  friend std::ostream &operator<<(std::ostream &os, const BigInt &b)
-  {
-    if (b.mIsNeg)
-      os << "-";
-    for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
-      os << "(" << *it << ")";
-    return os;
-  }
+  friend std::ostream &operator<<(std::ostream &os, const BigInt &b);
 
   const std::vector<Digit> digits() const { return mDigits; }
 
@@ -243,6 +222,18 @@ private:
   bool mIsNeg{false};
   std::vector<Digit> mDigits;
 };
+
+template <uint16_t Base>
+std::ostream &operator<<(std::ostream &os, const BigInt<Base> &b)
+{
+  if (b.mIsNeg) os << "-";
+  for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
+    if constexpr (Base <= 10)
+      os << *it;
+    else
+      os << "(" << *it << ")";
+  return os;
+}
 
 using DecBigInt   = BigInt<10>;
 using DenseBigInt = BigInt<256>;

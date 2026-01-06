@@ -22,8 +22,7 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
 {
   assert(max_threads > 0);
   const size_t length = std::distance(begin, end);
-  if (length == 0)
-    return true;
+  if (length == 0) return true;
   const size_t num_threads = std::min(length, max_threads);
 
   size_t block_size = (length + num_threads - 1) / num_threads;
@@ -43,8 +42,7 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
                                  {
                                    for (auto it = block_start; it != block_end;
                                         ++it)
-                                     if (!pred(*it))
-                                       return false;
+                                     if (!pred(*it)) return false;
                                    return true;
                                  }));
 
@@ -53,8 +51,7 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
 
   for (auto &f : futures)
   {
-    if (!f.get())
-      return false;
+    if (!f.get()) return false;
   }
 
   return true;
@@ -84,8 +81,7 @@ read_bfile(const std::string &relative_path,
   fs::path path = base / relative_path;
 
   std::ifstream in(path);
-  if (!in)
-    throw std::runtime_error("cannot open file");
+  if (!in) throw std::runtime_error("cannot open file");
 
   std::vector<T> out;
   T n, a;
@@ -93,14 +89,12 @@ read_bfile(const std::string &relative_path,
   std::string line;
   while (std::getline(in, line))
   {
-    if (line.empty() || line[0] == '#')
-      continue;
+    if (line.empty() || line[0] == '#') continue;
 
     std::istringstream iss(line);
     T n, a;
 
-    if (iss >> n >> a)
-      out.push_back(a);
+    if (iss >> n >> a) out.push_back(a);
   }
 
   return out;

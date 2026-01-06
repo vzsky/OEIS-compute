@@ -24,8 +24,7 @@ TEST(MoreMathTest, PowModBasic)
 TEST(MoreMathTest, PowModLarge)
 {
   EXPECT_EQ(pow(2, 30, 1000000007), 1073741824 % 1000000007);
-  for (auto a : {6, 1923, 5729, 9181})
-    EXPECT_EQ(pow(a, 1e9 + 7, 1e9 + 7), a);
+  for (auto a : {6, 1923, 5729, 9181}) EXPECT_EQ(pow(a, 1e9 + 7, 1e9 + 7), a);
 }
 
 TEST(MoreMathTest, GCDBasic)

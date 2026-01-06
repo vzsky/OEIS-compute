@@ -21,10 +21,8 @@ public:
   PrimeInt(const std::vector<std::pair<size_t, size_t>> &f) : mFactors(f) {}
   PrimeInt(size_t v)
   {
-    if (v == 0)
-      throw std::invalid_argument("PrimeInt doesn't support zero");
-    if (v > 1)
-      mFactors = factorizer.vector_factors_freq(v);
+    if (v == 0) throw std::invalid_argument("PrimeInt doesn't support zero");
+    if (v > 1) mFactors = factorizer.vector_factors_freq(v);
   }
 
   friend std::ostream &operator<<(std::ostream &out, const PrimeInt &m);
@@ -41,8 +39,7 @@ public:
   uint64_t unsafe_to_int() const
   {
     uint64_t ans = 1;
-    for (auto [p, m] : mFactors)
-      ans *= std::pow(p, m);
+    for (auto [p, m] : mFactors) ans *= std::pow(p, m);
     return ans;
   }
 

@@ -31,8 +31,7 @@ struct MaxPrime
 
   const MaxPrime &operator*=(const MaxPrime &other)
   {
-    if (other.maxP == maxP)
-      mult += other.mult;
+    if (other.maxP == maxP) mult += other.mult;
     if (other.maxP > maxP)
     {
       maxP = other.maxP;
@@ -66,8 +65,7 @@ void find_short_sequence()
     {
       uint64_t v = u + distance;
       MaxPrime prod({{0, 0}});
-      for (int i = u; i <= v; i++)
-        prod *= MaxPrime(p.vector_factors_freq(i));
+      for (int i = u; i <= v; i++) prod *= MaxPrime(p.vector_factors_freq(i));
       if (prod.mult >= 2)
       {
         std::cout << "prime: " << prod.maxP << "^" << prod.mult << " = "
@@ -84,8 +82,7 @@ void find_upper_bound(int width)
 {
   for (auto prime : p.all_primes())
   {
-    if (prime < width)
-      continue;
+    if (prime < width) continue;
 
     uint64_t firstTerm = 0;
     uint64_t psqr      = prime * prime;

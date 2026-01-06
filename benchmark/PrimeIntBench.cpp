@@ -12,8 +12,7 @@ std::vector<PrimeInt> numbers = []
 {
   std::vector<PrimeInt> n;
   for (int64_t base : {5040, 3600, 919, 243})
-    for (int mult = 1; mult <= 512; mult *= 2)
-      n.push_back(pi(base) * pi(mult));
+    for (int mult = 1; mult <= 512; mult *= 2) n.push_back(pi(base) * pi(mult));
   return n;
 }();
 const size_t n_all_pairs = numbers.size() * numbers.size();
@@ -23,8 +22,7 @@ static const std::vector<std::pair<size_t, size_t>> divisible_pairs = []
   std::vector<std::pair<size_t, size_t>> pairs;
   for (size_t i = 0; i < numbers.size(); ++i)
     for (size_t j = 0; j < numbers.size(); ++j)
-      if (numbers[i].is_divisible_by(numbers[j]))
-        pairs.emplace_back(i, j);
+      if (numbers[i].is_divisible_by(numbers[j])) pairs.emplace_back(i, j);
   return pairs;
 }();
 

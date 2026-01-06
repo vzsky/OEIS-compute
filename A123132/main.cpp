@@ -23,8 +23,7 @@ public:
 
   static int digit_of(int x)
   {
-    if (x == 0)
-      return 1;
+    if (x == 0) return 1;
     return static_cast<int>(std::log10(std::abs(x))) + 1;
   }
 
@@ -44,12 +43,9 @@ int main()
     int cnt = 0;
     for (int n = 2; n <= N; ++n)
     {
-      if (n % 2 == 0)
-        continue; // focusing on ==, it's impossible
-      if (n % 5 == 0)
-        continue; // focusing on ==, it's impossible
-      if (factorizer.factors_freq(n).size() == 1)
-        continue; // same
+      if (n % 2 == 0) continue; // focusing on ==, it's impossible
+      if (n % 5 == 0) continue; // focusing on ==, it's impossible
+      if (factorizer.factors_freq(n).size() == 1) continue; // same
 
       if (n >= a.describe_prime_factors(n))
       {

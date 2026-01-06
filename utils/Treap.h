@@ -71,14 +71,12 @@ private:
   inline size_type sz(const node_ptr &t) const { return t ? t->sz : 0; }
   inline void upd(node_ptr &t) const
   {
-    if (t)
-      t->sz = sz(t->l) + sz(t->r) + 1;
+    if (t) t->sz = sz(t->l) + sz(t->r) + 1;
   }
 
   template <typename Func> void inorder(Func f, const node_ptr &t) const
   {
-    if (!t)
-      return;
+    if (!t) return;
     inorder(f, t->l);
     f(t->val);
     inorder(f, t->r);
@@ -89,8 +87,7 @@ private:
   void idx_traversal(const node_ptr &t, Func f, std::counting_semaphore<> &sem,
                      size_t min_tree_size, size_t base_idx = 0) const
   {
-    if (!t)
-      return;
+    if (!t) return;
 
     bool spawn_left = (t->l && sz(t) >= min_tree_size && sem.try_acquire());
 
@@ -112,8 +109,7 @@ private:
     if (t->r)
       idx_traversal(t->r, f, sem, min_tree_size, base_idx + sz(t->l) + 1);
 
-    if (left_thread.joinable())
-      left_thread.join();
+    if (left_thread.joinable()) left_thread.join();
   }
 
   // split a treap into 2 treaps based on values
@@ -171,10 +167,8 @@ private:
   // find kth value in a treap
   value_type &kth(const node_ptr &t, size_type k) const
   {
-    if (!t)
-      throw std::out_of_range("cannot find element");
-    if (sz(t->l) == k - 1)
-      return t->val;
+    if (!t) throw std::out_of_range("cannot find element");
+    if (sz(t->l) == k - 1) return t->val;
     if (sz(t->l) < k - 1)
       return kth(t->r, k - sz(t->l) - 1);
     else
@@ -184,8 +178,7 @@ private:
   // check if key is in treap
   void find(const node_ptr &t, value_type key, bool &found) const
   {
-    if (!t)
-      return;
+    if (!t) return;
     if (value_eq(t->val, key))
     {
       found = true;
@@ -199,8 +192,7 @@ private:
   void find(const node_ptr &t, value_type key, bool &found,
             size_type &ind) const
   {
-    if (!t)
-      return;
+    if (!t) return;
     if (value_eq(t->val, key))
     {
       found = true;
@@ -276,8 +268,7 @@ private:
       return;
     }
     node_ptr a, b;
-    if (l->pri < r->pri)
-      std::swap(l, r);
+    if (l->pri < r->pri) std::swap(l, r);
     split(a, b, std::move(r), l->val);
     merge(l->l, std::move(l->l), std::move(a));
     merge(l->r, std::move(l->r), std::move(b));
@@ -323,8 +314,7 @@ public:
     bool found    = false;
     size_type ind = 0;
     find(mTop, v, found, ind);
-    if (!found)
-      return -1;
+    if (!found) return -1;
     return ind;
   }
 
@@ -372,8 +362,7 @@ public:
               [](auto &a, auto &b) { return a.first < b.first; });
 
     mapped.reserve(results.size());
-    for (auto &p : results)
-      mapped.push_back(std::move(p.second));
+    for (auto &p : results) mapped.push_back(std::move(p.second));
     return mapped;
   }
 
@@ -384,8 +373,7 @@ public:
     inorder(
         [&](const value_type &v)
         {
-          if (f(v) > f(*best))
-            best = &v;
+          if (f(v) > f(*best)) best = &v;
         },
         mTop);
     return *best;

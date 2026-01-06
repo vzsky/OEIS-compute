@@ -6,8 +6,7 @@ using TestInt = DecBigInt;
 static TestInt make_big(int n)
 {
   TestInt x(1);
-  for (int i = 1; i <= n; ++i)
-    x = x * TestInt(i + 1);
+  for (int i = 1; i <= n; ++i) x = x * TestInt(i + 1);
   return x;
 }
 

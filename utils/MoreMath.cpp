@@ -6,8 +6,7 @@ int pow(int base, int k)
   int result = 1;
   while (k > 0)
   {
-    if (k & 1)
-      result = (result * base);
+    if (k & 1) result = (result * base);
     base = (base * base);
     k >>= 1;
   }
@@ -20,8 +19,7 @@ int pow(int base, int k, int mod)
   long long b      = base % mod;
   while (k > 0)
   {
-    if (k & 1)
-      result = (result * b) % mod;
+    if (k & 1) result = (result * b) % mod;
     b = (b * b) % mod;
     k >>= 1;
   }

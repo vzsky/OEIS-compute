@@ -7,17 +7,13 @@ std::ostream &operator<<(std::ostream &out, const PrimeInt &m)
   bool first = true;
   for (const auto &[p, e] : m.mFactors)
   {
-    if (e == 0)
-      continue;
-    if (!first)
-      out << " * ";
+    if (e == 0) continue;
+    if (!first) out << " * ";
     out << p;
-    if (e > 1)
-      out << "^" << e;
+    if (e > 1) out << "^" << e;
     first = false;
   }
-  if (first)
-    out << 1;
+  if (first) out << 1;
   return out;
 }
 
@@ -41,10 +37,8 @@ const PrimeInt &PrimeInt::operator*=(const PrimeInt &other)
     }
   }
 
-  while (i < mFactors.size())
-    out.push_back(mFactors[i++]);
-  while (j < other.mFactors.size())
-    out.push_back(other.mFactors[j++]);
+  while (i < mFactors.size()) out.push_back(mFactors[i++]);
+  while (j < other.mFactors.size()) out.push_back(other.mFactors[j++]);
 
   mFactors.swap(out);
   return *this;
@@ -68,8 +62,7 @@ const PrimeInt &PrimeInt::operator/=(const PrimeInt &other)
     {
       int e = mFactors[i].second - other.mFactors[j].second;
       assert(e >= 0 && "dividing numbers that are not divisible");
-      if (e > 0)
-        out.emplace_back(mFactors[i].first, e);
+      if (e > 0) out.emplace_back(mFactors[i].first, e);
       i++;
       j++;
     }
@@ -97,19 +90,16 @@ bool PrimeInt::is_divisible_by(const PrimeInt &other) const
   size_t i = 0, j = 0;
   while (j < other.mFactors.size())
   {
-    if (i == mFactors.size())
-      return false;
+    if (i == mFactors.size()) return false;
 
-    if (mFactors[i].first > other.mFactors[j].first)
-      return false;
+    if (mFactors[i].first > other.mFactors[j].first) return false;
 
     if (mFactors[i].first < other.mFactors[j].first)
       i++;
 
     else
     { // same prime
-      if (mFactors[i].second < other.mFactors[j].second)
-        return false;
+      if (mFactors[i].second < other.mFactors[j].second) return false;
       i++;
       j++;
     }
