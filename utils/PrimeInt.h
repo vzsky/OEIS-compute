@@ -43,15 +43,6 @@ public:
 
   const std::vector<std::pair<size_t, size_t>>& factors() const { return mFactors; }
 
-  size_t mult_of_prime(size_t prime) const
-  {
-    auto it = std::lower_bound(mFactors.begin(), mFactors.end(), prime,
-                               [](const auto& a, size_t v) { return a.first < v; });
-
-    if (it == mFactors.end() || it->first != prime) return 0;
-    return it->second;
-  }
-
 private:
   // sorted pair of prime and exponent
   std::vector<std::pair<size_t, size_t>> mFactors;

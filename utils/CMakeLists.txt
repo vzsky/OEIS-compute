@@ -1,12 +1,13 @@
 set(UTILS_LIBS
-    utils      Utils.cpp
-    treap      Treap.cpp
-    bigint     BigInt.cpp
-    modint     ModInt.cpp
-    logint     LogInt.cpp
-    primeint   PrimeInt.cpp
-    prime      Prime.cpp
-    moremath   MoreMath.cpp
+    utils                   Utils.cpp
+    treap                   Treap.cpp
+    bigint                  BigInt.cpp
+    modint                  ModInt.cpp
+    logint                  LogInt.cpp
+    primeint                PrimeInt.cpp
+    prime                   Prime.cpp
+    moremath                MoreMath.cpp
+    complementnonnvector    ComplementNonnVector.cpp
 )
 
 set(ALLUTILS_SOURCES "")

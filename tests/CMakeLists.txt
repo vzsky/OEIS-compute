@@ -1,11 +1,12 @@
 set(TEST_MODULES
-  prime       testPrime.cpp
-  bigint      testBigInt.cpp
-  modint      testModInt.cpp
-  moremath    testMoreMath.cpp
-  treap       testTreap.cpp
-  primeint    testPrimeInt.cpp
-  logint      testLogInt.cpp
+  prime                     testPrime.cpp
+  bigint                    testBigInt.cpp
+  modint                    testModInt.cpp
+  moremath                  testMoreMath.cpp
+  treap                     testTreap.cpp
+  primeint                  testPrimeInt.cpp
+  logint                    testLogInt.cpp
+  complementnonnvector      testComplementNonnVector.cpp
 )
 
 enable_testing()
