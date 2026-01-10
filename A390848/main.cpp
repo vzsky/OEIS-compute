@@ -45,4 +45,4 @@ template <uint32_t N> void compute_from_scratch()
   assert(skipped == reference);
 }
 
-int main() { utils::timeit(compute_from_scratch<200'000>); }
+int main() { utils::timeit(compute_from_scratch<400'000>); }

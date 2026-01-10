@@ -1,6 +1,7 @@
 set(DEPENDENCIES
   utils
   primeint
+  logint
   prime
 )
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 #include <stdexcept>
 #include <utils/PrimeInt.h>
@@ -38,6 +40,8 @@ public:
     r *= o;
     return r;
   }
+
+  bool surely_lt(const LogInt& o) const { return mUpper < o.mLower; }
 
   friend std::ostream& operator<<(std::ostream& os, const LogInt& o)
   {

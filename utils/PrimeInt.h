@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BigInt.h"
 #include <cassert>
 #include <cmath>
 #include <cstdint>
@@ -39,14 +38,6 @@ public:
   {
     uint64_t ans = 1;
     for (const auto& [p, m] : mFactors) ans *= std::pow(p, m);
-    return ans;
-  }
-
-  template <typename T> T to_bigint() const
-  {
-    T ans = 1;
-    for (const auto& [p, m] : mFactors)
-      for (int i = 0; i < m; i++) ans *= p;
     return ans;
   }
 

@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include <utils/Prime.h>
 #include <utils/PrimeInt.h>
 
@@ -96,4 +97,8 @@ TEST(PrimeIntTest, Divide)
   EXPECT_EQ(c / a, one);
 
   EXPECT_EQ(b / b, one);
+
+  PrimeInt x = 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19;
+  PrimeInt y = 5 * 7 * 11 * 17 * 31;
+  ASSERT_THROW(x / y, std::invalid_argument);
 }

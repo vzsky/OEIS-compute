@@ -1,7 +1,7 @@
-#include "BigInt.h"
 #include <algorithm>
 #include <cstdint>
 #include <unordered_set>
+#include <utils/LogInt.h>
 #include <utils/ModInt.h>
 #include <utils/Prime.h>
 #include <utils/PrimeInt.h>
@@ -40,7 +40,7 @@ public:
     integerMap.resize(N);
     for (size_t i = 2; i <= N; i++) integerMap[i] = primeFactorizer.vector_factors_freq(i);
     consecCache = {};
-    sequence.resize(N);
+    sequence.reserve(N);
     sequence.push_back(2);
   }
 
@@ -53,14 +53,13 @@ public:
   bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
     { // size-wise
-      DenseBigInt target    = targetProduct.to_bigint<DenseBigInt>();
-      DenseBigInt candidate = 1;
+      LogInt target    = targetProduct;
+      LogInt candidate = 1;
       for (size_t i = startInd; i < endInd; i++)
       {
         candidate *= sequence[i];
-        if (candidate > target) return false;
+        if (target.surely_lt(candidate)) return false;
       }
-      return true;
     }
     { // divisibility-wise
       Int candidate{1};
@@ -69,8 +68,8 @@ public:
         candidate *= integerMap[sequence[i]];
         if (!targetProduct.is_divisible_by(candidate)) return false;
       }
-      return true;
     }
+    return true;
   }
 
   inline bool optimization_1(const Int& targetProduct) const
@@ -99,7 +98,7 @@ public:
     const auto& factors         = targetProduct.factors();
     const uint64_t largestPrime = factors.back().first;
     const size_t largestPrimeIndex =
-        std::upper_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
+        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
 
     if (factors.size() == 1) return false;
 
@@ -206,7 +205,8 @@ public:
       const auto multipliedTerms = sequence.size() - trail + 1;
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
-      // std::cout << n << " -> " << acc << std::endl;
+      std::cout << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
+      if (n == 20100) exit(1);
     }
 
     stats.loop += mCurrentProductsToCheck.size();

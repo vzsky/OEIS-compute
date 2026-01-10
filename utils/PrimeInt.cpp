@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <utils/PrimeInt.h>
 
 const Prime<PrimeInt::SmallN> PrimeInt::factorizer{};
@@ -70,7 +71,8 @@ const PrimeInt& PrimeInt::operator/=(const PrimeInt& other)
     }
   }
 
-  assert(j == other.mFactors.size() && "dividing numbers that are not divisible");
+  if (j != other.mFactors.size()) throw std::invalid_argument("dividing numbers that are not divisible");
+
   mFactors.swap(mTmp);
   return *this;
 }
