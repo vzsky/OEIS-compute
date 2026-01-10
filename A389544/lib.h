@@ -135,11 +135,11 @@ public:
 
     const auto largestPrime = factors.back().first;
     const size_t largestPrimeIndex =
-        std::upper_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
+        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
 
     if (largestPrimeIndex < minimumTerms) return false;
 
-    if (!product_is_lower_bound(largestPrimeIndex - minimumTerms, largestPrimeIndex, targetProduct))
+    if (!product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
     {
       stats.opt3++;
       return true;
@@ -148,11 +148,41 @@ public:
     return false;
   }
 
+  inline bool optimization_4(const Int& targetProduct) const
+  {
+    const auto& factors     = targetProduct.factors();
+    const auto largestPrime = factors.back().first;
+    const size_t largestPrimeIndex =
+        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
+
+    LogInt value  = 1;
+    LogInt target = targetProduct;
+    int i         = largestPrimeIndex;
+    while (i < sequence.size() && value.surely_lt(target))
+    {
+      value *= sequence[i];
+      i++;
+    }
+    size_t minimumTerms = i - largestPrimeIndex;
+
+    bool forwardFailed =
+        !product_is_lower_bound(largestPrimeIndex, largestPrimeIndex + minimumTerms, targetProduct);
+    bool backwardFailed =
+        !product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct);
+    if (forwardFailed && backwardFailed)
+    {
+      stats.opt4++;
+      return true;
+    }
+    return false;
+  }
+
   bool duplicate_product_impossible(const Int& targetProduct, const uint64_t multipliedTerms) const
   {
     if (optimization_1(targetProduct)) return true;
     if (optimization_2(targetProduct)) return true;
     if (optimization_3(targetProduct, multipliedTerms)) return true;
+    if (optimization_4(targetProduct)) return true;
     return false;
   }
 
@@ -198,6 +228,7 @@ public:
         stats.cached++;
         if (has_duplicate_product_cache(acc_small)) [[unlikely]]
           return skip(n);
+        continue;
       }
       else
         acc_small = 0;
@@ -206,7 +237,6 @@ public:
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
       std::cout << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
-      if (n == 20100) exit(1);
     }
 
     stats.loop += mCurrentProductsToCheck.size();
@@ -222,7 +252,7 @@ public:
     uint64_t start = sequence.back() + 1;
     for (uint64_t n = start; n <= N; n++)
     {
-      if (n % 100000 == 0)
+      if (n % 500000 == 0)
       {
         std::cout << "==== Progress: " << n << " / " << N << std::endl;
         stats.print();
@@ -253,6 +283,7 @@ public:
     uint64_t opt1   = 0;
     uint64_t opt2   = 0;
     uint64_t opt3   = 0;
+    uint64_t opt4   = 0;
 
     void print() const
     {
@@ -261,6 +292,7 @@ public:
       std::cout << "Opt1 " << opt1 << std::endl;
       std::cout << "Opt2 " << opt2 << std::endl;
       std::cout << "Opt3 " << opt3 << std::endl;
+      std::cout << "Opt4 " << opt4 << std::endl;
     }
   } stats;
 };
