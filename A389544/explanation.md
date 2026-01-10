@@ -42,7 +42,6 @@ If $T$ is a product of $t$ terms ($t = n - z + 1$), then we know that the soluti
 This should just be merged with Optimization 2
 
 # Further ideas: 
-- use a log based instead of bignum to quickly compare size
- - which allows doing quick-product in O(1) rather than looping
- - the bottleneck seems to be memory now going pass 10^7
+- the bottleneck seems to be memory now going pass 10^7
+    - hold skipped instead of sequence should help a lot
 

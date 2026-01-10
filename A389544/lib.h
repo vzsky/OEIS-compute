@@ -58,7 +58,11 @@ public:
       for (size_t i = startInd; i < endInd; i++)
       {
         candidate *= sequence[i];
-        if (target.surely_lt(candidate)) return false;
+        if (target.surely_lt(candidate))
+        {
+          stats.size_wise++;
+          return false;
+        }
       }
     }
     { // divisibility-wise
@@ -66,7 +70,11 @@ public:
       for (size_t i = startInd; i < endInd; i++)
       {
         candidate *= integerMap[sequence[i]];
-        if (!targetProduct.is_divisible_by(candidate)) return false;
+        if (!targetProduct.is_divisible_by(candidate))
+        {
+          stats.div_wise++;
+          return false;
+        }
       }
     }
     return true;
@@ -148,41 +156,11 @@ public:
     return false;
   }
 
-  inline bool optimization_4(const Int& targetProduct) const
-  {
-    const auto& factors     = targetProduct.factors();
-    const auto largestPrime = factors.back().first;
-    const size_t largestPrimeIndex =
-        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
-
-    LogInt value  = 1;
-    LogInt target = targetProduct;
-    int i         = largestPrimeIndex;
-    while (i < sequence.size() && value.surely_lt(target))
-    {
-      value *= sequence[i];
-      i++;
-    }
-    size_t minimumTerms = i - largestPrimeIndex;
-
-    bool forwardFailed =
-        !product_is_lower_bound(largestPrimeIndex, largestPrimeIndex + minimumTerms, targetProduct);
-    bool backwardFailed =
-        !product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct);
-    if (forwardFailed && backwardFailed)
-    {
-      stats.opt4++;
-      return true;
-    }
-    return false;
-  }
-
   bool duplicate_product_impossible(const Int& targetProduct, const uint64_t multipliedTerms) const
   {
+    if (optimization_3(targetProduct, multipliedTerms)) return true;
     if (optimization_1(targetProduct)) return true;
     if (optimization_2(targetProduct)) return true;
-    if (optimization_3(targetProduct, multipliedTerms)) return true;
-    if (optimization_4(targetProduct)) return true;
     return false;
   }
 
@@ -217,7 +195,7 @@ public:
     mCurrentProductsToCheck.clear();
     Int acc            = integerMap[n];
     uint64_t acc_small = n;
-    for (size_t trail = sequence.size(); trail-- > 0;)
+    for (int trail = sequence.size() - 1; trail >= 0; trail--)
     {
       if (primeFactorizer.is_prime(sequence[trail])) break;
       acc *= integerMap[sequence[trail]];
@@ -236,12 +214,12 @@ public:
       const auto multipliedTerms = sequence.size() - trail + 1;
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
-      std::cout << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
+      // std::cout << "need to loop " << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
     }
 
     stats.loop += mCurrentProductsToCheck.size();
-    if (utils::par_all_of(begin(mCurrentProductsToCheck), end(mCurrentProductsToCheck),
-                          [&](const Int& target) { return !has_duplicate_product_loop(target); }))
+    if (std::all_of(begin(mCurrentProductsToCheck), end(mCurrentProductsToCheck),
+                    [&](const Int& target) { return !has_duplicate_product_loop(target); }))
       return not_skip(n);
 
     return skip(n);
@@ -285,6 +263,9 @@ public:
     uint64_t opt3   = 0;
     uint64_t opt4   = 0;
 
+    uint64_t size_wise = 0;
+    uint64_t div_wise  = 0;
+
     void print() const
     {
       std::cout << "Cached " << cached << std::endl;
@@ -293,6 +274,9 @@ public:
       std::cout << "Opt2 " << opt2 << std::endl;
       std::cout << "Opt3 " << opt3 << std::endl;
       std::cout << "Opt4 " << opt4 << std::endl;
+      std::cout << "---------------------------\n";
+      std::cout << "Size " << size_wise << std::endl;
+      std::cout << "Div " << div_wise << std::endl;
     }
   } stats;
 };
