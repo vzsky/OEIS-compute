@@ -1,4 +1,6 @@
 main
+log/*
+*.prof
 */log/*
 .DS_Store
 .cache/*

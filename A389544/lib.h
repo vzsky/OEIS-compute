@@ -52,14 +52,25 @@ public:
 
   bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
-    DenseBigInt target    = targetProduct.to_bigint<DenseBigInt>();
-    DenseBigInt candidate = 1;
-    for (size_t i = startInd; i < endInd; i++)
-    {
-      candidate *= sequence[i];
-      if (candidate > target) return false;
+    { // size-wise
+      DenseBigInt target    = targetProduct.to_bigint<DenseBigInt>();
+      DenseBigInt candidate = 1;
+      for (size_t i = startInd; i < endInd; i++)
+      {
+        candidate *= sequence[i];
+        if (candidate > target) return false;
+      }
+      return true;
     }
-    return true;
+    { // divisibility-wise
+      Int candidate{1};
+      for (size_t i = startInd; i < endInd; i++)
+      {
+        candidate *= integerMap[sequence[i]];
+        if (!targetProduct.is_divisible_by(candidate)) return false;
+      }
+      return true;
+    }
   }
 
   inline bool optimization_1(const Int& targetProduct) const
@@ -133,7 +144,7 @@ public:
 
     if (largestPrimeIndex < minimumTerms) return false;
 
-    if (!product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
+    if (!product_is_lower_bound(largestPrimeIndex - minimumTerms, largestPrimeIndex, targetProduct))
     {
       stats.opt3++;
       return true;
@@ -207,7 +218,7 @@ public:
       // parallelizing this seems to make it worse
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       productsToCheck.push_back(acc);
-      std::cout << n << " -> " << acc << std::endl;
+      // std::cout << n << " -> " << acc << std::endl;
     }
 
     if (found) return skip(n);
@@ -235,7 +246,7 @@ public:
     return sequence;
   }
 
-  int is_interesting(uint64_t skippedElement) const
+  bool is_interesting(uint64_t skippedElement) const
   {
     return !has_duplicate_product_loop(integerMap[skippedElement]);
   }
