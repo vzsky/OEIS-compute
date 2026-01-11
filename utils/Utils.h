@@ -37,13 +37,12 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
     size_t steps       = std::min(block_size, static_cast<size_t>(std::distance(block_start, end)));
     std::advance(block_end, steps);
 
-    futures.push_back(std::async(std::launch::async,
-                                 [block_start, block_end, &pred]()
-                                 {
-                                   for (auto it = block_start; it != block_end; ++it)
-                                     if (!pred(*it)) return false;
-                                   return true;
-                                 }));
+    futures.push_back(std::async(std::launch::async, [block_start, block_end, &pred]()
+    {
+      for (auto it = block_start; it != block_end; ++it)
+        if (!pred(*it)) return false;
+      return true;
+    }));
 
     block_start = block_end;
   }

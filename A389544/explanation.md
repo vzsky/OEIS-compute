@@ -22,12 +22,14 @@ Now, let $$T := k \cdot \prod_{i=z}^n a(i)$$ be the target and focusing on findi
 
 Let's also factor $T$ as $$T = p_1^{m_1} \cdots p_s^{m_s}$$
 Write $\pi(x, y) := \prod_{i=x}^y a(i)$ and write $a^{-1}(k)$ as the first index $i$ such that $a(i) \ge k$.
+
+I will try lower bound the solution and most of the times, the lower bound will force it to have no solution. When I say $\pi(x, y)$ must be at least $S$ we can check both if $\pi(x, y) > S$ and $S | \pi(x, y)$. 
+
 ### Optimization 1
 Assume $p_i > m_i$.
 For each $p_i$, since $p_i^{m_i} \vert T$, the solution $(x, y)$ we want it must satisfies $p_i^{m_i} \vert \pi(x, y)$, the smallest such product will need to be at least at high as $\pi(x,y)$ where $a(x) = p_i$ and $a(y) = m_i \cdot p_i$
 
 Therefore, if for any $i$, the product $\pi(a^{-1}(p_j), a^{-1}(m_j \cdot p_j))$ exceed $T$, we can stop the search as it will be impossible to find any solution.
-> it might make sense to check divisibility rather than size here
 
 ### Optimization 2
 Assume $s > 1$. We know that $p_s \vert T$ so the solution must satisfies $p_s \vert \pi(x, y)$. However for $i \ne s$, as $p_i \vert T$ we must also have $p_i \vert \pi(x, y)$. 

@@ -1,12 +1,15 @@
 #include <algorithm>
 #include <cstdint>
 #include <unordered_set>
+#include <utils/ComplementNonnVector.h>
 #include <utils/LogInt.h>
 #include <utils/ModInt.h>
 #include <utils/Prime.h>
 #include <utils/PrimeInt.h>
 #include <utils/Utils.h>
 #include <vector>
+
+using namespace complementNonnVector;
 
 template <uint32_t N, uint32_t CacheLim> struct A389544
 {
@@ -18,31 +21,38 @@ private:
   virtual void _skip(uint64_t n) {}
   virtual void _not_skip(uint64_t n) {}
 
-  void skip(uint64_t n) { _skip(n); }
+  void skip(uint64_t n)
+  {
+    seq.add_skip(n);
+    _skip(n);
+  }
 
   void not_skip(uint64_t n)
   {
-    _not_skip(n);
     uint64_t cand = n;
-    for (size_t trail = sequence.size(); trail-- > 0;)
+    for (auto it = seq.it_at(seqSize - 1); it.idx() >= 0; --it)
     {
-      cand *= sequence[trail];
+      cand *= *it;
       if (cand >= CacheLim) break;
       consecCache.insert(cand);
     }
+
     _not_skip(n);
-    sequence.push_back(n);
+    seqSize++;
   }
 
 public:
   A389544()
   {
-    integerMap.resize(N);
-    for (size_t i = 2; i <= N; i++) integerMap[i] = primeFactorizer.vector_factors_freq(i);
     consecCache = {};
-    sequence.reserve(N);
-    sequence.push_back(2);
+
+    // seq = {2}
+    seq.add_skip(0);
+    seq.add_skip(1);
+    seqSize = 1;
   }
+
+  Int toInteger(uint64_t n) const { return primeFactorizer.vector_factors_freq(n); }
 
   bool has_duplicate_product_cache(const uint64_t& targetProduct) const
   {
@@ -50,14 +60,16 @@ public:
     return consecCache.contains(targetProduct);
   }
 
+  // TODO, Rework this to receive iterator / actual number. index is bad.
   bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
     { // size-wise
       LogInt target    = targetProduct;
       LogInt candidate = 1;
-      for (size_t i = startInd; i < endInd; i++)
+
+      for (auto it = seq.it_at(startInd); it.idx() < endInd; ++it)
       {
-        candidate *= sequence[i];
+        candidate *= *it;
         if (target.surely_lt(candidate))
         {
           stats.size_wise++;
@@ -67,9 +79,9 @@ public:
     }
     { // divisibility-wise
       Int candidate{1};
-      for (size_t i = startInd; i < endInd; i++)
+      for (auto it = seq.it_at(startInd); it.idx() < endInd; ++it)
       {
-        candidate *= integerMap[sequence[i]];
+        candidate *= toInteger(*it);
         if (!targetProduct.is_divisible_by(candidate))
         {
           stats.div_wise++;
@@ -90,8 +102,8 @@ public:
       if (m >= p) continue;
 
       // if multplicity of p is m, we at least need p, .., m * p
-      auto startInd = std::lower_bound(sequence.begin(), sequence.end(), p) - sequence.begin();
-      auto endInd   = std::upper_bound(sequence.begin(), sequence.end(), m * p) - sequence.begin();
+      auto startInd = seq.lower_bound(p);
+      auto endInd   = seq.upper_bound(m * p);
       if (!product_is_lower_bound(startInd, endInd, targetProduct))
       {
         stats.opt1++;
@@ -103,10 +115,9 @@ public:
 
   inline bool optimization_2(const Int& targetProduct) const
   {
-    const auto& factors         = targetProduct.factors();
-    const uint64_t largestPrime = factors.back().first;
-    const size_t largestPrimeIndex =
-        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
+    const auto& factors            = targetProduct.factors();
+    const uint64_t largestPrime    = factors.back().first;
+    const size_t largestPrimeIndex = seq.lower_bound(largestPrime);
 
     if (factors.size() == 1) return false;
 
@@ -119,8 +130,8 @@ public:
       endBackward          = std::min(endBackward, largestPrime - (largestPrime % nextPrime));
     }
 
-    size_t indForward  = std::upper_bound(sequence.begin(), sequence.end(), endForward) - sequence.begin();
-    size_t indBackward = std::lower_bound(sequence.begin(), sequence.end(), endBackward) - sequence.begin();
+    size_t indForward  = seq.upper_bound(endForward);
+    size_t indBackward = seq.lower_bound(endBackward);
 
     bool failedForward  = !product_is_lower_bound(largestPrimeIndex, indForward, targetProduct);
     bool failedBackward = !product_is_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct);
@@ -141,9 +152,8 @@ public:
     uint64_t minimumTerms = multipliedTerms + 1;
     const auto& factors   = targetProduct.factors();
 
-    const auto largestPrime = factors.back().first;
-    const size_t largestPrimeIndex =
-        std::lower_bound(sequence.begin(), sequence.end(), largestPrime) - sequence.begin();
+    const auto largestPrime        = factors.back().first;
+    const size_t largestPrimeIndex = seq.lower_bound(largestPrime);
 
     if (largestPrimeIndex < minimumTerms) return false;
 
@@ -169,13 +179,13 @@ public:
     Int candidate = 1;
     size_t l      = 0;
 
-    for (size_t r = 0; r < sequence.size(); r++)
+    for (size_t r = 0; r < seqSize; r++)
     {
-      candidate *= integerMap[sequence[r]];
+      candidate *= toInteger(seq[r]);
 
       while (l < r && !targetProduct.is_divisible_by(candidate))
       {
-        candidate /= integerMap[sequence[l]];
+        candidate /= toInteger(seq[l]);
         l++;
       }
 
@@ -193,14 +203,15 @@ public:
       return skip(n);
 
     mCurrentProductsToCheck.clear();
-    Int acc            = integerMap[n];
+    Int acc            = toInteger(n);
     uint64_t acc_small = n;
-    for (int trail = sequence.size() - 1; trail >= 0; trail--)
-    {
-      if (primeFactorizer.is_prime(sequence[trail])) break;
-      acc *= integerMap[sequence[trail]];
 
-      acc_small *= sequence[trail];
+    for (auto it = seq.it_at(seqSize - 1); it.idx() >= 0; --it)
+    {
+      if (primeFactorizer.is_prime(*it)) break;
+      acc *= toInteger(*it);
+
+      acc_small *= *it;
       if (acc_small != 0 && acc_small < CacheLim)
       {
         stats.cached++;
@@ -211,7 +222,7 @@ public:
       else
         acc_small = 0;
 
-      const auto multipliedTerms = sequence.size() - trail + 1;
+      const auto multipliedTerms = seqSize - it.idx() + 1;
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
       // std::cout << "need to loop " << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
@@ -225,34 +236,34 @@ public:
     return skip(n);
   }
 
-  const std::vector<uint64_t>& get_sequence_until_N()
+  void get_sequence_until_N()
   {
-    uint64_t start = sequence.back() + 1;
+    uint64_t start = seq[seqSize - 1] + 1;
     for (uint64_t n = start; n <= N; n++)
     {
-      if (n % 500000 == 0)
+      if (n % 1000000 == 0)
       {
         std::cout << "==== Progress: " << n << " / " << N << std::endl;
         stats.print();
       }
       try_add_number(n);
     }
-    return sequence;
   }
 
   bool is_interesting(uint64_t skippedElement) const
   {
-    return !has_duplicate_product_loop(integerMap[skippedElement]);
+    return !has_duplicate_product_loop(toInteger(skippedElement));
   }
 
 private:
   std::vector<Int> mCurrentProductsToCheck{};
 
 public:
-  std::vector<Int> integerMap              = std::vector<Int>(N + 1);
   std::unordered_set<uint64_t> consecCache = std::unordered_set<uint64_t>();
-  std::vector<uint64_t> sequence;
   Prime<N> primeFactorizer{};
+
+  Vector seq{};
+  size_t seqSize = 0;
 
   mutable struct Stats
   {
@@ -261,7 +272,6 @@ public:
     uint64_t opt1   = 0;
     uint64_t opt2   = 0;
     uint64_t opt3   = 0;
-    uint64_t opt4   = 0;
 
     uint64_t size_wise = 0;
     uint64_t div_wise  = 0;
@@ -273,8 +283,7 @@ public:
       std::cout << "Opt1 " << opt1 << std::endl;
       std::cout << "Opt2 " << opt2 << std::endl;
       std::cout << "Opt3 " << opt3 << std::endl;
-      std::cout << "Opt4 " << opt4 << std::endl;
-      std::cout << "---------------------------\n";
+      std::cout << "--------------\n";
       std::cout << "Size " << size_wise << std::endl;
       std::cout << "Div " << div_wise << std::endl;
     }

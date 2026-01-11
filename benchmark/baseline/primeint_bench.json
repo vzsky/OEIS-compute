@@ -1,0 +1,76 @@
+{
+  "context": {
+    "date": "2026-01-11T16:26:16+00:00",
+    "host_name": "Mac.lan",
+    "executable": "./build/bin/primeint_bench",
+    "num_cpus": 10,
+    "mhz_per_cpu": 24,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 65536,
+        "num_sharing": 0
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 131072,
+        "num_sharing": 0
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 4194304,
+        "num_sharing": 1
+      }
+    ],
+    "load_avg": [2.15234,1.9873,1.78809],
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "Multiply - 1600 pairs",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "Multiply - 1600 pairs",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1049,
+      "real_time": 6.6202597690833197e+05,
+      "cpu_time": 6.6202097235462337e+05,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Divide - 220 pairs",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "Divide - 220 pairs",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 10753,
+      "real_time": 6.4971356813859180e+04,
+      "cpu_time": 6.4969961871105726e+04,
+      "time_unit": "ns"
+    },
+    {
+      "name": "isDivisible - 1600 pairs",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "isDivisible - 1600 pairs",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 26723,
+      "real_time": 2.5932240006679262e+04,
+      "cpu_time": 2.5931781611346036e+04,
+      "time_unit": "ns"
+    }
+  ]
+}

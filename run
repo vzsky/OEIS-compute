@@ -2,6 +2,11 @@
 set -e
 
 BUILD_DIR="./build"
+BASELINE_DIR="./benchmark/baseline"
+LOG_DIR="./log"
+FLAGS=""
+
+mkdir -p "$LOG_DIR"
 
 if [ ! -d "$BUILD_DIR" ]; then
     cmake --preset=default
@@ -31,31 +36,13 @@ if [ "$TARGET" = "tests" ]; then
   exit $?;
 fi
 
-if [ "$TARGET" = "bench" ]; then 
-  if [ -z "$2" ]; then
-    echo "Usage: $0 bench <target>"
-    exit 1
-  fi
-  TARGET="${2}_bench"
-  TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
-fi
-
-if [ "$TARGET" = "test" ]; then
-  if [ -z "$2" ]; then
-    echo "Usage: $0 test <target>"
-    exit 1
-  fi
-  TARGET="${2}_test"
-  TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
-fi
-
 if [ "$TARGET" = "profile" ]; then 
   ninja -C "$BUILD_DIR" "$2" && echo "Compilation success"
   EXEC="$BUILD_DIR/bin/$2"
   if [ -x "$EXEC" ]; then
     DYLD_INSERT_LIBRARIES="/opt/homebrew/lib/libtcmalloc.dylib:/opt/homebrew/lib/libprofiler.dylib" \
     DYLD_FORCE_FLAT_NAMESPACE=1 \
-    CPUPROFILE="$2.prof" \
+    CPUPROFILE="$LOG_DIR/$2.prof" \
     "$EXEC"
   else
     echo "Executable not found: $EXEC"
@@ -67,12 +54,48 @@ if [ "$TARGET" = "profile" ]; then
   exit 0
 fi
 
+if [ "$TARGET" = "bench" ]; then
+  if [ -z "$2" ]; then
+    echo "Usage: $0 bench <target>"
+    exit 1
+  fi
+
+  name=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+  TARGET="${name}_bench"
+  ninja -C "$BUILD_DIR" "$TARGET" && echo "Compilation success"
+
+  EXEC="$BUILD_DIR/bin/$TARGET"
+  FLAGS="--benchmark_out=$LOG_DIR/$TARGET.json --benchmark_out_format=json"
+
+  if [ -x "$EXEC" ]; then
+    "$EXEC" $FLAGS
+
+    ./scripts/regression_test.py \
+      "$BASELINE_DIR/$TARGET.json" \
+      "$LOG_DIR/$TARGET.json" 
+
+    exit 0
+  fi
+
+  echo "Executable not found: $EXEC"
+  exit 1
+fi
+
+if [ "$TARGET" = "test" ]; then
+  if [ -z "$2" ]; then
+    echo "Usage: $0 test <target>"
+    exit 1
+  fi
+  TARGET="${2}_test"
+  TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
+fi
+
 ninja -C "$BUILD_DIR" "$TARGET" && echo "Compilation success"
 
 # Run executable if it exists
 EXEC="$BUILD_DIR/bin/$TARGET"
 if [ -x "$EXEC" ]; then
-  "$EXEC"
+  "$EXEC" $FLAGS
 else
   echo "Executable not found: $EXEC"
   exit 1

@@ -1,0 +1,174 @@
+{
+  "context": {
+    "date": "2026-01-11T16:25:08+00:00",
+    "host_name": "Mac.lan",
+    "executable": "./build/bin/prime_bench",
+    "num_cpus": 10,
+    "mhz_per_cpu": 24,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 65536,
+        "num_sharing": 0
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 131072,
+        "num_sharing": 0
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 4194304,
+        "num_sharing": 1
+      }
+    ],
+    "load_avg": [2.21045,1.93945,1.75781],
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "BM_is_prime_until/10",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "BM_is_prime_until/10",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 15632921,
+      "real_time": 4.4477857528577502e+01,
+      "cpu_time": 4.4477484406145201e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_is_prime_until/64",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "BM_is_prime_until/64",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 2372238,
+      "real_time": 2.9469775339317795e+02,
+      "cpu_time": 2.9469134209973856e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_is_prime_until/512",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "BM_is_prime_until/512",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 297347,
+      "real_time": 2.4131403413449002e+03,
+      "cpu_time": 2.3866223637702742e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_is_prime_until/1000",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "BM_is_prime_until/1000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 151967,
+      "real_time": 4.6146370075263148e+03,
+      "cpu_time": 4.6069936236156573e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "factor - Composite numbers/60/360/5040/83160/65536",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "factor - Composite numbers/60/360/5040/83160/65536",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 2810805,
+      "real_time": 2.5174187928602689e+02,
+      "cpu_time": 2.5151904881341829e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "factor_freq - Composite numbers/60/360/5040/83160/65536",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "factor_freq - Composite numbers/60/360/5040/83160/65536",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 989693,
+      "real_time": 7.1915407113980518e+02,
+      "cpu_time": 7.1222086040822774e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "vector_factors_freq - Composite numbers/60/360/5040/83160/65536",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "vector_factors_freq - Composite numbers/60/360/5040/83160/65536",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1252976,
+      "real_time": 5.5479494396716211e+02,
+      "cpu_time": 5.5477199882519733e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "factors - Primes/2347/4567/7919/99991/104729",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "factors - Primes/2347/4567/7919/99991/104729",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 7852728,
+      "real_time": 8.9457919376531223e+01,
+      "cpu_time": 8.9351751391363692e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "factors_freq - Primes/2347/4567/7919/99991/104729",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "factors_freq - Primes/2347/4567/7919/99991/104729",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 2923061,
+      "real_time": 2.4455237177408239e+02,
+      "cpu_time": 2.4245063650741466e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "vector_factors_freq - Primes/2347/4567/7919/99991/104729",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "vector_factors_freq - Primes/2347/4567/7919/99991/104729",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 3441275,
+      "real_time": 2.0805014132861874e+02,
+      "cpu_time": 2.0799558303245192e+02,
+      "time_unit": "ns"
+    }
+  ]
+}

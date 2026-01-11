@@ -30,47 +30,43 @@ public:
   ModInt operator-() const
   {
     ModInt r;
-    for_each_mod(
-        [&](size_t i, int MOD)
-        {
-          int x      = mVals[i];
-          r.mVals[i] = (x == 0 ? 0 : MOD - x);
-        });
+    for_each_mod([&](size_t i, int MOD)
+    {
+      int x      = mVals[i];
+      r.mVals[i] = (x == 0 ? 0 : MOD - x);
+    });
     return r;
   }
 
   const ModInt& operator+=(const ModInt& other)
   {
-    for_each_mod(
-        [&](size_t i, int MOD)
-        {
-          int x = mVals[i] + other.mVals[i];
-          if (x >= MOD) x -= MOD;
-          mVals[i] = x;
-        });
+    for_each_mod([&](size_t i, int MOD)
+    {
+      int x = mVals[i] + other.mVals[i];
+      if (x >= MOD) x -= MOD;
+      mVals[i] = x;
+    });
     return *this;
   }
 
   const ModInt& operator-=(const ModInt& other)
   {
-    for_each_mod(
-        [&](size_t i, int MOD)
-        {
-          int x = mVals[i] - other.mVals[i];
-          if (x < 0) x += MOD;
-          mVals[i] = x;
-        });
+    for_each_mod([&](size_t i, int MOD)
+    {
+      int x = mVals[i] - other.mVals[i];
+      if (x < 0) x += MOD;
+      mVals[i] = x;
+    });
     return *this;
   }
 
   const ModInt& operator*=(const ModInt& other)
   {
-    for_each_mod(
-        [&](size_t i, int MOD)
-        {
-          long long prod = 1LL * mVals[i] * other.mVals[i];
-          mVals[i]       = static_cast<int>(prod % MOD);
-        });
+    for_each_mod([&](size_t i, int MOD)
+    {
+      long long prod = 1LL * mVals[i] * other.mVals[i];
+      mVals[i]       = static_cast<int>(prod % MOD);
+    });
     return *this;
   }
 

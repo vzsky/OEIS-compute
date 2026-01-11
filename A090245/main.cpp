@@ -141,18 +141,16 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smal
   for (Elem<Dim>& next : all_elems)
   {
 
-    std::vector to_add = frontier.gather(
-        [&next](const auto& parent)
-        {
-          if (can_add(parent, next))
-          {
-            Elems<Dim> child = parent;
-            child.push_back(next);
-            return std::optional<Elems<Dim>>{child};
-          }
-          return std::optional<Elems<Dim>>{};
-        },
-        16, 100);
+    std::vector to_add = frontier.gather([&next](const auto& parent)
+    {
+      if (can_add(parent, next))
+      {
+        Elems<Dim> child = parent;
+        child.push_back(next);
+        return std::optional<Elems<Dim>>{child};
+      }
+      return std::optional<Elems<Dim>>{};
+    }, 16, 100);
 
     for (auto& s : to_add)
     {

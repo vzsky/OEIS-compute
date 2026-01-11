@@ -1,47 +1,58 @@
 #pragma once
 
 #include <cassert>
+#include <cstdint>
 #include <vector>
 
-// this is an infinite sorted vector
-class ComplementNonnVector
+namespace complementNonnVector
 {
-private:
-  size_t count_complement_lt(uint64_t num) const
-  {
-    return std::lower_bound(mComplement.begin(), mComplement.end(), num) - mComplement.begin();
-  }
+using value_type = uint64_t;
 
-  size_t count_sequence_lt(uint64_t num) const { return num - count_complement_lt(num); }
+class Vector
+{
+public:
+  class iterator
+  {
+  public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type   = std::ptrdiff_t;
+    using value_type        = complementNonnVector::value_type;
+    using reference         = value_type;
+    using pointer           = value_type*;
+
+    iterator() = default;
+
+    iterator(const Vector* seq, size_t index);
+
+    reference operator*() const;
+    iterator& operator++();
+    iterator& operator--();
+    bool operator==(const iterator& o) const;
+    bool operator!=(const iterator& o) const;
+
+    int idx() const { return mIndex; }
+
+  private:
+    const Vector* mSeq      = nullptr;
+    int mIndex              = 0;
+    value_type mValue       = 0;
+    size_t mComplementIndex = 0;
+  };
+
+private:
+  size_t count_complement_lt(value_type num) const;
+  size_t count_sequence_lt(value_type num) const;
 
 public:
-  uint64_t operator[](size_t idx) const
-  {
-    uint64_t lo = 0;
-    uint64_t hi = idx + mComplement.size() + 1;
+  value_type operator[](size_t idx) const;
+  inline size_t lower_bound(value_type value) const { return count_sequence_lt(value); }
+  inline size_t upper_bound(value_type value) const { return count_sequence_lt(value + 1); }
+  void add_skip(value_type n);
 
-    while (lo < hi)
-    {
-      uint64_t mid = lo + (hi - lo) / 2;
-      if (count_sequence_lt(mid) <= idx)
-        lo = mid + 1;
-      else
-        hi = mid;
-    }
-
-    return lo - 1;
-  }
-
-  size_t lower_bound(uint64_t value) { return count_sequence_lt(value); }
-
-  size_t upper_bound(uint64_t value) { return count_sequence_lt(value + 1); }
-
-  void add_skip(uint64_t n)
-  {
-    assert(mComplement.empty() || n > mComplement.back());
-    mComplement.push_back(n);
-  }
+  iterator it_at(size_t idx) const { return iterator{this, idx}; }
 
 private:
-  std::vector<uint64_t> mComplement{};
+  std::vector<value_type> mComplement{};
 };
+
+} // namespace complementNonnVector

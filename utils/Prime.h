@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <map>
 #include <stdexcept>
 #include <vector>
@@ -49,13 +48,14 @@ template <size_t N> bool Prime<N>::is_prime(size_t n) const
 
   if (n == 1) return false;
 
-  if (n <= N) return mLowestPrimeDiv[n] == n;
+  // if (n <= N) return mLowestPrimeDiv[n] == n;
 
-  for (auto p : mAllPrimes)
-    if (n % p == 0) return false;
+  // for (auto p : mAllPrimes)
+  //   if (n % p == 0) return false;
 
-  size_t next = mAllPrimes.back() + 1;
-  while (next * next <= n)
+  // size_t next = mAllPrimes.back() + 1;
+  size_t next = 2;
+  while (next < n)
   {
     if (n % next == 0) return false;
     next++;

@@ -99,19 +99,17 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
 
     Elem<N> next{i};
 
-    std::vector to_add = frontier.gather(
-        [&next, &i](const auto& parent)
-        {
-          if (can_add(parent, next))
-          {
-            Elems<N> child = parent;
-            child.push_back(next);
-            child.mCreated = i;
-            return std::optional<Elems<N>>{child};
-          }
-          return std::optional<Elems<N>>{};
-        },
-        16, 100);
+    std::vector to_add = frontier.gather([&next, &i](const auto& parent)
+    {
+      if (can_add(parent, next))
+      {
+        Elems<N> child = parent;
+        child.push_back(next);
+        child.mCreated = i;
+        return std::optional<Elems<N>>{child};
+      }
+      return std::optional<Elems<N>>{};
+    }, 16, 100);
 
     for (auto& s : to_add)
     {

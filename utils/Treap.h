@@ -84,12 +84,11 @@ private:
     std::thread left_thread;
     if (spawn_left)
     {
-      left_thread = std::thread(
-          [&]()
-          {
-            idx_traversal(t->l, f, sem, min_tree_size, base_idx);
-            sem.release();
-          });
+      left_thread = std::thread([&]()
+      {
+        idx_traversal(t->l, f, sem, min_tree_size, base_idx);
+        sem.release();
+      });
     }
     else if (t->l)
       idx_traversal(t->l, f, sem, min_tree_size, base_idx);
@@ -344,12 +343,10 @@ public:
   template <typename Func> const value_type& max(Func f, const value_type& def) const
   {
     const value_type* best = &def;
-    inorder(
-        [&](const value_type& v)
-        {
-          if (f(v) > f(*best)) best = &v;
-        },
-        mTop);
+    inorder([&](const value_type& v)
+    {
+      if (f(v) > f(*best)) best = &v;
+    }, mTop);
     return *best;
   }
 
