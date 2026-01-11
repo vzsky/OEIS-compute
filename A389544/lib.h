@@ -60,7 +60,6 @@ public:
     return consecCache.contains(targetProduct);
   }
 
-  // TODO, Rework this to receive iterator / actual number. index is bad.
   bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
     return product_is_lower_bound(seq.it_at(startInd), endInd, targetProduct);
@@ -68,6 +67,18 @@ public:
 
   bool product_is_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
   {
+    { // divisibility-wise
+      Int candidate{1};
+      for (auto it = startIt; it.idx() < endInd; ++it)
+      {
+        candidate *= toInteger(*it);
+        if (!targetProduct.is_divisible_by(candidate))
+        {
+          stats.div_wise++;
+          return false;
+        }
+      }
+    }
     { // size-wise
       LogInt target    = targetProduct;
       LogInt candidate = 1;
@@ -82,22 +93,10 @@ public:
         }
       }
     }
-    { // divisibility-wise
-      Int candidate{1};
-      for (auto it = startIt; it.idx() < endInd; ++it)
-      {
-        candidate *= toInteger(*it);
-        if (!targetProduct.is_divisible_by(candidate))
-        {
-          stats.div_wise++;
-          return false;
-        }
-      }
-    }
     return true;
   }
 
-  inline bool optimization_1(const Int& targetProduct) const
+  bool optimization_1(const Int& targetProduct) const
   {
     const auto& factors = targetProduct.factors();
     for (auto it = factors.rbegin(); it != factors.rend(); ++it)
@@ -118,7 +117,7 @@ public:
     return false;
   }
 
-  inline bool optimization_2(const Int& targetProduct) const
+  bool optimization_2(const Int& targetProduct) const
   {
     const auto& factors            = targetProduct.factors();
     const uint64_t largestPrime    = factors.back().first;
@@ -138,18 +137,14 @@ public:
     size_t indForward  = seq.upper_bound(endForward).idx();
     size_t indBackward = seq.lower_bound(endBackward).idx();
 
-    bool failedForward  = !product_is_lower_bound(largestPrimeIndex, indForward, targetProduct);
-    bool failedBackward = !product_is_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct);
+    if (product_is_lower_bound(largestPrimeIndex, indForward, targetProduct)) return false;
+    if (product_is_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct)) return false;
 
-    if (failedForward && failedBackward)
-    {
-      stats.opt2++;
-      return true;
-    }
-    return false;
+    stats.opt2++;
+    return true;
   }
 
-  inline bool optimization_3(const Int& targetProduct, const uint64_t multipliedTerms) const
+  bool optimization_3(const Int& targetProduct, const uint64_t multipliedTerms) const
   {
     // if there is a consecutive product = acc, it must has > (what constructed acc) terms;
     // (what constructed acc ~ log_n(acc))
@@ -162,13 +157,11 @@ public:
 
     if (largestPrimeIndex < minimumTerms) return false;
 
-    if (!product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
-    {
-      stats.opt3++;
-      return true;
-    }
+    if (product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
+      return false;
 
-    return false;
+    stats.opt3++;
+    return true;
   }
 
   bool duplicate_product_impossible(const Int& targetProduct, const uint64_t multipliedTerms) const
