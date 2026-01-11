@@ -1,33 +1,39 @@
 {
   "context": {
-    "date": "2026-01-11T16:26:16+00:00",
-    "host_name": "Mac.lan",
-    "executable": "./build/bin/primeint_bench",
-    "num_cpus": 10,
-    "mhz_per_cpu": 24,
+    "date": "2026-01-11T19:16:25+00:00",
+    "host_name": "runnervmi13qx",
+    "executable": "build/benchmark/primeint_bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 3254,
     "cpu_scaling_enabled": false,
     "caches": [
       {
         "type": "Data",
         "level": 1,
-        "size": 65536,
-        "num_sharing": 0
+        "size": 32768,
+        "num_sharing": 2
       },
       {
         "type": "Instruction",
         "level": 1,
-        "size": 131072,
-        "num_sharing": 0
+        "size": 32768,
+        "num_sharing": 2
       },
       {
         "type": "Unified",
         "level": 2,
-        "size": 4194304,
-        "num_sharing": 1
+        "size": 524288,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 33554432,
+        "num_sharing": 4
       }
     ],
-    "load_avg": [2.15234,1.9873,1.78809],
-    "library_build_type": "debug"
+    "load_avg": [2.94873,1.38232,0.537598],
+    "library_build_type": "release"
   },
   "benchmarks": [
     {
@@ -39,9 +45,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 1049,
-      "real_time": 6.6202597690833197e+05,
-      "cpu_time": 6.6202097235462337e+05,
+      "iterations": 7551,
+      "real_time": 9.2322603231357381e+04,
+      "cpu_time": 9.2316364057740691e+04,
       "time_unit": "ns"
     },
     {
@@ -53,9 +59,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 10753,
-      "real_time": 6.4971356813859180e+04,
-      "cpu_time": 6.4969961871105726e+04,
+      "iterations": 81912,
+      "real_time": 8.5196484031643340e+03,
+      "cpu_time": 8.5196577424553179e+03,
       "time_unit": "ns"
     },
     {
@@ -67,9 +73,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 26723,
-      "real_time": 2.5932240006679262e+04,
-      "cpu_time": 2.5931781611346036e+04,
+      "iterations": 86274,
+      "real_time": 8.1057948049239176e+03,
+      "cpu_time": 8.1053976400769643e+03,
       "time_unit": "ns"
     }
   ]
