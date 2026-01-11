@@ -5,4 +5,5 @@ log/*
 .DS_Store
 .cache/*
 build/*
+benchmark/local_baseline/*
 compile_commands.json
