@@ -1,10 +1,10 @@
 {
   "context": {
-    "date": "2026-01-11T20:20:59+00:00",
+    "date": "2026-01-11T22:05:38+00:00",
     "host_name": "runnervmi13qx",
     "executable": "build/benchmark/a390848_bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 2445,
+    "mhz_per_cpu": 3243,
     "cpu_scaling_enabled": false,
     "caches": [
       {
@@ -32,7 +32,7 @@
         "num_sharing": 4
       }
     ],
-    "load_avg": [2.87012,1.3042,0.495605],
+    "load_avg": [3.08691,1.42627,0.598145],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -45,9 +45,23 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 21,
-      "real_time": 3.3192895714286070e+07,
-      "cpu_time": 3.3191543714285713e+07,
+      "iterations": 27,
+      "real_time": 2.5817296740738299e+07,
+      "cpu_time": 2.5814087703703705e+07,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_until_100k",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "BM_until_100k",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.6653222399995685e+08,
+      "cpu_time": 5.6651209399999976e+08,
       "time_unit": "ns"
     }
   ]
