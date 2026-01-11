@@ -1,10 +1,10 @@
 {
   "context": {
-    "date": "2026-01-11T19:16:25+00:00",
+    "date": "2026-01-11T20:21:00+00:00",
     "host_name": "runnervmi13qx",
     "executable": "build/benchmark/primeint_bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 3254,
+    "mhz_per_cpu": 2724,
     "cpu_scaling_enabled": false,
     "caches": [
       {
@@ -32,7 +32,7 @@
         "num_sharing": 4
       }
     ],
-    "load_avg": [2.94873,1.38232,0.537598],
+    "load_avg": [2.87012,1.3042,0.495605],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -45,9 +45,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 7551,
-      "real_time": 9.2322603231357381e+04,
-      "cpu_time": 9.2316364057740691e+04,
+      "iterations": 7574,
+      "real_time": 9.2847925006602323e+04,
+      "cpu_time": 9.2838191180353853e+04,
       "time_unit": "ns"
     },
     {
@@ -59,9 +59,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 81912,
-      "real_time": 8.5196484031643340e+03,
-      "cpu_time": 8.5196577424553179e+03,
+      "iterations": 82726,
+      "real_time": 8.4634999516473526e+03,
+      "cpu_time": 8.4630778231753029e+03,
       "time_unit": "ns"
     },
     {
@@ -73,9 +73,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 86274,
-      "real_time": 8.1057948049239176e+03,
-      "cpu_time": 8.1053976400769643e+03,
+      "iterations": 86130,
+      "real_time": 8.1092001277140180e+03,
+      "cpu_time": 8.1086461976082683e+03,
       "time_unit": "ns"
     }
   ]
