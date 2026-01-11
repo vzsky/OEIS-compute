@@ -37,11 +37,11 @@ void Vector::add_skip(value_type n)
  * Iterators
  ***********************/
 
-Vector::iterator::iterator(const Vector* seq, size_t index) : mSeq(seq), mIndex(index)
+Vector::iterator::iterator(const Vector* seq, size_t index) : mSeq(seq)
 {
-  if (mSeq && mIndex < mSeq->count_sequence_lt(UINT64_MAX))
+  if (mSeq && index < mSeq->count_sequence_lt(UINT64_MAX))
   {
-    mValue           = (*mSeq)[mIndex];
+    mValue           = (*mSeq)[index];
     mComplementIndex = std::upper_bound(mSeq->mComplement.begin(), mSeq->mComplement.end(), mValue) -
                        mSeq->mComplement.begin();
   }
@@ -51,7 +51,6 @@ Vector::iterator::reference Vector::iterator::operator*() const { return mValue;
 
 Vector::iterator& Vector::iterator::operator++()
 {
-  ++mIndex;
   ++mValue;
   while (mComplementIndex < mSeq->mComplement.size() && mValue == mSeq->mComplement[mComplementIndex])
   {
@@ -64,7 +63,6 @@ Vector::iterator& Vector::iterator::operator++()
 
 Vector::iterator& Vector::iterator::operator--()
 {
-  --mIndex;
   --mValue;
   while (mComplementIndex > 0 && mValue == mSeq->mComplement[mComplementIndex - 1])
   {
@@ -75,6 +73,6 @@ Vector::iterator& Vector::iterator::operator--()
   return *this;
 }
 
-bool Vector::iterator::operator==(const iterator& o) const { return mSeq == o.mSeq && mIndex == o.mIndex; }
+bool Vector::iterator::operator==(const iterator& o) const { return mSeq == o.mSeq && idx() == o.idx(); }
 
 bool Vector::iterator::operator!=(const iterator& o) const { return !(*this == o); }

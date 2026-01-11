@@ -20,6 +20,8 @@ public:
     using reference         = value_type;
     using pointer           = value_type*;
 
+    friend class Vector;
+
     iterator() = default;
 
     iterator(const Vector* seq, size_t index);
@@ -30,11 +32,17 @@ public:
     bool operator==(const iterator& o) const;
     bool operator!=(const iterator& o) const;
 
-    int idx() const { return mIndex; }
+    int idx() const { return mValue - mComplementIndex; }
 
   private:
-    const Vector* mSeq      = nullptr;
-    int mIndex              = 0;
+    iterator(const Vector* seq, value_type val, size_t skipInd)
+        : mSeq{seq}, mValue{val}, mComplementIndex{skipInd}
+    {
+    }
+
+  private:
+    const Vector* mSeq = nullptr;
+    // int mIndex              = 0;
     value_type mValue       = 0;
     size_t mComplementIndex = 0;
   };
@@ -45,11 +53,16 @@ private:
 
 public:
   value_type operator[](size_t idx) const;
-  inline size_t lower_bound(value_type value) const { return count_sequence_lt(value); }
-  inline size_t upper_bound(value_type value) const { return count_sequence_lt(value + 1); }
   void add_skip(value_type n);
 
   iterator it_at(size_t idx) const { return iterator{this, idx}; }
+  iterator lower_bound(value_type value) const
+  {
+    size_t skipInd = count_complement_lt(value);
+    return iterator{this, value, skipInd};
+  }
+  // since sequence is increasing
+  iterator upper_bound(value_type value) const { return lower_bound(value + 1); }
 
 private:
   std::vector<value_type> mComplement{};

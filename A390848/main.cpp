@@ -3,7 +3,6 @@
 #include <cassert>
 #include <cstdint>
 #include <utils/LogInt.h>
-#include <vector>
 
 constexpr uint32_t CacheLim = 2e9;
 
@@ -21,7 +20,7 @@ int main()
 {
   utils::timeit([]()
   {
-    A390848<100'000'000> e{};
+    A390848<101'000'000> e{};
     e.get_sequence_until_N();
     // < 4 hours
   });

@@ -63,11 +63,16 @@ public:
   // TODO, Rework this to receive iterator / actual number. index is bad.
   bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
+    return product_is_lower_bound(seq.it_at(startInd), endInd, targetProduct);
+  }
+
+  bool product_is_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
+  {
     { // size-wise
       LogInt target    = targetProduct;
       LogInt candidate = 1;
 
-      for (auto it = seq.it_at(startInd); it.idx() < endInd; ++it)
+      for (auto it = startIt; it.idx() < endInd; ++it)
       {
         candidate *= *it;
         if (target.surely_lt(candidate))
@@ -79,7 +84,7 @@ public:
     }
     { // divisibility-wise
       Int candidate{1};
-      for (auto it = seq.it_at(startInd); it.idx() < endInd; ++it)
+      for (auto it = startIt; it.idx() < endInd; ++it)
       {
         candidate *= toInteger(*it);
         if (!targetProduct.is_divisible_by(candidate))
@@ -102,9 +107,9 @@ public:
       if (m >= p) continue;
 
       // if multplicity of p is m, we at least need p, .., m * p
-      auto startInd = seq.lower_bound(p);
-      auto endInd   = seq.upper_bound(m * p);
-      if (!product_is_lower_bound(startInd, endInd, targetProduct))
+      const Vector::iterator startIt = seq.lower_bound(p);
+      const size_t endInd            = seq.upper_bound(m * p).idx();
+      if (!product_is_lower_bound(startIt, endInd, targetProduct))
       {
         stats.opt1++;
         return true;
@@ -117,7 +122,7 @@ public:
   {
     const auto& factors            = targetProduct.factors();
     const uint64_t largestPrime    = factors.back().first;
-    const size_t largestPrimeIndex = seq.lower_bound(largestPrime);
+    const size_t largestPrimeIndex = seq.lower_bound(largestPrime).idx();
 
     if (factors.size() == 1) return false;
 
@@ -130,8 +135,8 @@ public:
       endBackward          = std::min(endBackward, largestPrime - (largestPrime % nextPrime));
     }
 
-    size_t indForward  = seq.upper_bound(endForward);
-    size_t indBackward = seq.lower_bound(endBackward);
+    size_t indForward  = seq.upper_bound(endForward).idx();
+    size_t indBackward = seq.lower_bound(endBackward).idx();
 
     bool failedForward  = !product_is_lower_bound(largestPrimeIndex, indForward, targetProduct);
     bool failedBackward = !product_is_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct);
@@ -153,7 +158,7 @@ public:
     const auto& factors   = targetProduct.factors();
 
     const auto largestPrime        = factors.back().first;
-    const size_t largestPrimeIndex = seq.lower_bound(largestPrime);
+    const size_t largestPrimeIndex = seq.lower_bound(largestPrime).idx();
 
     if (largestPrimeIndex < minimumTerms) return false;
 

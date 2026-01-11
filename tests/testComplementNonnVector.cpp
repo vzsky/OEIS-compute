@@ -63,14 +63,14 @@ TEST(ComplementNonnVectorTest, BinarySearch)
 
   const auto checkLowerbound = [&](uint64_t num)
   {
-    auto lb = c.lower_bound(num);
+    auto lb = c.lower_bound(num).idx();
     EXPECT_GE(c[lb], num);
     if (lb != 0) EXPECT_LT(c[lb - 1], num);
   };
 
   const auto checkUpperbound = [&](uint64_t num)
   {
-    auto ub = c.upper_bound(num);
+    auto ub = c.upper_bound(num).idx();
     EXPECT_GT(c[ub], num);
     if (ub != 0) EXPECT_LE(c[ub - 1], num);
   };
@@ -94,14 +94,19 @@ protected:
 
 TEST_F(ComplementNonnVectorIteratorTest, ConstructFromIndex)
 {
-  Vector::iterator it(&v, 0);
-  EXPECT_EQ(*it, 0);
-
-  Vector::iterator it2(&v, 2);
-  EXPECT_EQ(*it2, 3);
-
-  Vector::iterator it3(&v, 4);
-  EXPECT_EQ(*it3, 6);
+  const auto test = [&](int i, int j)
+  {
+    Vector::iterator it(&v, i);
+    EXPECT_EQ(*it, j);
+    EXPECT_EQ(*it, v[it.idx()]);
+  };
+  test(0, 0);
+  test(1, 1);
+  test(2, 3);
+  test(3, 4);
+  test(4, 6);
+  test(5, 8);
+  test(6, 9);
 }
 
 TEST_F(ComplementNonnVectorIteratorTest, ForwardIterationSkipsComplement)
