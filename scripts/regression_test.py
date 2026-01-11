@@ -38,11 +38,8 @@ for current_bench in current['benchmarks']:
     if change_pct > REGRESSION_THRESHOLD:
         status = "🔴 REGRESSION"
         found_regression = True
-        need_human = True;
     elif change_pct < -REGRESSION_THRESHOLD:
         status = "🟢 IMPROVEMENT"
-        if change_pct < -1.5 * REGRESSION_THRESHOLD:
-            need_human = True;
     else:
         status = "⚪ NEUTRAL"
         
@@ -51,7 +48,7 @@ for current_bench in current['benchmarks']:
     print(f"  Current:  {current_time:.2f} ns")
     print(f"  Change:   {change_pct:+.2f}%\n")
 
-if need_human :
+if found_regression :
     print("NEED HUMAN")
 
 # Exit with error if regression found

@@ -22,8 +22,6 @@ for bench in $BINARIES; do
   check=$("./scripts/regression_test.py" "$BASELINE_FILE" "$CURRENT_FILE")
 
   # Check if NEED HUMAN appears
-  echo "$check"
-  $check | grep "NEED HUMAN"
   if echo "$check" | grep -q "NEED HUMAN"; then
     echo "> NEED HUMAN to inspect $name"
     status=1

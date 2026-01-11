@@ -33,13 +33,13 @@ jobs:
         run: |
           echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
-      - name: Run benchmark
+      - name: Generate benchmarks
         if: contains(env.COMMIT_MESSAGE, 'generate baseline')
         run: |
           ./scripts/ci_make_baseline.sh
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add benchmarks/*.json
+          git add benchmark/*.json
           git commit -m "Update benchmark baseline"
           git push
         env:
