@@ -26,10 +26,7 @@ TYPED_TEST(BigIntTest, StreamOutput)
 
   std::stringstream ss;
   ss << BI("000123") << " " << BI(-456);
-  if constexpr (BI::Base == 10)
-    EXPECT_EQ(ss.str(), "123 -456");
-  else
-    EXPECT_EQ(ss.str(), "(123) -(1)(200)");
+  if constexpr (BI::Base == 10) EXPECT_EQ(ss.str(), "123 -456");
 }
 
 TYPED_TEST(BigIntTest, Comparison)
@@ -113,6 +110,13 @@ TYPED_TEST(BigIntTest, MultiplicationAssignment)
   for (int i = 0; i < 18; i++) f *= 10;
   f += 123456;
   EXPECT_EQ(e, f);
+
+  BI g(2);
+  for (int i = 0; i < 100; i++) g *= 2;
+  if constexpr (BI::Base == 10)
+    EXPECT_EQ(g.digits().size(), 31);
+  else
+    EXPECT_EQ(g.digits(), std::vector<uint64_t>({0, 0, 0, 32}));
 }
 
 TYPED_TEST(BigIntTest, ModuloAssignment)

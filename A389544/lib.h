@@ -41,6 +41,25 @@ private:
     seqSize++;
   }
 
+  void make_conseccache()
+  {
+    uint64_t prod = 1;
+    auto l        = seq.it_at(0);
+
+    for (auto r = seq.it_at(0); r.idx() < seqSize; ++r)
+    {
+      prod *= *r;
+
+      while (l != r && prod >= CacheLim)
+      {
+        prod /= *l;
+        ++l;
+      }
+
+      consecCache.insert(prod);
+    }
+  }
+
 public:
   A389544()
   {
@@ -160,6 +179,9 @@ public:
     if (product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
       return false;
 
+    if (product_is_lower_bound(largestPrimeIndex, largestPrimeIndex + minimumTerms, targetProduct))
+      return false;
+
     stats.opt3++;
     return true;
   }
@@ -246,6 +268,14 @@ public:
       }
       try_add_number(n);
     }
+  }
+
+  void read_skipped(const std::vector<uint64_t> skipped)
+  {
+    for (auto n : skipped) seq.add_skip(n);
+    seqSize = skipped.back() + 1 - skipped.size();
+    make_conseccache();
+    std::cout << "read skipped" << std::endl;
   }
 
   bool is_interesting(uint64_t skippedElement) const

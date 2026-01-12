@@ -6,6 +6,8 @@
 
 template <size_t N> class Prime
 {
+  static_assert(N > 2);
+
 public:
   Prime();
 
@@ -27,25 +29,17 @@ template <size_t N> Prime<N>::Prime()
   for (size_t i = 0; i <= N; ++i) mLowestPrimeDiv[i] = i;
 
   for (size_t i = 2; i * i <= N; ++i)
-  {
     if (mLowestPrimeDiv[i] == i)
-    {
       for (size_t j = i * i; j <= N; j += i)
-      {
         if (mLowestPrimeDiv[j] == j) mLowestPrimeDiv[j] = i;
-      }
-    }
-  }
 
   for (size_t i = 2; i <= N; i++)
-  {
     if (mLowestPrimeDiv[i] == i) mAllPrimes.push_back(i);
-  }
 }
 
 template <size_t N> bool Prime<N>::is_prime(size_t n) const
 {
-  if (n == 0) throw std::invalid_argument("is prime: n out of range");
+  if (n == 0) throw std::invalid_argument("is prime: can't factor zero");
   if (n == 1) return false;
   if (n <= N) return mLowestPrimeDiv[n] == n;
 
@@ -90,11 +84,11 @@ template <size_t N> template <typename EmitCB> void Prime<N>::emit_factors(size_
 
   for (auto p : mAllPrimes) checkDivisor(n, p);
 
-  size_t next = mAllPrimes.back() + 1;
+  size_t next = mAllPrimes.back() + 2;
   while (next * next <= n)
   {
     checkDivisor(n, next);
-    next++;
+    next += 2;
   }
 
   if (n != 1) callback(n);

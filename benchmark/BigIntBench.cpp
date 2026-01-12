@@ -1,12 +1,12 @@
 #include <benchmark/benchmark.h>
 #include <utils/BigInt.h>
 
-using TestInt = DecBigInt;
+using TestInt = DenseBigInt;
 
 static TestInt make_big(int n)
 {
   TestInt x(1);
-  for (int i = 1; i <= n; ++i) x = x * TestInt(i + 1);
+  for (int i = 1; i <= n; ++i) x *= TestInt(i + 1);
   return x;
 }
 
@@ -91,8 +91,5 @@ BENCHMARK(BM_add)->Range(10, 1000);
 BENCHMARK(BM_sub)->Range(10, 1000);
 BENCHMARK(BM_mul)->Range(10, 1000);
 BENCHMARK(BM_cmp)->Range(10, 1000);
-
-BENCHMARK(BM_copy_ctor)->Range(10, 2000);
-BENCHMARK(BM_move_ctor)->Range(10, 2000);
 
 BENCHMARK_MAIN();

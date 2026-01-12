@@ -7,11 +7,11 @@
 #include <string>
 #include <vector>
 
-template <uint16_t B> class BigInt
+template <typename DigitT, DigitT B> class BigInt
 {
 public:
-  using Digit                    = uint16_t;
-  static constexpr uint16_t Base = B;
+  using Digit                 = DigitT;
+  static constexpr Digit Base = B;
 
 private:
   void normalize()
@@ -20,7 +20,7 @@ private:
     if (mDigits.size() == 1 && mDigits[0] == 0) mIsNeg = false;
   }
 
-  // compare the underlying without sign change
+  // compare the underlying without sign: sgn(abs(a) - abs(b))
   static int abs_cmp(const BigInt& a, const BigInt& b)
   {
     if (a.mDigits.size() != b.mDigits.size()) return a.mDigits.size() < b.mDigits.size() ? -1 : 1;
@@ -61,6 +61,36 @@ private:
       mDigits[i] = cur;
     }
     normalize();
+  }
+
+  // this += (-1*negate_o) o;
+  void signed_add(const BigInt& o, bool negate_o)
+  {
+    bool oNeg = negate_o ? !o.mIsNeg : o.mIsNeg;
+
+    if (mIsNeg == oNeg)
+    {
+      abs_add(o);
+      return;
+    }
+
+    int c = abs_cmp(*this, o);
+    if (c == 0)
+    {
+      mDigits = {0};
+      mIsNeg  = false;
+    }
+    else if (c > 0)
+    {
+      abs_sub(o);
+    }
+    else
+    {
+      BigInt tmp = o;
+      tmp.abs_sub(*this);
+      *this  = tmp;
+      mIsNeg = oNeg;
+    }
   }
 
 public:
@@ -113,31 +143,13 @@ public:
 
   BigInt& operator+=(const BigInt& o)
   {
-    if (mIsNeg == o.mIsNeg)
-      abs_add(o);
-    else
-    {
-      int c = abs_cmp(*this, o);
-      if (c == 0)
-      {
-        mDigits = {0};
-        mIsNeg  = false;
-      }
-      else if (c > 0)
-        abs_sub(o);
-      else
-      {
-        BigInt tmp = o;
-        tmp.abs_sub(*this);
-        *this = tmp;
-      }
-    }
+    signed_add(o, false);
     return *this;
   }
 
   BigInt& operator-=(const BigInt& o)
   {
-    *this += -o;
+    signed_add(o, true);
     return *this;
   }
 
@@ -225,5 +237,5 @@ private:
   std::vector<Digit> mDigits;
 };
 
-using DecBigInt   = BigInt<10>;
-using DenseBigInt = BigInt<256>;
+using DecBigInt   = BigInt<uint16_t, 10>;
+using DenseBigInt = BigInt<uint64_t, 1ull << 32>;
