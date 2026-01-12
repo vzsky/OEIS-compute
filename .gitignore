@@ -2,6 +2,7 @@ main
 log/*
 *.prof
 */log/*
+artifacts/*
 .DS_Store
 .cache/*
 build/*
