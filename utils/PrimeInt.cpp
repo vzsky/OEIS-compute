@@ -86,24 +86,18 @@ PrimeInt PrimeInt::operator/(const PrimeInt& other) const
 
 bool PrimeInt::is_divisible_by(const PrimeInt& other) const
 {
-  size_t i = 0, j = 0;
-  while (j < other.mFactors.size())
+  size_t j = 0;
+  for (size_t i = 0; i < mFactors.size(); i++)
   {
-    if (i == mFactors.size()) return false;
-
+    if (j == other.mFactors.size()) return true;
     if (mFactors[i].first > other.mFactors[j].first) return false;
-
-    if (mFactors[i].first < other.mFactors[j].first)
-      i++;
-
-    else
-    { // same prime
+    if (mFactors[i].first == other.mFactors[j].first)
+    {
       if (mFactors[i].second < other.mFactors[j].second) return false;
-      i++;
       j++;
     }
   }
-  return true;
+  return j == other.mFactors.size();
 }
 
 bool PrimeInt::operator==(const PrimeInt& other) const { return mFactors == other.mFactors; }

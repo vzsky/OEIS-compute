@@ -1,7 +1,7 @@
 #include <benchmark/benchmark.h>
 #include <utils/Prime.h>
 
-Prime<105000> p;
+Prime<5000> p;
 
 static void BM_is_prime_until(benchmark::State& state)
 {
@@ -24,7 +24,7 @@ static void BM_vector_factors_freq(benchmark::State& state)
   for (auto _ : state) benchmark::DoNotOptimize(p.vector_factors_freq(state.range(0)));
 }
 
-BENCHMARK(BM_is_prime_until)->Range(10, 1000);
+BENCHMARK(BM_is_prime_until)->Range(1 << 8, 1 << 12)->Arg(1 << 18);
 
 BENCHMARK(BM_factors)->Args({60, 360, 5040, 83160, 1 << 16})->Name("factor - Composite numbers");
 BENCHMARK(BM_factors_freq)->Args({60, 360, 5040, 83160, 1 << 16})->Name("factor_freq - Composite numbers");
@@ -32,10 +32,14 @@ BENCHMARK(BM_vector_factors_freq)
     ->Args({60, 360, 5040, 83160, 1 << 16})
     ->Name("vector_factors_freq - Composite numbers");
 
-BENCHMARK(BM_factors)->Args({2347, 4567, 7919, 99991, 104729})->Name("factors - Primes");
-BENCHMARK(BM_factors_freq)->Args({2347, 4567, 7919, 99991, 104729})->Name("factors_freq - Primes");
+BENCHMARK(BM_factors)
+    ->Args({2347, 4567, 7919, 99991, 104729, 918234121, (1llu << 20) * 7919 * 7919})
+    ->Name("factors - Primes");
+BENCHMARK(BM_factors_freq)
+    ->Args({2347, 4567, 7919, 99991, 104729, 918234121, (1llu << 20) * 7919 * 7919})
+    ->Name("factors_freq - Primes");
 BENCHMARK(BM_vector_factors_freq)
-    ->Args({2347, 4567, 7919, 99991, 104729})
+    ->Args({2347, 4567, 7919, 99991, 104729, 918234121, (1llu << 20) * 7919 * 7919})
     ->Name("vector_factors_freq - Primes");
 
 BENCHMARK_MAIN();

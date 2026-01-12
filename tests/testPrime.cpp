@@ -65,6 +65,22 @@ TEST(PrimeTest, WorksForOutOfRange)
   ASSERT_EQ(pf.factors(11 * 17), std::vector<prime>({11, 17}));
 }
 
+TEST(PrimeTest, Factors)
+{
+  // give me 5 large examples, say millions ++
+  Prime<1000> pf;
+
+  ASSERT_EQ(pf.factors(1000000007ULL), std::vector<size_t>{1000000007ULL});
+  ASSERT_EQ(pf.factors(1000000000000ULL),
+            (std::vector<size_t>{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}));
+  ASSERT_EQ(pf.factors(11ull * 9901 * 99991), (std::vector<size_t>{11, 9901, 99991}));
+  ASSERT_EQ(pf.factors(1099511627776ULL),
+            (std::vector<size_t>{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}));
+  ASSERT_EQ(pf.factors(2ull * 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 5 * 5),
+            (std::vector<size_t>{2, 3, 5, 5, 5, 7, 11, 13, 17, 19, 23, 29, 31}));
+}
+
 TEST(PrimeTest, IsPrime)
 {
   Prime<100> pf;
