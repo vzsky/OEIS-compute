@@ -29,12 +29,16 @@ jobs:
           ctest --test-dir build --output-on-failure
 
       - name: Run benchmarks
-        run: |
-          ./scripts/ci_regression.sh
-        working-directory: ${{ github.workspace }}
+        id: bench
+        run: ./scripts/ci_regression.sh
+        continue-on-error: true
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-${{ github.sha }}
           path: /tmp/*.json
+
+      - name: fail if regression found
+        if: steps.bench.outcome == 'failure'
+        run: exit 1
