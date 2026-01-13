@@ -28,8 +28,7 @@ int main()
   utils::timeit([]()
   {
     A390848<101'000'000> e{};
-    e.read_skipped(utils::read_bfile<uint64_t>("./b390848.txt"));
+    // e.read_skipped(utils::read_bfile<uint64_t>("./b390848.txt"));
     e.get_sequence_until_N();
-    // < 4 hours
   });
 }
