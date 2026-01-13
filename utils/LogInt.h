@@ -12,8 +12,10 @@ public:
   {
     if (n == 0) throw std::invalid_argument("LogInt not support 0");
     double l = std::log2(n);
-    mLower   = static_cast<uint64_t>(std::floor(l));
-    mUpper   = static_cast<uint64_t>(std::ceil(l));
+    mLower   = l;
+    mUpper   = l;
+    // mLower   = static_cast<uint64_t>(std::floor(l));
+    // mUpper   = static_cast<uint64_t>(std::ceil(l));
   }
 
   LogInt(PrimeInt pi)
@@ -23,8 +25,8 @@ public:
     {
       logSum += m * std::log2(p);
     }
-    mLower = static_cast<uint64_t>(std::floor(logSum));
-    mUpper = static_cast<uint64_t>(std::ceil(logSum));
+    mLower = logSum;
+    mUpper = logSum;
   }
 
   LogInt& operator*=(const LogInt& o)
@@ -49,6 +51,6 @@ public:
   }
 
 protected:
-  uint64_t mLower = 0;
-  uint64_t mUpper = 0;
+  long double mLower = 0;
+  long double mUpper = 0;
 };

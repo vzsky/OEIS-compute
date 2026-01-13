@@ -14,6 +14,7 @@ static void BM_until_10k(benchmark::State& state)
     A390848<10'000> e{};
     e.get_sequence_until_N();
     benchmark::DoNotOptimize(e);
+    // e.stats.print();
   }
 }
 
@@ -24,6 +25,7 @@ static void BM_until_100k(benchmark::State& state)
     A390848<100'000> e{};
     e.get_sequence_until_N();
     benchmark::DoNotOptimize(e);
+    // e.stats.print();
   }
 }
 
