@@ -79,38 +79,36 @@ public:
     return consecCache.contains(targetProduct);
   }
 
-  bool product_is_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
+  bool product_is_size_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
-    return product_is_lower_bound(seq.it_at(startInd), endInd, targetProduct);
+    return product_is_size_lower_bound(seq.it_at(startInd), endInd, targetProduct);
   }
 
-  bool product_is_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
+  bool product_is_div_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
   {
-    { // divisibility-wise
-      Int candidate{1};
-      for (auto it = startIt; it.idx() < endInd; ++it)
-      {
-        candidate *= toInteger(*it);
-        if (!targetProduct.is_divisible_by(candidate))
-        {
-          stats.div_wise++;
-          return false;
-        }
-      }
-    }
-    { // size-wise
-      LogInt target    = targetProduct;
-      LogInt candidate = 1;
+    return product_is_div_lower_bound(seq.it_at(startInd), endInd, targetProduct);
+  }
 
-      for (auto it = startIt; it.idx() < endInd; ++it)
-      {
-        candidate *= *it;
-        if (target.surely_lt(candidate))
-        {
-          stats.size_wise++;
-          return false;
-        }
-      }
+  bool product_is_div_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
+  {
+    Int candidate{1};
+    for (auto it = startIt; it.idx() < endInd; ++it)
+    {
+      candidate *= toInteger(*it);
+      if (!targetProduct.is_divisible_by(candidate)) return false;
+    }
+    return true;
+  }
+
+  bool product_is_size_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
+  {
+    LogInt target    = targetProduct;
+    LogInt candidate = 1;
+
+    for (auto it = startIt; it.idx() < endInd; ++it)
+    {
+      candidate *= *it;
+      if (target.surely_lt(candidate)) return false;
     }
     return true;
   }
@@ -127,9 +125,14 @@ public:
       // if multplicity of p is m, we at least need p, .., m * p
       const Vector::iterator startIt = seq.lower_bound(p);
       const size_t endInd            = seq.upper_bound(m * p).idx();
-      if (!product_is_lower_bound(startIt, endInd, targetProduct))
+      if (!product_is_size_lower_bound(startIt, endInd, targetProduct))
       {
-        stats.opt1++;
+        stats.opt1_size++;
+        return true;
+      }
+      if (!product_is_div_lower_bound(startIt, endInd, targetProduct))
+      {
+        stats.opt1_div++;
         return true;
       }
     }
@@ -156,10 +159,21 @@ public:
     size_t indForward  = seq.upper_bound(endForward).idx();
     size_t indBackward = seq.lower_bound(endBackward).idx();
 
-    if (product_is_lower_bound(largestPrimeIndex, indForward, targetProduct)) return false;
-    if (product_is_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct)) return false;
+    bool forwardSizeBound  = product_is_size_lower_bound(largestPrimeIndex, indForward, targetProduct);
+    bool backwardSizeBound = product_is_size_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct);
 
-    stats.opt2++;
+    if (!forwardSizeBound && !backwardSizeBound)
+    {
+      stats.opt2_size++;
+      return true;
+    }
+
+    bool forwardDivBound = product_is_div_lower_bound(largestPrimeIndex, indForward, targetProduct);
+    if (forwardDivBound) return false;
+    bool backwardDivBound = product_is_div_lower_bound(indBackward, largestPrimeIndex + 1, targetProduct);
+    if (backwardDivBound) return false;
+
+    stats.opt2_div++;
     return true;
   }
 
@@ -176,14 +190,22 @@ public:
 
     if (largestPrimeIndex < minimumTerms) return false;
 
-    if (product_is_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1, targetProduct))
-      return false;
+    if (!product_is_size_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1,
+                                     targetProduct))
+    {
+      stats.opt3_size++;
+      return true;
+    }
 
-    if (product_is_lower_bound(largestPrimeIndex, largestPrimeIndex + minimumTerms, targetProduct))
-      return false;
+    if (!product_is_div_lower_bound(largestPrimeIndex, largestPrimeIndex + minimumTerms, targetProduct) &&
+        !product_is_div_lower_bound(largestPrimeIndex - minimumTerms + 1, largestPrimeIndex + 1,
+                                    targetProduct))
+    {
+      stats.opt3_div++;
+      return true;
+    }
 
-    stats.opt3++;
-    return true;
+    return false;
   }
 
   bool duplicate_product_impossible(const Int& targetProduct, const uint64_t multipliedTerms) const
@@ -295,25 +317,25 @@ public:
 
   mutable struct Stats
   {
-    uint64_t loop   = 0;
-    uint64_t cached = 0;
-    uint64_t opt1   = 0;
-    uint64_t opt2   = 0;
-    uint64_t opt3   = 0;
-
-    uint64_t size_wise = 0;
-    uint64_t div_wise  = 0;
+    uint64_t loop      = 0;
+    uint64_t cached    = 0;
+    uint64_t opt1_size = 0;
+    uint64_t opt1_div  = 0;
+    uint64_t opt2_size = 0;
+    uint64_t opt2_div  = 0;
+    uint64_t opt3_size = 0;
+    uint64_t opt3_div  = 0;
 
     void print() const
     {
       std::cout << "Cached " << cached << std::endl;
       std::cout << "Loop " << loop << std::endl;
-      std::cout << "Opt1 " << opt1 << std::endl;
-      std::cout << "Opt2 " << opt2 << std::endl;
-      std::cout << "Opt3 " << opt3 << std::endl;
-      std::cout << "--------------\n";
-      std::cout << "Size " << size_wise << std::endl;
-      std::cout << "Div " << div_wise << std::endl;
+      std::cout << "Opt1 size " << opt1_size << std::endl;
+      std::cout << "Opt1 div " << opt1_div << std::endl;
+      std::cout << "Opt2 size " << opt2_size << std::endl;
+      std::cout << "Opt2 div " << opt2_div << std::endl;
+      std::cout << "Opt3 size " << opt3_size << std::endl;
+      std::cout << "Opt3 div " << opt3_div << std::endl;
     }
   } stats;
 };
