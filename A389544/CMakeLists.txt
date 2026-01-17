@@ -1,7 +1,6 @@
 set(DEPENDENCIES
   utils
   primeint
-  logint
   complementnonnvector
   prime
 )

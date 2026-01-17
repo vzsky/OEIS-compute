@@ -2,10 +2,10 @@ set(TEST_MODULES
   prime                     testPrime.cpp
   bigint                    testBigInt.cpp
   modint                    testModInt.cpp
+  fraction                  testFraction.cpp
   moremath                  testMoreMath.cpp
   treap                     testTreap.cpp
   primeint                  testPrimeInt.cpp
-  logint                    testLogInt.cpp
   complementnonnvector      testComplementNonnVector.cpp
 )
 

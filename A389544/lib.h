@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <set>
 #include <utils/ComplementNonnVector.h>
-#include <utils/LogInt.h>
 #include <utils/ModInt.h>
 #include <utils/Prime.h>
 #include <utils/PrimeInt.h>
