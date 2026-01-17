@@ -8,3 +8,4 @@ artifacts/*
 build/*
 benchmark/local_baseline/*
 compile_commands.json
+reading_list

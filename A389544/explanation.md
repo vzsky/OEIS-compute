@@ -23,7 +23,8 @@ Now, let $$T := k \cdot \prod_{i=z}^n a(i)$$ be the target and focusing on findi
 Let's also factor $T$ as $$T = p_1^{m_1} \cdots p_s^{m_s}$$
 Write $\pi(x, y) := \prod_{i=x}^y a(i)$ and write $a^{-1}(k)$ as the first index $i$ such that $a(i) \ge k$.
 
-I will try lower bound the solution and most of the times, the lower bound will force it to have no solution. When I say $\pi(x, y)$ must be at least $S$ we can check both if $\pi(x, y) > S$ and $S | \pi(x, y)$. 
+I will try lower bound the solution and most of the times, the lower bound will force it to have no solution. 
+When I say $\pi(x, y)$ must be at least $S$ we *can* check both if $\pi(x, y) > S$ and $S | \pi(x, y)$.
 
 ### Optimization 1
 Assume $p_i > m_i$.
@@ -43,7 +44,22 @@ If $T$ is a product of $t$ terms ($t = n - z + 1$), then we know that the soluti
 
 This should just be merged with Optimization 2
 
-# Further ideas: 
-- the bottleneck seems to be memory now going pass 10^7
-    - hold skipped instead of sequence should help a lot
+# Results
+Running 3 first then 1 and 2: 
+```
+==== Progress: 101000000 / 101000000
+Cached 95220256
+Loop 0
+Opt1 size 0
+Opt1 div 310
+Opt2 size 0
+Opt2 div 121
+Opt3 size 0
+Opt3 div 1369088589
+Time elapsed: 19797.266s
+```
 
+I got this result by bounding only divisibility, not size.
+
+# Further ideas
+Now we don't care about the loop, how to optimize optimization 3 is the key to go bigger. Wouldn't be easy to make it pass 10^9 anyway 
