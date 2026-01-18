@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <gtest/gtest.h>
+#include <numeric>
 #include <utils/Fraction.h>
 
 using Int = uint64_t;
@@ -30,6 +31,7 @@ TEST(FractionTest, Multiplication)
   Fraction<Int> b(3, 4);
 
   auto c = a * b;
+  c.normalize([](const Int& a, const Int& b) { return std::gcd(a, b); });
 
   EXPECT_EQ(c, Fraction<Int>(1, 2));
 }

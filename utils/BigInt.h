@@ -17,7 +17,7 @@ private:
   void normalize()
   {
     while (mDigits.size() > 1 && mDigits.back() == 0) mDigits.pop_back();
-    if (mDigits.size() == 1 && mDigits[0] == 0) mIsNeg = false;
+    if (is_zero()) mIsNeg = false;
   }
 
   // compare the underlying without sign: sgn(abs(a) - abs(b))
@@ -93,10 +93,57 @@ private:
     }
   }
 
+  // returns remainder
+  BigInt abs_div(const BigInt& o)
+  {
+    BigInt rem;
+    rem.mDigits = {0};
+
+    for (int i = int(mDigits.size()) - 1; i >= 0; --i)
+    {
+      rem.mDigits.insert(rem.mDigits.begin(), mDigits[i]);
+      rem.normalize();
+
+      Digit lo = 0, hi = Base - 1;
+      Digit x = 0;
+
+      while (lo <= hi)
+      {
+        Digit mid = lo + (hi - lo) / 2;
+        BigInt t  = o;
+        t *= BigInt(mid);
+
+        if (abs_cmp(rem, t) >= 0)
+        {
+          x  = mid;
+          lo = mid + 1;
+        }
+        else
+        {
+          if (mid == 0) break;
+          hi = mid - 1;
+        }
+      }
+
+      mDigits[i] = x;
+
+      if (x != 0)
+      {
+        BigInt t = o;
+        t *= BigInt(x);
+        rem.abs_sub(t);
+      }
+    }
+
+    normalize();
+    rem.normalize();
+    return rem;
+  }
+
 public:
   BigInt() { mDigits = {0}; }
 
-  BigInt(int v)
+  BigInt(int64_t v)
   {
     mIsNeg = v < 0;
     if (v < 0) v = -v;
@@ -125,6 +172,27 @@ public:
     }
     mIsNeg = !s.empty() && s[0] == '-';
   }
+
+  template <typename ODigitT, ODigitT OB> BigInt(const BigInt<ODigitT, OB>& other)
+  {
+    mIsNeg  = other.is_neg();
+    mDigits = {0};
+
+    BigInt<ODigitT, OB> factor(1);
+    for (size_t i = 0; i < other.digits().size(); ++i)
+    {
+      BigInt val(other.digits()[i]);
+      for (size_t j = 0; j < i; ++j) val *= OB;
+      *this += val;
+    }
+
+    normalize();
+  }
+
+  BigInt(const BigInt& other)                = default;
+  BigInt(BigInt&& other) noexcept            = default;
+  BigInt& operator=(const BigInt& other)     = default;
+  BigInt& operator=(BigInt&& other) noexcept = default;
 
   BigInt abs() const
   {
@@ -175,29 +243,45 @@ public:
     return *this;
   }
 
-  BigInt& operator%=(const BigInt& o)
+  BigInt& operator/=(const BigInt& o)
   {
-    while (mIsNeg) *this += o;
-    while (abs_cmp(*this, o) >= 0) abs_sub(o);
+    abs_div(o);
+    mIsNeg ^= o.mIsNeg;
+    normalize();
     return *this;
   }
 
-  BigInt operator+(const BigInt& o)
+  BigInt& operator%=(const BigInt& o)
+  {
+    bool neg   = mIsNeg;
+    BigInt rem = abs_div(o);
+    rem.mIsNeg = neg;
+    *this      = rem;
+    normalize();
+    return *this;
+  }
+
+  BigInt operator+(const BigInt& o) const
   {
     BigInt r = *this;
     return r += o;
   }
-  BigInt operator-(const BigInt& o)
+  BigInt operator-(const BigInt& o) const
   {
     BigInt r = *this;
     return r -= o;
   }
-  BigInt operator*(const BigInt& o)
+  BigInt operator*(const BigInt& o) const
   {
     BigInt r = *this;
     return r *= o;
   }
-  BigInt operator%(const BigInt& o)
+  BigInt operator/(const BigInt& o) const
+  {
+    BigInt r = *this;
+    return r /= o;
+  }
+  BigInt operator%(const BigInt& o) const
   {
     BigInt r = *this;
     return r %= o;
@@ -230,12 +314,34 @@ public:
     return os;
   }
 
-  const std::vector<Digit> digits() const { return mDigits; }
+  const std::vector<Digit>& digits() const { return mDigits; }
+  bool is_neg() const { return mIsNeg; }
+  const bool is_zero() const { return mDigits.size() == 1 && mDigits[0] == 0; }
 
 private:
   bool mIsNeg{false};
-  std::vector<Digit> mDigits;
+  std::vector<Digit> mDigits; // LSB first
 };
 
+namespace math
+{
+
+template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, uint64_t exp)
+{
+  BigInt<DigitT, B> result(1);
+  BigInt<DigitT, B> base = a;
+
+  while (exp > 0)
+  {
+    if (exp & 1) result *= base;
+    base *= base;
+    exp >>= 1;
+  }
+
+  return result;
+}
+
+} // namespace math
+
 using DecBigInt   = BigInt<uint16_t, 10>;
-using DenseBigInt = BigInt<uint64_t, 1ull << 32>;
+using DenseBigInt = BigInt<uint64_t, 1ull << 31>;

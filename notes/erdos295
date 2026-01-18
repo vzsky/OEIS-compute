@@ -1,0 +1,16 @@
+Denominators used: 2 3 6
+3 <= a(2) <= 3
+
+Denominators used: 3 4 5 6 20
+5 <= a(3) <= 5
+
+Denominators used: 4 5 6 7 8 9 230 57960
+Denominators used: 4 5 6 9 10 12 20 40
+7 <= a(4) <= 8 -> a(4) = 8
+
+Denominators used: 5 6 7 8 9 10 11 16 1047 1138151 3145940416080
+Denominators used: 5 6 8 9 10 11 12 15 18 1320
+8 <= a(5) <= 10
+
+Denominators used: 6 7 8 9 10 11 12 13 14 32 1920 5765760
+10 <= a(6) <= 12
