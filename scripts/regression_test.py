@@ -17,7 +17,7 @@ REGRESSION_THRESHOLD = 5.0
 found_regression = False
 need_human = False;
 
-print("Performance Comparison Report")
+print(f"Performance Comparison Report: {sys.argv[1]}")
 print("=============================\n")
 
 # Compare each benchmark
@@ -28,6 +28,7 @@ for current_bench in current['benchmarks']:
     baseline_bench = next((b for b in baseline['benchmarks'] if b['name'] == name), None)
     if not baseline_bench:
         print(f"⚠️  New benchmark: {name}")
+        found_regression = True;
         continue
         
     # Calculate change %
@@ -49,7 +50,7 @@ for current_bench in current['benchmarks']:
     print(f"  Change:   {change_pct:+.2f}%\n")
 
 if found_regression :
-    print("NEED HUMAN")
+    print("NEED HUMAN to inspect")
 
 # Exit with error if regression found
 sys.exit(1 if found_regression else 0)
