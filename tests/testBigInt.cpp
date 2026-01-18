@@ -80,8 +80,9 @@ TYPED_TEST(BigIntTest, Arithmetic)
     }
   }
 
-  std::vector<int> numerators   = {123, -103, 12345, -12345, 42, 5510};
-  std::vector<int> denominators = {5, 3, 2, 105, 3429};
+  std::vector<int64_t> numerators   = {123, -103, 12345,      -12345,   52352333,
+                                       42,  5510, 2391273124, 12318593, 126668449623};
+  std::vector<int64_t> denominators = {5, 3, 2, 105, 3429, 2348242, -123123, -34, -789};
   for (auto n : numerators)
   {
     for (auto d : denominators)

@@ -3,7 +3,7 @@
 #include <utils/Fraction.h>
 #include <utils/Utils.h>
 
-constexpr size_t DIGITS = 100;
+constexpr size_t DIGITS = 300;
 
 Fraction<DenseBigInt> get_answer()
 {
@@ -40,11 +40,17 @@ int main()
 
     std::cout << mantissa << std::endl;
 
-    // auto answer = mantissa.digits();
-    // std::reverse(answer.begin(), answer.end());
-    // auto result = utils::read_bfile<uint16_t>("./b.txt");
-    // result.resize(std::min(result.size(), DIGITS));
-    // answer.resize(result.size());
-    // assert(result == answer);
+    auto answer = mantissa.digits();
+    std::reverse(answer.begin(), answer.end());
+    auto result = utils::read_bfile<uint16_t>("./b.txt");
+    result.resize(std::min(result.size(), DIGITS));
+    answer.resize(result.size());
+
+    for (int i = 0; i <= 78; i++)
+    {
+      std::cout << answer[i] << ' ' << result[i] << std::endl;
+    }
+
+    assert(result == answer);
   });
 }
