@@ -15,7 +15,6 @@ with open(sys.argv[2], 'r') as f:
 # Set regression threshold (%)
 REGRESSION_THRESHOLD = 5.0
 found_regression = False
-need_human = False;
 
 print(f"Performance Comparison Report: {sys.argv[1]}")
 print("=============================\n")

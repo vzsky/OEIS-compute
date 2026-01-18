@@ -1,16 +1,16 @@
 {
   "context": {
-    "date": "2026-01-13T21:08:49+00:00",
-    "host_name": "runnervmi13qx",
+    "date": "2026-01-18T14:30:31+00:00",
+    "host_name": "runnervmmtnos",
     "executable": "build/benchmark/primeint_bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 3517,
+    "mhz_per_cpu": 3270,
     "cpu_scaling_enabled": false,
     "caches": [
       {
         "type": "Data",
         "level": 1,
-        "size": 49152,
+        "size": 32768,
         "num_sharing": 2
       },
       {
@@ -22,17 +22,17 @@
       {
         "type": "Unified",
         "level": 2,
-        "size": 1310720,
+        "size": 524288,
         "num_sharing": 2
       },
       {
         "type": "Unified",
         "level": 3,
-        "size": 50331648,
+        "size": 33554432,
         "num_sharing": 4
       }
     ],
-    "load_avg": [3.1167,1.41602,0.546875],
+    "load_avg": [3.0376,1.24707,0.461426],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -45,9 +45,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 8278,
-      "real_time": 8.4824005798501763e+04,
-      "cpu_time": 8.4817977772408791e+04,
+      "iterations": 7610,
+      "real_time": 9.3800583574243195e+04,
+      "cpu_time": 9.3796821156373189e+04,
       "time_unit": "ns"
     },
     {
@@ -59,9 +59,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 89100,
-      "real_time": 8.1751092143660853e+03,
-      "cpu_time": 8.1745571941638609e+03,
+      "iterations": 81605,
+      "real_time": 8.5585473439129946e+03,
+      "cpu_time": 8.5576831689234750e+03,
       "time_unit": "ns"
     },
     {
@@ -73,9 +73,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 117210,
-      "real_time": 5.9318658390920527e+03,
-      "cpu_time": 5.9318597048033444e+03,
+      "iterations": 91103,
+      "real_time": 7.6836907346635589e+03,
+      "cpu_time": 7.6829056781884256e+03,
       "time_unit": "ns"
     }
   ]
