@@ -1,10 +1,10 @@
 {
   "context": {
-    "date": "2026-01-18T14:30:04+00:00",
+    "date": "2026-01-18T20:41:17+00:00",
     "host_name": "runnervmmtnos",
     "executable": "build/benchmark/prime_bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 3243,
+    "mhz_per_cpu": 3240,
     "cpu_scaling_enabled": false,
     "caches": [
       {
@@ -32,7 +32,7 @@
         "num_sharing": 4
       }
     ],
-    "load_avg": [4.09424,1.26953,0.445312],
+    "load_avg": [4.51221,1.51855,0.547852],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -45,9 +45,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 4189137,
-      "real_time": 1.7133291773460604e+02,
-      "cpu_time": 1.7131035007926454e+02,
+      "iterations": 4189720,
+      "real_time": 1.6783442449614799e+02,
+      "cpu_time": 1.6782286358038246e+02,
       "time_unit": "ns"
     },
     {
@@ -59,9 +59,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 2145544,
-      "real_time": 3.2630141586470120e+02,
-      "cpu_time": 3.2624846239461880e+02,
+      "iterations": 2143763,
+      "real_time": 3.2608040907506779e+02,
+      "cpu_time": 3.2601652141584680e+02,
       "time_unit": "ns"
     },
     {
@@ -73,9 +73,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 273910,
-      "real_time": 2.5566304004965823e+03,
-      "cpu_time": 2.5560638238837591e+03,
+      "iterations": 274263,
+      "real_time": 2.5582825536073519e+03,
+      "cpu_time": 2.5575898280117985e+03,
       "time_unit": "ns"
     },
     {
@@ -88,8 +88,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 20,
-      "real_time": 3.5380140300000563e+07,
-      "cpu_time": 3.5371543600000009e+07,
+      "real_time": 3.5337648049998902e+07,
+      "cpu_time": 3.5332615800000027e+07,
       "time_unit": "ns"
     },
     {
@@ -101,9 +101,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 12868237,
-      "real_time": 5.4349227637007679e+01,
-      "cpu_time": 5.4335689418838044e+01,
+      "iterations": 12930121,
+      "real_time": 5.4191164645713712e+01,
+      "cpu_time": 5.4185892691955495e+01,
       "time_unit": "ns"
     },
     {
@@ -115,9 +115,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 9245621,
-      "real_time": 7.5812382640392059e+01,
-      "cpu_time": 7.5787402598484249e+01,
+      "iterations": 9232031,
+      "real_time": 7.5981268693745463e+01,
+      "cpu_time": 7.5966606481282398e+01,
       "time_unit": "ns"
     },
     {
@@ -129,9 +129,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 13394513,
-      "real_time": 5.2314260921616459e+01,
-      "cpu_time": 5.2311229979021981e+01,
+      "iterations": 13269219,
+      "real_time": 5.2464925177586771e+01,
+      "cpu_time": 5.2460311643059050e+01,
       "time_unit": "ns"
     },
     {
@@ -143,9 +143,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 39443118,
-      "real_time": 1.7760435698820260e+01,
-      "cpu_time": 1.7756216078049405e+01,
+      "iterations": 39476483,
+      "real_time": 1.7737446621068074e+01,
+      "cpu_time": 1.7735012462989673e+01,
       "time_unit": "ns"
     },
     {
@@ -157,9 +157,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 28850470,
-      "real_time": 2.4381770037021930e+01,
-      "cpu_time": 2.4378369711134667e+01,
+      "iterations": 28872646,
+      "real_time": 2.4253469079349063e+01,
+      "cpu_time": 2.4251975381819864e+01,
       "time_unit": "ns"
     },
     {
@@ -171,9 +171,9 @@
       "repetitions": 1,
       "repetition_index": 0,
       "threads": 1,
-      "iterations": 39389399,
-      "real_time": 1.7756088687720617e+01,
-      "cpu_time": 1.7754450835870831e+01,
+      "iterations": 39490977,
+      "real_time": 1.7737570939305428e+01,
+      "cpu_time": 1.7735777086497528e+01,
       "time_unit": "ns"
     }
   ]
