@@ -27,5 +27,5 @@ endforeach()
 
 # ExSeq test 
 add_executable(exseq_test testExSeq.cpp)
-target_link_libraries(exseq_test PRIVATE gtest_main utils A002326_lib A045345_lib)
+target_link_libraries(exseq_test PRIVATE gtest_main utils A002326_lib A045345_lib A331373_lib)
 add_test(NAME exseq_test COMMAND exseq_test --gtest_shuffle)

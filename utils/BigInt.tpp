@@ -6,7 +6,7 @@ template <typename DigitT, DigitT B> BigInt<DigitT, B>::BigInt() { mDigits = {0}
 template <typename DigitT, DigitT B> BigInt<DigitT, B>::BigInt(int64_t v)
 {
   mIsNeg = v < 0;
-  if (v < 0) v = -v;
+  if (mIsNeg) v = -v;
 
   if (v == 0)
   {
@@ -40,11 +40,10 @@ BigInt<DigitT, B>::BigInt(const BigInt<ODigitT, OB>& other)
   mIsNeg  = other.is_neg();
   mDigits = {0};
 
-  for (size_t i = 0; i < other.digits().size(); ++i)
+  for (auto it = other.digits().rbegin(); it != other.digits().rend(); ++it)
   {
-    BigInt v(other.digits()[i]);
-    for (size_t j = 0; j < i; ++j) v *= OB;
-    *this += v;
+    *this *= OB;
+    *this += *it;
   }
 
   normalize();
@@ -165,56 +164,67 @@ template <typename DigitT, DigitT B> BigInt<DigitT, B> BigInt<DigitT, B>::abs_mo
   return rem;
 }
 
-template <typename DigitT, DigitT B> BigInt<DigitT, B>& BigInt<DigitT, B>::operator+=(const BigInt& o)
+template <typename DigitT, DigitT B> BigInt<DigitT, B> BigInt<DigitT, B>::mult_simple(const BigInt& o) const
 {
-  signed_add(o, false);
-  return *this;
-}
-
-template <typename DigitT, DigitT B> BigInt<DigitT, B>& BigInt<DigitT, B>::operator-=(const BigInt& o)
-{
-  signed_add(o, true);
-  return *this;
-}
-
-template <typename DigitT, DigitT B> BigInt<DigitT, B>& BigInt<DigitT, B>::operator*=(const BigInt& o)
-{
-  std::vector<uint64_t> tmp(mDigits.size() + o.mDigits.size(), 0);
+  BigInt result;
+  result.mDigits.resize(mDigits.size() + o.mDigits.size());
 
   for (size_t i = 0; i < mDigits.size(); ++i)
-    for (size_t j = 0; j < o.mDigits.size(); ++j) tmp[i + j] += uint64_t(mDigits[i]) * o.mDigits[j];
-
-  mDigits.resize(tmp.size());
+    for (size_t j = 0; j < o.mDigits.size(); ++j)
+      result.mDigits[i + j] += uint64_t(mDigits[i]) * o.mDigits[j];
 
   uint64_t carry = 0;
-  for (size_t i = 0; i < tmp.size(); ++i)
+  for (size_t i = 0; i < result.mDigits.size(); ++i)
   {
-    tmp[i] += carry;
-    mDigits[i] = tmp[i] % Base;
-    carry      = tmp[i] / Base;
+    uint64_t tmp      = result.mDigits[i] + carry;
+    result.mDigits[i] = tmp % Base;
+    carry             = tmp / Base;
   }
 
-  mIsNeg ^= o.mIsNeg;
-  normalize();
-  return *this;
+  result.mIsNeg = mIsNeg ^ o.mIsNeg;
+  result.normalize();
+  return result;
 }
 
-template <typename DigitT, DigitT B> BigInt<DigitT, B>& BigInt<DigitT, B>::operator/=(const BigInt& o)
+// https://github.com/indy256/codelibrary/blob/main/cpp/numeric/bigint.cpp + gpt | blackbox tested
+template <typename DigitT, DigitT B>
+std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BigInt<DigitT, B>::divmod(const BigInt& a1, const BigInt& b1)
 {
-  abs_mod_div(o);
-  mIsNeg ^= o.mIsNeg;
-  normalize();
-  return *this;
-}
+  using Big = BigInt<DigitT, B>;
+  if (b1.is_zero()) throw std::runtime_error("Division by zero");
+  if (a1.is_zero()) return {0, 0};
 
-template <typename DigitT, DigitT B> BigInt<DigitT, B>& BigInt<DigitT, B>::operator%=(const BigInt& o)
-{
-  bool neg   = mIsNeg;
-  BigInt rem = abs_mod_div(o);
-  rem.mIsNeg = neg;
-  *this      = rem;
-  normalize();
-  return *this;
+  int norm = Base / (b1.digits().back() + 1);
+  Big a    = a1.abs() * norm;
+  Big b    = b1.abs() * norm;
+  Big q, r;
+  q.mDigits.resize(a.digits().size());
+
+  for (int i = a.digits().size() - 1; i >= 0; --i)
+  {
+    r *= Base;
+    r += a.digits()[i];
+
+    DigitT s1 = b.digits().size() < r.digits().size() ? r.digits()[b.digits().size()] : 0;
+    DigitT s2 = b.digits().size() - 1 < r.digits().size() ? r.digits()[b.digits().size() - 1] : 0;
+    DigitT d  = (uint64_t(s1) * B + s2) / b.digits().back();
+
+    r -= b * d;
+    while (r < 0)
+    {
+      r += b;
+      --d;
+    }
+
+    q.mDigits[i] = d;
+  }
+
+  q.mIsNeg = a1.is_neg() ^ b1.is_neg();
+  r.mIsNeg = a1.is_neg();
+  q.normalize();
+  r.normalize();
+
+  return {q, r / norm};
 }
 
 template <typename DigitT, DigitT B> BigInt<DigitT, B> BigInt<DigitT, B>::abs() const

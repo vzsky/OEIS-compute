@@ -1,5 +1,6 @@
 #include <A002326/lib.h>
 #include <A045345/lib.h>
+#include <A331373/lib.h>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -22,4 +23,17 @@ TEST(TestExSeq, testA045345)
   constexpr int N = 1000;
   auto answers    = A045345::answers_upto<N>();
   EXPECT_EQ(answers, std::vector({1, 23, 53}));
+}
+
+TEST(TestExSeq, testA331373)
+{
+  constexpr int N      = 70;
+  auto fraction        = A331373::get_fraction<N>();
+  auto [mantissa, exp] = fraction.expansion<DecBigInt>(N);
+  auto answers         = mantissa.digits();
+  std::reverse(begin(answers), end(answers));
+  EXPECT_EQ(answers,
+            std::vector<uint16_t>({1, 2, 5, 3, 4, 9, 8, 7, 5, 5, 6, 9, 9, 9, 5, 3, 4, 7, 1, 6, 4, 3, 3, 6,
+                                   0, 9, 3, 7, 9, 0, 5, 7, 9, 8, 9, 4, 0, 3, 6, 9, 2, 3, 2, 2, 0, 8, 3, 3,
+                                   2, 0, 1, 3, 4, 1, 7, 0, 6, 3, 8, 3, 4, 7, 1, 6, 6, 4, 0, 9, 5, 2, 4}));
 }

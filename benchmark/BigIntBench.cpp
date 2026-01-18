@@ -6,7 +6,7 @@ template <typename T> static T make_big(int n)
   T x(1);
   for (int i = 1; i <= n; ++i)
   {
-    x *= T(i + 1);
+    x *= i + 1;
     x += i;
   }
   return x;

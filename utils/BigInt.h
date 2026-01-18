@@ -40,11 +40,17 @@ public:
     return os;
   }
 
-  BigInt& operator+=(const BigInt& o);
-  BigInt& operator-=(const BigInt& o);
-  BigInt& operator*=(const BigInt& o);
-  BigInt& operator/=(const BigInt& o);
-  BigInt& operator%=(const BigInt& o);
+  inline BigInt& operator+=(const BigInt& o)
+  {
+    signed_add(o, false);
+    return *this;
+  }
+
+  inline BigInt& operator-=(const BigInt& o)
+  {
+    signed_add(o, true);
+    return *this;
+  }
 
   inline BigInt operator+(const BigInt& o) const
   {
@@ -60,25 +66,25 @@ public:
     return r;
   }
 
-  inline BigInt operator*(const BigInt& o) const
+  inline BigInt operator*(const BigInt& o) const { return mult_simple(o); }
+  inline BigInt& operator*=(const BigInt& o)
   {
-    BigInt r = *this;
-    r *= o;
-    return r;
+    *this = mult_simple(o);
+    return *this;
   }
 
-  inline BigInt operator/(const BigInt& o) const
+  inline BigInt operator/(const BigInt& o) const { return divmod(*this, o).first; }
+  inline BigInt& operator/=(const BigInt& o)
   {
-    BigInt r = *this;
-    r /= o;
-    return r;
+    *this = divmod(*this, o).first;
+    return *this;
   }
 
-  inline BigInt operator%(const BigInt& o) const
+  inline BigInt operator%(const BigInt& o) const { return divmod(*this, o).second; }
+  inline BigInt& operator%=(const BigInt& o)
   {
-    BigInt r = *this;
-    r %= o;
-    return r;
+    *this = divmod(*this, o).second;
+    return *this;
   }
 
   inline const std::vector<Digit>& digits() const { return mDigits; };
@@ -92,6 +98,9 @@ private:
   void abs_add(const BigInt& o);
   void abs_sub(const BigInt& o);
   void signed_add(const BigInt& o, bool negate_o);
+
+  static std::pair<BigInt, BigInt> divmod(const BigInt& a1, const BigInt& b1);
+  BigInt mult_simple(const BigInt& o) const;
   BigInt abs_mod_div(const BigInt& o);
 
 private:
@@ -125,6 +134,6 @@ template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, 
 }
 
 using DecBigInt   = BigInt<uint16_t, 10>;
-using DenseBigInt = BigInt<uint64_t, 1ull << 31>;
+using DenseBigInt = BigInt<uint64_t, 1ull << 30>; // don't go higher!
 
 #include "utils/BigInt.tpp"

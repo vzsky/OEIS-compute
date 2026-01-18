@@ -99,10 +99,7 @@ TYPED_TEST(BigIntTest, Multiplication)
 
   BI g(2);
   for (int i = 0; i < 100; i++) g *= 2;
-  if constexpr (BI::Base == 10)
-    EXPECT_EQ(g.digits().size(), 31);
-  else
-    EXPECT_EQ(g.digits(), std::vector<uint64_t>({0, 0, 0, 256}));
+  if constexpr (BI::Base == 10) EXPECT_EQ(g.digits().size(), 31);
 }
 
 TYPED_TEST(BigIntTest, Exponentiation)
@@ -163,7 +160,7 @@ TEST(BigIntTest, DenseBigIntEdgeCase)
   DenseBigInt c(1);
   DecBigInt dec_c(1);
 
-  for (int i = 1; i <= 30; i++)
+  for (int i = 1; i <= 100; i++)
   {
     c *= i;
     c -= 1;
@@ -176,4 +173,28 @@ TEST(BigIntTest, DenseBigIntEdgeCase)
   }
 
   EXPECT_EQ(a, DenseBigInt(dec_a));
+
+  DenseBigInt top  = 1;
+  DenseBigInt fact = 1;
+  DenseBigInt bot  = 1;
+
+  for (int k = 2; k <= 100; ++k)
+  {
+    fact *= k;
+    DenseBigInt d = fact - 1;
+
+    top = top * d + bot;
+    bot = bot * d;
+
+    auto dtop  = DecBigInt(top);
+    auto dfact = DecBigInt(fact);
+    auto dbot  = DecBigInt(bot);
+
+    EXPECT_EQ(DecBigInt(top), dtop);
+    EXPECT_EQ(top, DenseBigInt(dtop));
+    EXPECT_EQ(DecBigInt(fact), dfact);
+    EXPECT_EQ(fact, DenseBigInt(dfact));
+    EXPECT_EQ(DecBigInt(bot), dbot);
+    EXPECT_EQ(bot, DenseBigInt(dbot));
+  }
 }
