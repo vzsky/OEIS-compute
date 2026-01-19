@@ -151,6 +151,34 @@ TEST(BigIntTest, BaseConversion)
   }
 }
 
+TEST(BigIntTest, MultOverflowBehavior)
+{
+  constexpr uint16_t Base = 128;
+  constexpr int N         = 128;
+
+  BigInt<uint16_t, Base> a = Base - 1;
+  for (int i = 0; i < N; i++)
+  {
+    a *= Base;
+    a += (Base - 1);
+  }
+  BigInt<uint16_t, Base> b = a;
+
+  BigInt<uint16_t, Base> c = a * b;
+
+  BigInt<uint64_t, Base> big_a = Base - 1;
+  for (int i = 0; i < N; i++)
+  {
+    big_a *= Base;
+    big_a += (Base - 1);
+  }
+  BigInt<uint64_t, Base> big_b = big_a;
+  BigInt<uint64_t, Base> big_c = big_a * big_b;
+
+  ASSERT_EQ(c.digits().size(), big_c.digits().size());
+  for (int i = 0; i < c.digits().size(); i++) ASSERT_EQ((uint64_t)c.digits()[i], big_c.digits()[i]);
+}
+
 TEST(BigIntTest, DenseBigIntEdgeCase)
 {
   DenseBigInt a(1);

@@ -6,7 +6,15 @@
 #include <string>
 #include <vector>
 
-template <typename DigitT, DigitT B> class BigInt
+template <typename DigitT, DigitT B>
+concept ValidBigIntBase = ((std::is_same_v<DigitT, uint8_t> && B >= 2 && B <= (1 << 3)) ||
+                           (std::is_same_v<DigitT, uint16_t> && B >= 2 && B <= (1 << 7)) ||
+                           (std::is_same_v<DigitT, uint32_t> && B >= 2 && B <= (1 << 15)) ||
+                           (std::is_same_v<DigitT, uint64_t> && B >= 2 && B <= (1 << 31)));
+
+template <typename DigitT, DigitT B>
+  requires ValidBigIntBase<DigitT, B>
+class BigInt
 {
 public:
   using Digit                 = DigitT;
@@ -73,17 +81,17 @@ public:
     return *this;
   }
 
-  inline BigInt operator/(const BigInt& o) const { return divmod(*this, o).first; }
+  inline BigInt operator/(const BigInt& o) const { return divmod(o).first; }
   inline BigInt& operator/=(const BigInt& o)
   {
-    *this = divmod(*this, o).first;
+    *this = divmod(o).first;
     return *this;
   }
 
-  inline BigInt operator%(const BigInt& o) const { return divmod(*this, o).second; }
+  inline BigInt operator%(const BigInt& o) const { return divmod(o).second; }
   inline BigInt& operator%=(const BigInt& o)
   {
-    *this = divmod(*this, o).second;
+    *this = divmod(o).second;
     return *this;
   }
 
@@ -99,9 +107,9 @@ private:
   void abs_sub(const BigInt& o);
   void signed_add(const BigInt& o, bool negate_o);
 
-  static std::pair<BigInt, BigInt> divmod(const BigInt& a1, const BigInt& b1);
+  std::pair<BigInt, BigInt> divmod(const BigInt& b1) const;
   BigInt mult_simple(const BigInt& o) const;
-  BigInt abs_mod_div(const BigInt& o);
+  void div_simple(const BigInt& o);
 
 private:
   bool mIsNeg{false};
@@ -134,6 +142,6 @@ template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, 
 }
 
 using DecBigInt   = BigInt<uint16_t, 10>;
-using DenseBigInt = BigInt<uint64_t, 1ull << 30>; // don't go higher!
+using DenseBigInt = BigInt<uint64_t, 1ull << 31>; // TODO find the actual limit
 
 #include "utils/BigInt.tpp"

@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
+#include <unordered_map>
 #include <utils/BigInt.h>
-#include <utils/biggerint.h>
 
 template <typename T> static T make_big(int n)
 {
@@ -109,8 +109,8 @@ BENCHMARK(BM_add_dec)->Name("DecBigInt/Add")->Args({128})->Args({512})->Args({81
 BENCHMARK(BM_add_dense)->Name("DenseBigInt/Add")->Args({128})->Args({512})->Args({8192});
 BENCHMARK(BM_sub_dec)->Name("DecBigInt/Sub")->Args({128})->Args({512})->Args({8192});
 BENCHMARK(BM_sub_dense)->Name("DenseBigInt/Sub")->Args({128})->Args({512})->Args({8192});
-BENCHMARK(BM_mul_dec)->Name("DecBigInt/Mul")->Args({128})->Args({512})->Args({8192})->Args({65536});
-BENCHMARK(BM_mul_dense)->Name("DenseBigInt/Mul")->Args({128})->Args({512})->Args({8192})->Args({65536});
+BENCHMARK(BM_mul_dec)->Name("DecBigInt/Mul")->Args({128})->Args({512})->Args({8192});
+BENCHMARK(BM_mul_dense)->Name("DenseBigInt/Mul")->Args({128})->Args({512})->Args({8192})->Args({32768});
 BENCHMARK(BM_div_dec)->Name("DecBigInt/Div")->Args({128})->Args({512})->Args({8192});
 BENCHMARK(BM_div_dense)->Name("DenseBigInt/Div")->Args({128})->Args({512})->Args({8192});
 BENCHMARK(BM_mod_dec)->Name("DecBigInt/Mod")->Args({128})->Args({512})->Args({8192});

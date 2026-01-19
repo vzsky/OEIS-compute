@@ -2,7 +2,7 @@
 set -e
 
 BUILD_DIR="./build"
-BASELINE_DIR="./benchmark/local_baseline/"
+BASELINE_DIR="./benchmark/local_baseline"
 LOG_DIR="./log"
 FLAGS=""
 
