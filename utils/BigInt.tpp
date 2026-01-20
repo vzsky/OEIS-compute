@@ -1,21 +1,22 @@
 #pragma once
-#include <iostream>
 #include <utils/BigInt.h>
 
 #define TEMPLATE_BIGINT                                                                                      \
   template <typename DigitT, DigitT B>                                                                       \
     requires ValidBigIntBase<DigitT, B>
 
-TEMPLATE_BIGINT BigInt<DigitT, B>::BigInt() { mDigits = {0}; }
+#define BIGINT BigInt<DigitT, B>
 
-TEMPLATE_BIGINT BigInt<DigitT, B>::BigInt(int64_t v)
+TEMPLATE_BIGINT BIGINT::BigInt() : mDigits{} {}
+
+TEMPLATE_BIGINT BIGINT::BigInt(int64_t v)
 {
   mIsNeg = v < 0;
   if (mIsNeg) v = -v;
 
   if (v == 0)
   {
-    mDigits = {0};
+    mDigits.clear();
     return;
   }
 
@@ -26,9 +27,9 @@ TEMPLATE_BIGINT BigInt<DigitT, B>::BigInt(int64_t v)
   }
 }
 
-TEMPLATE_BIGINT BigInt<DigitT, B>::BigInt(const std::string& s)
+TEMPLATE_BIGINT BIGINT::BigInt(const std::string& s)
 {
-  mDigits = {0};
+  mDigits.clear();
   for (char c : s)
   {
     if (c < '0' || c > '9') continue;
@@ -39,10 +40,10 @@ TEMPLATE_BIGINT BigInt<DigitT, B>::BigInt(const std::string& s)
 }
 
 TEMPLATE_BIGINT
-template <typename ODigitT, ODigitT OB> BigInt<DigitT, B>::BigInt(const BigInt<ODigitT, OB>& other)
+template <typename ODigitT, ODigitT OB> BIGINT::BigInt(const BigInt<ODigitT, OB>& other)
 {
-  mIsNeg  = other.is_neg();
-  mDigits = {0};
+  mIsNeg = other.is_neg();
+  mDigits.clear();
 
   for (auto it = other.digits().rbegin(); it != other.digits().rend(); ++it)
   {
@@ -53,13 +54,13 @@ template <typename ODigitT, ODigitT OB> BigInt<DigitT, B>::BigInt(const BigInt<O
   normalize();
 }
 
-TEMPLATE_BIGINT void BigInt<DigitT, B>::normalize()
+TEMPLATE_BIGINT void BIGINT::normalize()
 {
-  while (mDigits.size() > 1 && mDigits.back() == 0) mDigits.pop_back();
+  while (mDigits.size() >= 1 && mDigits.back() == 0) mDigits.pop_back();
   if (is_zero()) mIsNeg = false;
 }
 
-TEMPLATE_BIGINT int BigInt<DigitT, B>::abs_cmp(const BigInt& a, const BigInt& b)
+TEMPLATE_BIGINT int BIGINT::abs_cmp(const BigInt& a, const BigInt& b)
 {
   if (a.mDigits.size() != b.mDigits.size()) return a.mDigits.size() < b.mDigits.size() ? -1 : 1;
 
@@ -84,7 +85,7 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add(const BigInt& o)
   }
 }
 
-TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_sub(const BigInt& o)
+TEMPLATE_BIGINT void BIGINT::abs_sub(const BigInt& o)
 {
   int64_t carry = 0;
   for (size_t i = 0; i < o.mDigits.size() || carry; ++i)
@@ -97,7 +98,7 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_sub(const BigInt& o)
   normalize();
 }
 
-TEMPLATE_BIGINT void BigInt<DigitT, B>::signed_add(const BigInt& o, bool negate_o)
+TEMPLATE_BIGINT void BIGINT::signed_add(const BigInt& o, bool negate_o)
 {
   bool oNeg = negate_o ? !o.mIsNeg : o.mIsNeg;
 
@@ -110,8 +111,8 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::signed_add(const BigInt& o, bool negate_
   int c = abs_cmp(*this, o);
   if (c == 0)
   {
-    mDigits = {0};
-    mIsNeg  = false;
+    mDigits.clear();
+    mIsNeg = false;
   }
   else if (c > 0)
   {
@@ -121,16 +122,15 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::signed_add(const BigInt& o, bool negate_
   {
     BigInt tmp = o;
     tmp.abs_sub(*this);
-    *this  = tmp;
+    *this  = std::move(tmp);
     mIsNeg = oNeg;
   }
 }
 
-// not simple enough. we can short div right?
-TEMPLATE_BIGINT void BigInt<DigitT, B>::div_simple(const BigInt& o)
+TEMPLATE_BIGINT void BIGINT::div_simple(const BigInt& o)
 {
   BigInt rem;
-  rem.mDigits = {0};
+  rem.mDigits.clear();
 
   for (int i = (int)mDigits.size() - 1; i >= 0; --i)
   {
@@ -166,7 +166,7 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::div_simple(const BigInt& o)
   normalize();
 }
 
-TEMPLATE_BIGINT BigInt<DigitT, B> BigInt<DigitT, B>::mult_simple(const BigInt& o) const
+TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& o) const
 {
   BigInt result;
   result.mDigits.assign(mDigits.size() + o.mDigits.size(), 0);
@@ -174,14 +174,15 @@ TEMPLATE_BIGINT BigInt<DigitT, B> BigInt<DigitT, B>::mult_simple(const BigInt& o
   for (size_t i = 0; i < mDigits.size(); ++i)
   {
     Digit carry = 0;
-    for (size_t j = 0; j < o.mDigits.size() || carry; ++j)
+    for (size_t j = 0; j < o.mDigits.size(); ++j)
     {
       Digit cur = result.mDigits[i + j] + carry;
-      if (j < o.mDigits.size()) cur += mDigits[i] * o.mDigits[j];
+      cur += mDigits[i] * o.mDigits[j];
 
       result.mDigits[i + j] = cur % Base;
       carry                 = cur / Base;
     }
+    if (carry) result.mDigits[i + o.mDigits.size()] += carry;
   }
 
   result.mIsNeg = mIsNeg ^ o.mIsNeg;
@@ -189,9 +190,49 @@ TEMPLATE_BIGINT BigInt<DigitT, B> BigInt<DigitT, B>::mult_simple(const BigInt& o
   return result;
 }
 
+TEMPLATE_BIGINT
+BigInt<DigitT, B> BIGINT::mult_karatsuba(const BigInt& o) const
+{
+  size_t n = std::max(mDigits.size(), o.mDigits.size());
+  if (n < KARATSUBA_THRESHOLD_DIGITS) return mult_simple(o);
+
+  size_t m = n / 2;
+
+  BigInt a0, a1, b0, b1;
+
+  a0.mDigits.assign(mDigits.begin(), mDigits.begin() + std::min(m, mDigits.size()));
+  a1.mDigits.assign(mDigits.begin() + std::min(m, mDigits.size()), mDigits.end());
+
+  b0.mDigits.assign(o.mDigits.begin(), o.mDigits.begin() + std::min(m, o.mDigits.size()));
+  b1.mDigits.assign(o.mDigits.begin() + std::min(m, o.mDigits.size()), o.mDigits.end());
+
+  a0.normalize();
+  a1.normalize();
+  b0.normalize();
+  b1.normalize();
+
+  BigInt z0 = a0.mult_karatsuba(b0);
+  BigInt z2 = a1.mult_karatsuba(b1);
+
+  a0.abs_add(a1);
+  b0.abs_add(b1);
+
+  BigInt z1 = a0.mult_karatsuba(b0); 
+  z1.abs_sub(z0);
+  z1.abs_sub(z2);
+
+  z2.shift_left(2 * m);
+  z1.shift_left(m);
+
+  z0.mIsNeg = mIsNeg ^ o.mIsNeg;
+  z0.abs_add(z1);
+  z0.abs_add(z2);
+  return z0;
+}
+
 // https://github.com/indy256/codelibrary/blob/main/cpp/numeric/bigint.cpp + gpt | blackbox tested
 TEMPLATE_BIGINT
-std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BigInt<DigitT, B>::divmod(const BigInt& o) const
+std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& o) const
 {
   using Big = BigInt<DigitT, B>;
   if (o.is_zero()) throw std::runtime_error("Division by zero");
@@ -205,12 +246,12 @@ std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BigInt<DigitT, B>::divmod(const 
 
   for (int i = a.digits().size() - 1; i >= 0; --i)
   {
-    r *= Base;
+    r.shift_left(1);
     r += a.digits()[i];
 
-    DigitT s1 = b.digits().size() < r.digits().size() ? r.digits()[b.digits().size()] : 0;
-    DigitT s2 = b.digits().size() - 1 < r.digits().size() ? r.digits()[b.digits().size() - 1] : 0;
-    DigitT d  = (uint64_t(s1) * B + s2) / b.digits().back();
+    Digit s1 = b.digits().size() < r.digits().size() ? r.digits()[b.digits().size()] : 0;
+    Digit s2 = b.digits().size() - 1 < r.digits().size() ? r.digits()[b.digits().size() - 1] : 0;
+    Digit d  = (s1 * B + s2) / b.digits().back();
 
     r -= b * d;
     while (r < 0)
@@ -230,23 +271,23 @@ std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BigInt<DigitT, B>::divmod(const 
   return {q, r / norm};
 }
 
-TEMPLATE_BIGINT BigInt<DigitT, B> BigInt<DigitT, B>::abs() const
+TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::abs() const
 {
   BigInt r = *this;
   r.mIsNeg = false;
   return r;
 }
 
-TEMPLATE_BIGINT BigInt<DigitT, B> BigInt<DigitT, B>::operator-() const
+TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::operator-() const
 {
-  if (*this == 0) return *this;
+  if (*this == 0) return 0;
   BigInt r = *this;
   r.mIsNeg = !r.mIsNeg;
   return r;
 }
 
 TEMPLATE_BIGINT
-std::strong_ordering BigInt<DigitT, B>::operator<=>(const BigInt& o) const
+std::strong_ordering BIGINT::operator<=>(const BigInt& o) const
 {
   if (mIsNeg != o.mIsNeg) return mIsNeg ? std::strong_ordering::less : std::strong_ordering::greater;
 
@@ -258,8 +299,24 @@ std::strong_ordering BigInt<DigitT, B>::operator<=>(const BigInt& o) const
                 : (less ? std::strong_ordering::less : std::strong_ordering::greater);
 }
 
-TEMPLATE_BIGINT bool BigInt<DigitT, B>::is_zero() const { return mDigits.size() == 1 && mDigits[0] == 0; }
+TEMPLATE_BIGINT void BIGINT::shift_left(size_t digits)
+{
+  if (is_zero() || digits == 0) return;
+  mDigits.insert(mDigits.begin(), digits, Digit(0));
+}
 
+TEMPLATE_BIGINT void BIGINT::shift_right(size_t digits)
+{
+  if (digits >= mDigits.size())
+  {
+    mDigits.clear();
+    mIsNeg = false;
+    return;
+  }
+  mDigits.erase(mDigits.begin(), mDigits.begin() + digits);
+}
+
+// TODO: move this to more math
 namespace math
 {
 TEMPLATE_BIGINT BigInt<DigitT, B> pow(BigInt<DigitT, B> a, uint64_t exp)

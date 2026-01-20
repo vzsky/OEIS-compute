@@ -20,6 +20,8 @@ public:
   using Digit                 = DigitT;
   static constexpr Digit Base = B;
 
+  static constexpr size_t KARATSUBA_THRESHOLD_DIGITS = 7000;
+
   BigInt();
   BigInt(int64_t v);
   BigInt(const std::string& s);
@@ -74,10 +76,10 @@ public:
     return r;
   }
 
-  inline BigInt operator*(const BigInt& o) const { return mult_simple(o); }
+  inline BigInt operator*(const BigInt& o) const { return mult_karatsuba(o); }
   inline BigInt& operator*=(const BigInt& o)
   {
-    *this = mult_simple(o);
+    *this = mult_karatsuba(o);
     return *this;
   }
 
@@ -97,7 +99,7 @@ public:
 
   inline const std::vector<Digit>& digits() const { return mDigits; };
   inline bool is_neg() const { return mIsNeg; };
-  inline bool is_zero() const;
+  inline bool is_zero() const { return mDigits.empty(); }
 
 private:
   inline void normalize();
@@ -107,33 +109,17 @@ private:
   void abs_sub(const BigInt& o);
   void signed_add(const BigInt& o, bool negate_o);
 
+  void shift_left(size_t digits);
+  void shift_right(size_t digits);
+
   std::pair<BigInt, BigInt> divmod(const BigInt& b1) const;
   BigInt mult_simple(const BigInt& o) const;
+  BigInt mult_karatsuba(const BigInt& o) const;
   void div_simple(const BigInt& o);
 
 private:
-  bool mIsNeg{false};
-  std::vector<Digit> mDigits;
-
-  void mul_small(uint64_t k)
-  {
-    if (k == 0)
-    {
-      mDigits.assign(1, 0);
-      mIsNeg = false;
-      return;
-    }
-
-    uint64_t carry = 0;
-    for (size_t i = 0; i < mDigits.size(); ++i)
-    {
-      uint64_t cur = uint64_t(mDigits[i]) * k + carry;
-      mDigits[i]   = cur % Base;
-      carry        = cur / Base;
-    }
-
-    if (carry) mDigits.push_back(carry);
-  }
+  bool mIsNeg{false};         // 0 is not neg
+  std::vector<Digit> mDigits; // 0 is {0};
 };
 
 namespace math
@@ -142,6 +128,6 @@ template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, 
 }
 
 using DecBigInt   = BigInt<uint16_t, 10>;
-using DenseBigInt = BigInt<uint64_t, 1ull << 31>; // TODO find the actual limit
+using DenseBigInt = BigInt<uint64_t, 1ull << 31>;
 
 #include "utils/BigInt.tpp"
