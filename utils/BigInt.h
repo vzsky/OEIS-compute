@@ -12,9 +12,18 @@ concept ValidBigIntBase = ((std::is_same_v<DigitT, uint8_t> && B >= 2 && B <= (1
                            (std::is_same_v<DigitT, uint32_t> && B >= 2 && B <= (1 << 15)) ||
                            (std::is_same_v<DigitT, uint64_t> && B >= 2 && B <= (1 << 31)));
 
-template <typename DigitT, DigitT B>
-  requires ValidBigIntBase<DigitT, B>
-class BigInt
+#define TEMPLATE_BIGINT                                                                                      \
+  template <typename DigitT, DigitT B>                                                                       \
+    requires ValidBigIntBase<DigitT, B>
+
+#define BIGINT BigInt<DigitT, B>
+
+/**************************************************************************************/
+
+TEMPLATE_BIGINT class BigInt;
+TEMPLATE_BIGINT std::ostream& operator<<(std::ostream& os, const BigInt<DigitT, B>& b);
+
+TEMPLATE_BIGINT class BigInt
 {
 public:
   class View;
@@ -38,7 +47,7 @@ public:
   BigInt abs() const;
   BigInt operator-() const;
 
-  friend std::ostream& operator<<(std::ostream& os, const BigInt& b);
+  friend std::ostream& operator<< <>(std::ostream& os, const BigInt& b);
   std::strong_ordering operator<=>(const BigInt& o) const;
   inline bool operator==(const BigInt& o) const { return (*this <=> o) == std::strong_ordering::equal; };
 

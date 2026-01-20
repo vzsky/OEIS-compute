@@ -1,12 +1,6 @@
 #pragma once
 #include <utils/BigInt.h>
 
-#define TEMPLATE_BIGINT                                                                                      \
-  template <typename DigitT, DigitT B>                                                                       \
-    requires ValidBigIntBase<DigitT, B>
-
-#define BIGINT BigInt<DigitT, B>
-
 TEMPLATE_BIGINT BIGINT::BigInt() : mDigits{} {}
 
 TEMPLATE_BIGINT BIGINT::BigInt(int64_t v)
