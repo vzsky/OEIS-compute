@@ -17,14 +17,16 @@ template <typename DigitT, DigitT B>
 class BigInt
 {
 public:
+  class View;
   using Digit                 = DigitT;
   static constexpr Digit Base = B;
 
-  static constexpr size_t KARATSUBA_THRESHOLD_DIGITS = 7000;
+  static constexpr size_t KARATSUBA_THRESHOLD_DIGITS = 64;
 
   BigInt();
   BigInt(int64_t v);
   BigInt(const std::string& s);
+  BigInt(View v);
 
   template <typename ODigitT, ODigitT OB> BigInt(const BigInt<ODigitT, OB>& other);
 
@@ -36,29 +38,19 @@ public:
   BigInt abs() const;
   BigInt operator-() const;
 
+  friend std::ostream& operator<<(std::ostream& os, const BigInt& b);
   std::strong_ordering operator<=>(const BigInt& o) const;
   inline bool operator==(const BigInt& o) const { return (*this <=> o) == std::strong_ordering::equal; };
 
-  friend std::ostream& operator<<(std::ostream& os, const BigInt& b)
-  {
-    if (b.mIsNeg) os << "-";
-    for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
-      if constexpr (Base <= 10)
-        os << *it;
-      else
-        os << "(" << *it << ")";
-    return os;
-  }
-
   inline BigInt& operator+=(const BigInt& o)
   {
-    signed_add(o, false);
+    signed_add_with(o, false);
     return *this;
   }
 
   inline BigInt& operator-=(const BigInt& o)
   {
-    signed_add(o, true);
+    signed_add_with(o, true);
     return *this;
   }
 
@@ -76,10 +68,10 @@ public:
     return r;
   }
 
-  inline BigInt operator*(const BigInt& o) const { return mult_karatsuba(o); }
+  inline BigInt operator*(const BigInt& o) const { return mult_karatsuba(*this, o); }
   inline BigInt& operator*=(const BigInt& o)
   {
-    *this = mult_karatsuba(o);
+    *this = mult_karatsuba(*this, o);
     return *this;
   }
 
@@ -105,21 +97,47 @@ private:
   inline void normalize();
   static int abs_cmp(const BigInt& a, const BigInt& b);
 
-  void abs_add(const BigInt& o);
-  void abs_sub(const BigInt& o);
-  void signed_add(const BigInt& o, bool negate_o);
+  void abs_add_with(const BigInt& o);
+  void abs_sub_with(const BigInt& o);
+  void signed_add_with(const BigInt& o, bool negate_o);
 
   void shift_left(size_t digits);
   void shift_right(size_t digits);
 
   std::pair<BigInt, BigInt> divmod(const BigInt& b1) const;
-  BigInt mult_simple(const BigInt& o) const;
-  BigInt mult_karatsuba(const BigInt& o) const;
+
+  static BigInt mult_simple(const BigInt& a, const BigInt& b);
+  static BigInt mult_karatsuba(const BigInt& a, const BigInt& b);
   void div_simple(const BigInt& o);
 
 private:
   bool mIsNeg{false};         // 0 is not neg
   std::vector<Digit> mDigits; // 0 is {0};
+};
+
+template <typename DigitT, DigitT B>
+  requires ValidBigIntBase<DigitT, B>
+class BigInt<DigitT, B>::View
+{
+  const Digit* mPtr = nullptr;
+  size_t mSize      = 0;
+  bool mIsNeg       = false;
+
+public:
+  View() = default;
+  View(const Digit* ptr, size_t len, bool isneg) : mPtr(ptr), mSize(len), mIsNeg(isneg) {}
+  View(const BigInt& x) : mPtr(x.mDigits.data()), mSize(x.mDigits.size()), mIsNeg(x.mIsNeg) {}
+
+  const Digit& operator[](size_t i) const { return mPtr[i]; }
+  const Digit* data() const { return mPtr; }
+  size_t digits() const { return mSize; }
+  bool is_neg() const { return mIsNeg; }
+
+  View subview(size_t offset, size_t len) const
+  {
+    if (offset >= mSize) return View(nullptr, 0, false);
+    return View(mPtr + offset, std::min(len, mSize - offset), mIsNeg);
+  }
 };
 
 namespace math

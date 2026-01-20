@@ -39,6 +39,11 @@ TEMPLATE_BIGINT BIGINT::BigInt(const std::string& s)
   mIsNeg = !s.empty() && s[0] == '-';
 }
 
+TEMPLATE_BIGINT BIGINT::BigInt(View v) : mIsNeg{v.is_neg()}
+{
+  if (v.data() && v.digits() > 0) mDigits.assign(v.data(), v.data() + v.digits());
+}
+
 TEMPLATE_BIGINT
 template <typename ODigitT, ODigitT OB> BIGINT::BigInt(const BigInt<ODigitT, OB>& other)
 {
@@ -52,6 +57,18 @@ template <typename ODigitT, ODigitT OB> BIGINT::BigInt(const BigInt<ODigitT, OB>
   }
 
   normalize();
+}
+
+TEMPLATE_BIGINT
+std::ostream& operator<<(std::ostream& os, const BigInt<DigitT, B>& b)
+{
+  if (b.mIsNeg) os << "-";
+  for (auto it = b.mDigits.rbegin(); it != b.mDigits.rend(); ++it)
+    if constexpr (B <= 10)
+      os << *it;
+    else
+      os << "(" << *it << ")";
+  return os;
 }
 
 TEMPLATE_BIGINT void BIGINT::normalize()
@@ -70,7 +87,7 @@ TEMPLATE_BIGINT int BIGINT::abs_cmp(const BigInt& a, const BigInt& b)
   return 0;
 }
 
-TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add(const BigInt& o)
+TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add_with(const BigInt& o)
 {
   size_t n = std::max(mDigits.size(), o.mDigits.size());
   mDigits.resize(n, 0);
@@ -85,7 +102,7 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add(const BigInt& o)
   }
 }
 
-TEMPLATE_BIGINT void BIGINT::abs_sub(const BigInt& o)
+TEMPLATE_BIGINT void BIGINT::abs_sub_with(const BigInt& o)
 {
   int64_t carry = 0;
   for (size_t i = 0; i < o.mDigits.size() || carry; ++i)
@@ -98,13 +115,13 @@ TEMPLATE_BIGINT void BIGINT::abs_sub(const BigInt& o)
   normalize();
 }
 
-TEMPLATE_BIGINT void BIGINT::signed_add(const BigInt& o, bool negate_o)
+TEMPLATE_BIGINT void BIGINT::signed_add_with(const BigInt& o, bool negate_o)
 {
   bool oNeg = negate_o ? !o.mIsNeg : o.mIsNeg;
 
   if (mIsNeg == oNeg)
   {
-    abs_add(o);
+    abs_add_with(o);
     return;
   }
 
@@ -116,12 +133,12 @@ TEMPLATE_BIGINT void BIGINT::signed_add(const BigInt& o, bool negate_o)
   }
   else if (c > 0)
   {
-    abs_sub(o);
+    abs_sub_with(o);
   }
   else
   {
     BigInt tmp = o;
-    tmp.abs_sub(*this);
+    tmp.abs_sub_with(*this);
     *this  = std::move(tmp);
     mIsNeg = oNeg;
   }
@@ -159,74 +176,71 @@ TEMPLATE_BIGINT void BIGINT::div_simple(const BigInt& o)
     {
       BigInt t = o;
       t *= BigInt(x);
-      rem.abs_sub(t);
+      rem.abs_sub_with(t);
     }
   }
 
   normalize();
 }
 
-TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& o) const
+TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& a, const BigInt& b)
 {
   BigInt result;
-  result.mDigits.assign(mDigits.size() + o.mDigits.size(), 0);
+  result.mDigits.assign(a.mDigits.size() + b.mDigits.size(), 0);
 
-  for (size_t i = 0; i < mDigits.size(); ++i)
+  for (size_t i = 0; i < a.mDigits.size(); ++i)
   {
     Digit carry = 0;
-    for (size_t j = 0; j < o.mDigits.size(); ++j)
+    for (size_t j = 0; j < b.mDigits.size(); ++j)
     {
       Digit cur = result.mDigits[i + j] + carry;
-      cur += mDigits[i] * o.mDigits[j];
+      cur += a.mDigits[i] * b.mDigits[j];
 
       result.mDigits[i + j] = cur % Base;
       carry                 = cur / Base;
     }
-    if (carry) result.mDigits[i + o.mDigits.size()] += carry;
+    if (carry) result.mDigits[i + b.mDigits.size()] += carry;
   }
 
-  result.mIsNeg = mIsNeg ^ o.mIsNeg;
+  result.mIsNeg = a.mIsNeg ^ b.mIsNeg;
   result.normalize();
   return result;
 }
 
 TEMPLATE_BIGINT
-BigInt<DigitT, B> BIGINT::mult_karatsuba(const BigInt& o) const
+BigInt<DigitT, B> BIGINT::mult_karatsuba(const BigInt& a, const BigInt& b)
 {
-  size_t n = std::max(mDigits.size(), o.mDigits.size());
-  if (n < KARATSUBA_THRESHOLD_DIGITS) return mult_simple(o);
+  if (std::min(a.mDigits.size(), b.mDigits.size()) < KARATSUBA_THRESHOLD_DIGITS) return mult_simple(a, b);
 
-  size_t m = n / 2;
+  size_t m = std::max(a.mDigits.size(), b.mDigits.size()) / 2;
 
   BigInt a0, a1, b0, b1;
-
-  a0.mDigits.assign(mDigits.begin(), mDigits.begin() + std::min(m, mDigits.size()));
-  a1.mDigits.assign(mDigits.begin() + std::min(m, mDigits.size()), mDigits.end());
-
-  b0.mDigits.assign(o.mDigits.begin(), o.mDigits.begin() + std::min(m, o.mDigits.size()));
-  b1.mDigits.assign(o.mDigits.begin() + std::min(m, o.mDigits.size()), o.mDigits.end());
+  a0.mDigits.assign(a.mDigits.begin(), a.mDigits.begin() + std::min(m, a.mDigits.size()));
+  a1.mDigits.assign(a.mDigits.begin() + std::min(m, a.mDigits.size()), a.mDigits.end());
+  b0.mDigits.assign(b.mDigits.begin(), b.mDigits.begin() + std::min(m, b.mDigits.size()));
+  b1.mDigits.assign(b.mDigits.begin() + std::min(m, b.mDigits.size()), b.mDigits.end());
 
   a0.normalize();
   a1.normalize();
   b0.normalize();
   b1.normalize();
 
-  BigInt z0 = a0.mult_karatsuba(b0);
-  BigInt z2 = a1.mult_karatsuba(b1);
+  BigInt z0 = mult_karatsuba(a0, b0);
+  BigInt z2 = mult_karatsuba(a1, b1);
 
-  a0.abs_add(a1);
-  b0.abs_add(b1);
+  a0.abs_add_with(a1);
+  b0.abs_add_with(b1);
 
-  BigInt z1 = a0.mult_karatsuba(b0); 
-  z1.abs_sub(z0);
-  z1.abs_sub(z2);
+  BigInt z1 = mult_karatsuba(a0, b0);
+  z1.abs_sub_with(z0);
+  z1.abs_sub_with(z2);
 
   z2.shift_left(2 * m);
   z1.shift_left(m);
 
-  z0.mIsNeg = mIsNeg ^ o.mIsNeg;
-  z0.abs_add(z1);
-  z0.abs_add(z2);
+  z0.abs_add_with(z1);
+  z0.abs_add_with(z2);
+  z0.mIsNeg = a.mIsNeg ^ b.mIsNeg;
   return z0;
 }
 
