@@ -86,14 +86,15 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add_with(const BigInt& o)
   size_t n = std::max(mDigits.size(), o.mDigits.size());
   mDigits.resize(n, 0);
 
-  uint64_t carry = 0;
-  for (size_t i = 0; i < n || carry; ++i)
+  DigitT carry = 0;
+  for (size_t i = 0; i < n; ++i)
   {
-    if (i == mDigits.size()) mDigits.push_back(0);
-    uint64_t sum = carry + mDigits[i] + (i < o.mDigits.size() ? o.mDigits[i] : 0);
+    DigitT sum = carry + mDigits[i] + (i < o.mDigits.size() ? o.mDigits[i] : 0);
     mDigits[i]   = sum % Base;
     carry        = sum / Base;
   }
+  if (carry)
+      mDigits.push_back(carry);
 }
 
 TEMPLATE_BIGINT void BIGINT::abs_sub_with(const BigInt& o)
@@ -106,7 +107,6 @@ TEMPLATE_BIGINT void BIGINT::abs_sub_with(const BigInt& o)
     if (carry) cur += Base;
     mDigits[i] = cur;
   }
-  normalize();
 }
 
 TEMPLATE_BIGINT void BIGINT::signed_add_with(const BigInt& o, bool negate_o)
@@ -146,7 +146,6 @@ TEMPLATE_BIGINT void BIGINT::div_simple(const BigInt& o)
   for (int i = (int)mDigits.size() - 1; i >= 0; --i)
   {
     rem.mDigits.insert(rem.mDigits.begin(), mDigits[i]);
-    rem.normalize();
 
     Digit lo = 0, hi = Base - 1, x = 0;
     while (lo <= hi)
@@ -173,8 +172,6 @@ TEMPLATE_BIGINT void BIGINT::div_simple(const BigInt& o)
       rem.abs_sub_with(t);
     }
   }
-
-  normalize();
 }
 
 TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& a, const BigInt& b)
@@ -197,7 +194,6 @@ TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& a, const Big
   }
 
   result.mIsNeg = a.mIsNeg ^ b.mIsNeg;
-  result.normalize();
   return result;
 }
 
@@ -213,11 +209,6 @@ BigInt<DigitT, B> BIGINT::mult_karatsuba(const BigInt& a, const BigInt& b)
   a1.mDigits.assign(a.mDigits.begin() + std::min(m, a.mDigits.size()), a.mDigits.end());
   b0.mDigits.assign(b.mDigits.begin(), b.mDigits.begin() + std::min(m, b.mDigits.size()));
   b1.mDigits.assign(b.mDigits.begin() + std::min(m, b.mDigits.size()), b.mDigits.end());
-
-  a0.normalize();
-  a1.normalize();
-  b0.normalize();
-  b1.normalize();
 
   BigInt z0 = mult_karatsuba(a0, b0);
   BigInt z2 = mult_karatsuba(a1, b1);
@@ -252,13 +243,14 @@ std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& o) 
   Big q, r;
   q.mDigits.resize(a.digits().size());
 
+  auto bsize = b.digits().size();
   for (int i = a.digits().size() - 1; i >= 0; --i)
   {
     r.shift_left(1);
     r += a.digits()[i];
 
-    Digit s1 = b.digits().size() < r.digits().size() ? r.digits()[b.digits().size()] : 0;
-    Digit s2 = b.digits().size() - 1 < r.digits().size() ? r.digits()[b.digits().size() - 1] : 0;
+    Digit s1 = bsize < r.digits().size() ? r.digits()[bsize] : 0;
+    Digit s2 = bsize - 1 < r.digits().size() ? r.digits()[bsize - 1] : 0;
     Digit d  = (s1 * B + s2) / b.digits().back();
 
     r -= b * d;
@@ -273,8 +265,6 @@ std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& o) 
 
   q.mIsNeg = is_neg() ^ o.is_neg();
   r.mIsNeg = is_neg();
-  q.normalize();
-  r.normalize();
 
   return {q, r / norm};
 }

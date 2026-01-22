@@ -54,12 +54,14 @@ public:
   inline BigInt& operator+=(const BigInt& o)
   {
     signed_add_with(o, false);
+    normalize();
     return *this;
   }
 
   inline BigInt& operator-=(const BigInt& o)
   {
     signed_add_with(o, true);
+    normalize();
     return *this;
   }
 
@@ -77,24 +79,45 @@ public:
     return r;
   }
 
-  inline BigInt operator*(const BigInt& o) const { return mult_karatsuba(*this, o); }
+  inline BigInt operator*(const BigInt& o) const
+  {
+    BigInt ret = mult_karatsuba(*this, o);
+    ret.normalize();
+    return ret;
+  }
+
   inline BigInt& operator*=(const BigInt& o)
   {
     *this = mult_karatsuba(*this, o);
+    normalize();
     return *this;
   }
 
-  inline BigInt operator/(const BigInt& o) const { return divmod(o).first; }
+  inline BigInt operator/(const BigInt& o) const
+  {
+    BigInt ret = divmod(o).first;
+    ret.normalize();
+    return ret;
+  }
+
   inline BigInt& operator/=(const BigInt& o)
   {
     *this = divmod(o).first;
+    normalize();
     return *this;
   }
 
-  inline BigInt operator%(const BigInt& o) const { return divmod(o).second; }
+  inline BigInt operator%(const BigInt& o) const
+  {
+    BigInt ret = divmod(o).second;
+    ret.normalize();
+    return ret;
+  }
+
   inline BigInt& operator%=(const BigInt& o)
   {
     *this = divmod(o).second;
+    normalize();
     return *this;
   }
 
@@ -139,7 +162,7 @@ public:
 
   const Digit& operator[](size_t i) const { return mPtr[i]; }
   const Digit* data() const { return mPtr; }
-  size_t digits() const { return mSize; }
+  size_t size() const { return mSize; }
   bool is_neg() const { return mIsNeg; }
 
   View subview(size_t offset, size_t len) const
@@ -154,7 +177,10 @@ namespace math
 template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, uint64_t exp);
 }
 
-using DecBigInt   = BigInt<uint16_t, 10>;
-using DenseBigInt = BigInt<uint64_t, 1ull << 31>;
+// TODO: make better translation between Dec and DenseDec
+
+using DecBigInt      = BigInt<uint16_t, 10>;
+using DenseDecBigInt = BigInt<uint64_t, 1'000'000'000>;
+using DenseBigInt    = BigInt<uint64_t, 1ull << 31>;
 
 #include "utils/BigInt.tpp"

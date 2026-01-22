@@ -2,7 +2,7 @@
 #include "lib.h"
 #include <utils/Utils.h>
 
-constexpr size_t DIGITS = 250;
+constexpr size_t DIGITS = 1000;
 using namespace A331373;
 
 int main()
