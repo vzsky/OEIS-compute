@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
+#include <utils/BigInt.h>
 #include <utils/MoreMath.h>
+
+using namespace math;
 
 TEST(MoreMathTest, PowBasic)
 {
@@ -24,7 +27,7 @@ TEST(MoreMathTest, PowModBasic)
 TEST(MoreMathTest, PowModLarge)
 {
   EXPECT_EQ(pow(2, 30, 1000000007), 1073741824 % 1000000007);
-  for (auto a : {6, 1923, 5729, 9181}) EXPECT_EQ(pow(a, 1e9 + 7, 1e9 + 7), a);
+  for (uint64_t a : {6, 1923, 5729, 9181}) EXPECT_EQ(pow<uint64_t>(a, 1e9 + 7, 1e9 + 7), a);
 }
 
 TEST(MoreMathTest, GCDBasic)
@@ -34,7 +37,6 @@ TEST(MoreMathTest, GCDBasic)
   EXPECT_EQ(gcd(17, 13), 1);
   EXPECT_EQ(gcd(0, 5), 5);
   EXPECT_EQ(gcd(5, 0), 5);
-  EXPECT_EQ(gcd(0, 0), 0);
 }
 
 TEST(MoreMathTest, LCMBasic)
@@ -44,5 +46,16 @@ TEST(MoreMathTest, LCMBasic)
   EXPECT_EQ(lcm(21, 6), 42);
   EXPECT_EQ(lcm(0, 5), 0);
   EXPECT_EQ(lcm(5, 0), 0);
-  EXPECT_EQ(lcm(0, 0), 0);
+}
+
+TEST(MoreMathTest, GCDBigInt)
+{
+  EXPECT_EQ(gcd<DecBigInt>(14, 21), 7);
+  EXPECT_EQ(gcd<DecBigInt>(5, 0), 5);
+}
+
+TEST(MoreMathTest, LCMBigInt)
+{
+  EXPECT_EQ(lcm<DecBigInt>(21, 6), 42);
+  EXPECT_EQ(lcm<DecBigInt>(0, 5), 0);
 }

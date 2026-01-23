@@ -53,6 +53,43 @@ template <typename ODigitT, ODigitT OB> BIGINT::BigInt(const BigInt<ODigitT, OB>
   normalize();
 }
 
+template <> template <> DecBigInt::BigInt(const DenseDecBigInt& other)
+{
+  this->mDigits.clear();
+  this->mIsNeg = other.is_neg();
+  if (other.digits().empty()) return;
+
+  for (auto block : other.digits())
+  {
+    for (int j = 0; j < 9; ++j)
+    {
+      this->mDigits.push_back(static_cast<DecBigInt::Digit>(block % 10));
+      block /= 10;
+    }
+  }
+  normalize();
+}
+
+template <> template <> DenseDecBigInt::BigInt(const DecBigInt& other)
+{
+  this->mDigits.clear();
+  this->mIsNeg = other.is_neg();
+  if (other.digits().empty()) return;
+
+  const auto& sparseDigits = other.digits();
+
+  for (size_t i = 0; i < sparseDigits.size(); i += 9)
+  {
+    DenseDecBigInt::Digit block = 0;
+    for (size_t j = 0; j < 9 && (i + j) < sparseDigits.size(); ++j)
+    {
+      block *= 10;
+      block += static_cast<DenseDecBigInt::Digit>(sparseDigits[i + j]);
+    }
+    this->mDigits.push_back(block);
+  }
+}
+
 TEMPLATE_BIGINT
 std::ostream& operator<<(std::ostream& os, const BigInt<DigitT, B>& b)
 {
@@ -90,11 +127,10 @@ TEMPLATE_BIGINT void BigInt<DigitT, B>::abs_add_with(const BigInt& o)
   for (size_t i = 0; i < n; ++i)
   {
     DigitT sum = carry + mDigits[i] + (i < o.mDigits.size() ? o.mDigits[i] : 0);
-    mDigits[i]   = sum % Base;
-    carry        = sum / Base;
+    mDigits[i] = sum % Base;
+    carry      = sum / Base;
   }
-  if (carry)
-      mDigits.push_back(carry);
+  if (carry) mDigits.push_back(carry);
 }
 
 TEMPLATE_BIGINT void BIGINT::abs_sub_with(const BigInt& o)
@@ -231,15 +267,15 @@ BigInt<DigitT, B> BIGINT::mult_karatsuba(const BigInt& a, const BigInt& b)
 
 // https://github.com/indy256/codelibrary/blob/main/cpp/numeric/bigint.cpp + gpt | blackbox tested
 TEMPLATE_BIGINT
-std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& o) const
+std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& x, const BigInt& y)
 {
   using Big = BigInt<DigitT, B>;
-  if (o.is_zero()) throw std::runtime_error("Division by zero");
-  if (is_zero()) return {0, 0};
+  if (y.is_zero()) throw std::runtime_error("Division by zero");
+  if (x.is_zero()) return {0, 0};
 
-  Digit norm = Base / (o.digits().back() + 1);
-  Big a      = abs() * norm;
-  Big b      = o.abs() * norm;
+  Digit norm = Base / (y.digits().back() + 1);
+  Big a      = x.abs() * norm;
+  Big b      = y.abs() * norm;
   Big q, r;
   q.mDigits.resize(a.digits().size());
 
@@ -263,8 +299,8 @@ std::pair<BigInt<DigitT, B>, BigInt<DigitT, B>> BIGINT::divmod(const BigInt& o) 
     q.mDigits[i] = d;
   }
 
-  q.mIsNeg = is_neg() ^ o.is_neg();
-  r.mIsNeg = is_neg();
+  q.mIsNeg = x.is_neg() ^ y.is_neg();
+  r.mIsNeg = x.is_neg();
 
   return {q, r / norm};
 }
@@ -313,19 +349,3 @@ TEMPLATE_BIGINT void BIGINT::shift_right(size_t digits)
   }
   mDigits.erase(mDigits.begin(), mDigits.begin() + digits);
 }
-
-// TODO: move this to more math
-namespace math
-{
-TEMPLATE_BIGINT BigInt<DigitT, B> pow(BigInt<DigitT, B> a, uint64_t exp)
-{
-  BigInt<DigitT, B> r(1);
-  while (exp)
-  {
-    if (exp & 1) r *= a;
-    a *= a;
-    exp >>= 1;
-  }
-  return r;
-}
-} // namespace math

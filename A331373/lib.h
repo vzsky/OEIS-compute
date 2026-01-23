@@ -1,14 +1,14 @@
 #include <iostream>
 #include <utils/BigInt.h>
 #include <utils/Fraction.h>
+#include <utils/MoreMath.h>
 
 namespace A331373
 {
 
 template <uint32_t DIGITS> Fraction<DenseBigInt> get_fraction(bool stats = false)
 {
-  DenseBigInt limit = 10;
-  limit             = math::pow(limit, DIGITS + 1);
+  DenseBigInt limit = math::pow(DenseBigInt(10), DIGITS + 1);
 
   Fraction<DenseBigInt> f;
   DenseBigInt fact(1);

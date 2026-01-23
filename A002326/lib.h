@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <utils/MoreMath.h>
 #include <utils/Prime.h>
 
@@ -13,8 +14,8 @@ private:
     while (l < r)
     {
       int mid = (l + r) / 2;
-      int now = total / pow(p, k - mid);
-      if (pow(2, now, mod) == 1)
+      int now = total / math::pow<uint64_t>(p, k - mid);
+      if (math::pow<uint64_t>(2, now, mod) == 1)
         r = mid;
       else
         l = mid + 1;
@@ -31,7 +32,7 @@ private:
     for (auto& [p, k] : primes)
     {
       int x = min_p_needed(phi_n, p, k, n);
-      ans *= pow(p, x);
+      ans *= math::pow<uint64_t>(p, x);
     }
     return ans;
   }
@@ -40,18 +41,18 @@ private:
   {
     if (power == 1) return order_of_2_mod_p(p);
     int cur = order_of_2_mod_p(p);
-    int mod = pow(p, power);
+    int mod = math::pow<uint64_t>(p, power);
     int l   = 0;
     int r   = power - 1;
     while (l < r)
     {
       int mid = (l + r) / 2;
-      if (pow(2, cur * pow(p, mid), mod) == 1)
+      if (math::pow<uint64_t>(2, cur * math::pow<uint64_t>(p, mid), mod) == 1)
         r = mid;
       else
         l = mid + 1;
     }
-    return cur * pow(p, l);
+    return cur * math::pow<uint64_t>(p, l);
   }
 
 public:
@@ -64,7 +65,7 @@ public:
     for (auto& [p, k] : factors)
     {
       auto res = order_of_2_mod_prime_power(p, k);
-      ans      = lcm(ans, res);
+      ans      = math::lcm<int>(ans, res);
     }
     return ans;
   }
@@ -85,16 +86,16 @@ public:
           ans = order_of_2_mod_p(p);
         else
         {
-          int prev_ind = pow(p, k - 1) / 2 - 1;
+          int prev_ind = math::pow<uint64_t>(p, k - 1) / 2 - 1;
           ans          = all_answers[prev_ind];
-          if (pow(2, all_answers[prev_ind], n) != 1) ans *= p;
+          if (math::pow<uint64_t>(2, all_answers[prev_ind], n) != 1) ans *= p;
         }
       }
       else
       {
         for (auto& [p, k] : factors)
         {
-          ans = lcm(ans, all_answers[pow(p, k) / 2 - 1]);
+          ans = math::lcm<int>(ans, all_answers[math::pow<uint64_t>(p, k) / 2 - 1]);
         }
       }
       all_answers[ind - 2] = ans;

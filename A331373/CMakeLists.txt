@@ -1,5 +1,8 @@
 set(DEPENDENCIES
   utils
+  moremath 
+  bigint
+  fraction
 )
 
 set(FILES

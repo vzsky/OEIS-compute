@@ -3,7 +3,7 @@ set(UTILS_LIBS
     treap                   Treap.cpp
     bigint                  BigInt.cpp
     modint                  ModInt.cpp
-    Fraction                Fraction.cpp
+    fraction                Fraction.cpp
     primeint                PrimeInt.cpp
     prime                   Prime.cpp
     moremath                MoreMath.cpp

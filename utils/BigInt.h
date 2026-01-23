@@ -95,28 +95,28 @@ public:
 
   inline BigInt operator/(const BigInt& o) const
   {
-    BigInt ret = divmod(o).first;
+    BigInt ret = divmod(*this, o).first;
     ret.normalize();
     return ret;
   }
 
   inline BigInt& operator/=(const BigInt& o)
   {
-    *this = divmod(o).first;
+    *this = divmod(*this, o).first;
     normalize();
     return *this;
   }
 
   inline BigInt operator%(const BigInt& o) const
   {
-    BigInt ret = divmod(o).second;
+    BigInt ret = divmod(*this, o).second;
     ret.normalize();
     return ret;
   }
 
   inline BigInt& operator%=(const BigInt& o)
   {
-    *this = divmod(o).second;
+    *this = divmod(*this, o).second;
     normalize();
     return *this;
   }
@@ -125,18 +125,19 @@ public:
   inline bool is_neg() const { return mIsNeg; };
   inline bool is_zero() const { return mDigits.empty(); }
 
-private:
-  inline void normalize();
+public:
   static int abs_cmp(const BigInt& a, const BigInt& b);
-
-  void abs_add_with(const BigInt& o);
-  void abs_sub_with(const BigInt& o);
-  void signed_add_with(const BigInt& o, bool negate_o);
+  static std::pair<BigInt, BigInt> divmod(const BigInt& a, const BigInt& b);
 
   void shift_left(size_t digits);
   void shift_right(size_t digits);
 
-  std::pair<BigInt, BigInt> divmod(const BigInt& b1) const;
+private:
+  inline void normalize();
+
+  void abs_add_with(const BigInt& o);
+  void abs_sub_with(const BigInt& o);
+  void signed_add_with(const BigInt& o, bool negate_o);
 
   static BigInt mult_simple(const BigInt& a, const BigInt& b);
   static BigInt mult_karatsuba(const BigInt& a, const BigInt& b);
@@ -171,13 +172,6 @@ public:
     return View(mPtr + offset, std::min(len, mSize - offset), mIsNeg);
   }
 };
-
-namespace math
-{
-template <typename DigitT, DigitT B> BigInt<DigitT, B> pow(BigInt<DigitT, B> a, uint64_t exp);
-}
-
-// TODO: make better translation between Dec and DenseDec
 
 using DecBigInt      = BigInt<uint16_t, 10>;
 using DenseDecBigInt = BigInt<uint64_t, 1'000'000'000>;

@@ -1,6 +1,7 @@
 #include <compare>
 #include <ostream>
 #include <utils/BigInt.h>
+#include <utils/MoreMath.h>
 
 template <typename Int>
 concept FractionCompatible = std::copyable<Int> && requires(Int a, Int b) {
@@ -87,26 +88,12 @@ public:
 
   double estimate() const { return (double)mTop / mBot; }
 
-  // returns (mantissa, exponent)
-  // mantissa = BigInt of all digits in output_base
-  // exponent = number of digits before the decimal point
-  template <typename BigIntT> std::pair<BigIntT, uint64_t> expansion(size_t digits) const
+  // returns BigInt with #digits after floating point (returned digits can > digits)
+  template <typename BigIntT> BigIntT expansion(size_t digits) const
   {
-    BigIntT mantissa = mTop / mBot;
-    uint64_t exp     = mantissa.digits().size();
-    Int rem          = mTop % mBot;
-
-    for (size_t i = 0; i < digits; ++i)
-    {
-      rem *= BigIntT::Base;
-      BigIntT d = rem / mBot;
-      rem %= mBot;
-
-      mantissa *= BigIntT::Base;
-      mantissa += d;
-    }
-
-    return {mantissa, exp};
+    Int top = mTop;
+    top *= math::pow(DenseBigInt(BigIntT::Base), digits);
+    return top /= DenseBigInt(mBot);
   }
 
   Int numerator() const { return mTop; }

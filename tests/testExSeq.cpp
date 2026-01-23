@@ -27,10 +27,9 @@ TEST(TestExSeq, testA045345)
 
 TEST(TestExSeq, testA331373)
 {
-  constexpr int N      = 70;
-  auto fraction        = A331373::get_fraction<N>();
-  auto [mantissa, exp] = fraction.expansion<DecBigInt>(N);
-  auto answers         = mantissa.digits();
+  auto fraction = A331373::get_fraction<150>();
+  auto mantissa = fraction.expansion<DecBigInt>(70);
+  auto answers  = mantissa.digits();
   std::reverse(begin(answers), end(answers));
   EXPECT_EQ(answers,
             std::vector<uint16_t>({1, 2, 5, 3, 4, 9, 8, 7, 5, 5, 6, 9, 9, 9, 5, 3, 4, 7, 1, 6, 4, 3, 3, 6,

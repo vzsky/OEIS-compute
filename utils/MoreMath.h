@@ -1,21 +1,57 @@
 #pragma once
 
-#include <type_traits>
+#include <cstdint>
+#include <stdexcept>
+#include <utility>
 
-int pow(int base, int k, int mod);
-int pow(int base, int k); // can overflow
-
-int gcd(int a, int b);
-int lcm(int a, int b);
-
-template <typename... Ts> constexpr int gcd(int a, int b, Ts... rest)
+namespace math
 {
-  static_assert((... && std::is_same_v<int, Ts>), "All arguments must be integers");
-  return gcd(gcd(a, b), rest...);
+
+template <typename T> T pow(T base, uint64_t k)
+{
+  T result = 1;
+  while (k > 0)
+  {
+    if (k & 1) result *= base;
+    base *= base;
+    k >>= 1;
+  }
+  return result;
 }
 
-template <typename... Ts> constexpr int lcm(int a, int b, Ts... rest)
+template <typename T> T pow(T base, uint64_t k, T mod)
 {
-  static_assert((... && std::is_same_v<int, Ts>), "All arguments must be integers");
-  return lcm(lcm(a, b), rest...);
+  T result = 1;
+  T b      = base % mod;
+  while (k > 0)
+  {
+    if (k & 1) result = (result * b) % mod;
+    b = (b * b) % mod;
+    k >>= 1;
+  }
+  return result;
 }
+
+template <typename T> T gcd(T a, T b)
+{
+  if (a == 0 && b == 0) throw std::invalid_argument("gcd of zeros");
+  if (a < 0) a = -a;
+  if (b < 0) b = -b;
+  if (a < b) std::swap(a, b);
+
+  while (b != 0)
+  {
+    T r = a % b;
+    a   = b;
+    b   = r;
+  }
+  return a;
+}
+
+template <typename T> T lcm(T a, T b)
+{
+  if (a == 0 && b == 0) throw std::invalid_argument("lcm of zeros");
+  return a * b / gcd(a, b);
+}
+
+} // namespace math
