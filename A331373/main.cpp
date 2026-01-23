@@ -3,7 +3,7 @@
 #include <utils/BigInt.h>
 #include <utils/Utils.h>
 
-constexpr size_t DIGITS = 2000;
+constexpr size_t DIGITS = 5000;
 using namespace A331373;
 
 int main()
