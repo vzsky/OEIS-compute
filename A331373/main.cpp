@@ -7,7 +7,7 @@ constexpr size_t DIGITS = 5000;
 using namespace A331373;
 
 int main()
-{
+{ // still slower than a simple python :(
   utils::timeit([]
   {
     Fraction<DenseBigInt> f_dense = get_fraction<DIGITS>(true);
