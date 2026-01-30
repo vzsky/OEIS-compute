@@ -213,20 +213,22 @@ TEMPLATE_BIGINT void BIGINT::div_simple(const BigInt& o)
 TEMPLATE_BIGINT BigInt<DigitT, B> BIGINT::mult_simple(const BigInt& a, const BigInt& b)
 {
   BigInt result;
-  result.mDigits.assign(a.mDigits.size() + b.mDigits.size(), 0);
+  const auto asize = a.mDigits.size();
+  const auto bsize = b.mDigits.size();
+  result.mDigits.assign(asize + bsize, 0);
 
-  for (size_t i = 0; i < a.mDigits.size(); ++i)
+  for (size_t i = 0; i < asize; ++i)
   {
     Digit carry = 0;
-    for (size_t j = 0; j < b.mDigits.size(); ++j)
+    for (size_t j = 0; j < bsize; ++j)
     {
-      Digit cur = result.mDigits[i + j] + carry;
-      cur += a.mDigits[i] * b.mDigits[j];
+      Digit cur = a.mDigits[i] * b.mDigits[j] + carry;
 
-      result.mDigits[i + j] = cur % Base;
-      carry                 = cur / Base;
+      result.mDigits[i + j] += cur;
+      carry = result.mDigits[i + j] / Base;
+      result.mDigits[i + j] %= Base;
     }
-    if (carry) result.mDigits[i + b.mDigits.size()] += carry;
+    if (carry) result.mDigits[i + bsize] += carry;
   }
 
   result.mIsNeg = a.mIsNeg ^ b.mIsNeg;

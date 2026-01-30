@@ -29,6 +29,16 @@ foreach(i RANGE 0 ${_utils_len} 2)
   )
 endforeach()
 
+target_include_directories(bigint PUBLIC 
+    ${GMP_INCLUDE_DIR}
+)
+
+target_link_libraries(bigint PUBLIC 
+    ${GMPXX_LIB} 
+    ${GMP_LIB} 
+    pthread
+)
+
 add_library(allutils STATIC ${ALLUTILS_SOURCES})
 target_include_directories(allutils PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
