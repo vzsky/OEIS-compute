@@ -6,6 +6,8 @@
 #include <utils/Prime.h>
 #include <utils/Utils.h>
 
+using namespace slow_bigint;
+
 template <int N> class A123132
 {
 public:

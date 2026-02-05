@@ -3,6 +3,8 @@
 #include <utils/BigInt.h>
 #include <utils/Utils.h>
 
+using namespace slow_bigint;
+
 bool is_harshad(DecBigInt n)
 {
   long long sum = 0;

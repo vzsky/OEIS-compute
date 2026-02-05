@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include <utils/BigInt.h>
 
+using namespace slow_bigint;
+
 template <typename T> static T make_big(int n)
 {
   static std::unordered_map<int, T> cache;

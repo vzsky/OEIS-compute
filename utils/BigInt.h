@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 
+namespace slow_bigint
+{
+
 template <typename DigitT, DigitT B>
 concept ValidBigIntBase = ((std::is_same_v<DigitT, uint8_t> && B >= 2 && B <= (1 << 3)) ||
                            (std::is_same_v<DigitT, uint16_t> && B >= 2 && B <= (1 << 7)) ||
@@ -18,9 +21,19 @@ concept ValidBigIntBase = ((std::is_same_v<DigitT, uint8_t> && B >= 2 && B <= (1
 
 #define BIGINT BigInt<DigitT, B>
 
+TEMPLATE_BIGINT class BigInt;
+
+template <typename T> struct _is_bigint_impl : std::false_type
+{
+};
+template <typename A, A B> struct _is_bigint_impl<BigInt<A, B>> : std::true_type
+{
+};
+template <typename T>
+concept isBigInt = _is_bigint_impl<std::remove_cvref_t<T>>::value;
+
 /**************************************************************************************/
 
-TEMPLATE_BIGINT class BigInt;
 TEMPLATE_BIGINT std::ostream& operator<<(std::ostream& os, const BigInt<DigitT, B>& b);
 
 TEMPLATE_BIGINT class BigInt
@@ -177,4 +190,6 @@ using DecBigInt      = BigInt<uint16_t, 10>;
 using DenseDecBigInt = BigInt<uint64_t, 1'000'000'000>;
 using DenseBigInt    = BigInt<uint64_t, 1ull << 31>;
 
-#include "utils/BigInt.tpp"
+} // namespace slow_bigint
+
+#include <utils/SlowBigInt.tpp>

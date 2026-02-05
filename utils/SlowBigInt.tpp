@@ -1,6 +1,8 @@
 #pragma once
 #include <utils/BigInt.h>
 
+namespace slow_bigint {
+
 TEMPLATE_BIGINT BIGINT::BigInt() : mDigits{} {}
 
 TEMPLATE_BIGINT BIGINT::BigInt(int64_t v)
@@ -351,3 +353,5 @@ TEMPLATE_BIGINT void BIGINT::shift_right(size_t digits)
   }
   mDigits.erase(mDigits.begin(), mDigits.begin() + digits);
 }
+
+} // namespace slow_bigint

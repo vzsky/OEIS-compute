@@ -89,11 +89,11 @@ public:
   double estimate() const { return (double)mTop / mBot; }
 
   // returns BigInt with #digits after floating point (returned digits can > digits)
-  template <typename BigIntT> BigIntT expansion(size_t digits) const
+  template <slow_bigint::isBigInt BigIntT> BigIntT expansion(size_t digits) const
   {
     Int top = mTop;
-    top *= math::pow(DenseBigInt(BigIntT::Base), digits);
-    return top /= DenseBigInt(mBot);
+    top *= math::pow(slow_bigint::DenseBigInt(BigIntT::Base), digits);
+    return top /= slow_bigint::DenseBigInt(mBot);
   }
 
   Int numerator() const { return mTop; }

@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <utils/BigInt.h>
 
+using namespace slow_bigint;
+
 template <typename T> class BigIntTest : public ::testing::Test
 {
 };

@@ -10,7 +10,7 @@ set(UTILS_LIBS
     complementnonnvector    ComplementNonnVector.cpp
 )
 
-set(ALLUTILS_SOURCES "")
+set(ALLUTILS "")
 list(LENGTH UTILS_LIBS _utils_len)
 math(EXPR _utils_len "${_utils_len} - 1")
 
@@ -18,7 +18,7 @@ foreach(i RANGE 0 ${_utils_len} 2)
   math(EXPR j "${i} + 1")
   list(GET UTILS_LIBS ${i} libname)
   list(GET UTILS_LIBS ${j} src)
-  list(APPEND ALLUTILS_SOURCES ${src})
+  list(APPEND ALLUTILS ${libname})
 
   add_library(${libname} STATIC ${src})
 
@@ -29,19 +29,21 @@ foreach(i RANGE 0 ${_utils_len} 2)
   )
 endforeach()
 
-target_include_directories(bigint PUBLIC 
-    ${GMP_INCLUDE_DIR}
-)
+# target_include_directories(bigint
+#   PRIVATE
+#     ${CMAKE_CURRENT_SOURCE_DIR}
+#     ${GMP_INCLUDE_DIR}
+# )
+#
+# target_link_libraries(bigint PRIVATE 
+#     ${GMPXX_LIB} 
+#     ${GMP_LIB} 
+#     pthread
+# )
 
-target_link_libraries(bigint PUBLIC 
-    ${GMPXX_LIB} 
-    ${GMP_LIB} 
-    pthread
-)
-
-add_library(allutils STATIC ${ALLUTILS_SOURCES})
-target_include_directories(allutils PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}
+add_library(allutils INTERFACE)
+target_link_libraries(allutils INTERFACE ${ALLUTILS})
+target_include_directories(allutils INTERFACE
   ${PROJECT_SOURCE_DIR}
 )
+

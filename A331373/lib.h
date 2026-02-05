@@ -1,4 +1,3 @@
-#include <gmpxx.h>
 #include <iostream>
 #include <utils/BigInt.h>
 #include <utils/Fraction.h>
@@ -7,32 +6,34 @@
 namespace A331373
 {
 
-template <uint32_t DIGITS> std::vector<uint16_t> get_answer_gmp()
-{
-  mpz_class limit;
-  mpz_ui_pow_ui(limit.get_mpz_t(), 10, DIGITS + 2);
+using namespace slow_bigint;
 
-  mpz_class fact   = 1;
-  mpz_class answer = 0;
-
-  for (uint32_t k = 2; fact <= limit; ++k)
-  {
-    fact *= k;
-    answer += limit / (fact - 1);
-  }
-
-  std::vector<uint16_t> digits;
-  {
-    std::string s = answer.get_str(10);
-    digits.reserve(s.length());
-
-    for (char c : s)
-    {
-      digits.push_back(c - '0');
-    }
-  }
-  return digits;
-}
+// template <uint32_t DIGITS> std::vector<uint16_t> get_answer_gmp()
+// {
+//   mpz_class limit;
+//   mpz_ui_pow_ui(limit.get_mpz_t(), 10, DIGITS + 2);
+//
+//   mpz_class fact   = 1;
+//   mpz_class answer = 0;
+//
+//   for (uint32_t k = 2; fact <= limit; ++k)
+//   {
+//     fact *= k;
+//     answer += limit / (fact - 1);
+//   }
+//
+//   std::vector<uint16_t> digits;
+//   {
+//     std::string s = answer.get_str(10);
+//     digits.reserve(s.length());
+//
+//     for (char c : s)
+//     {
+//       digits.push_back(c - '0');
+//     }
+//   }
+//   return digits;
+// }
 
 template <uint32_t DIGITS> DecBigInt get_answer()
 {

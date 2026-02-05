@@ -50,12 +50,12 @@ TEST(MoreMathTest, LCMBasic)
 
 TEST(MoreMathTest, GCDBigInt)
 {
-  EXPECT_EQ(gcd<DecBigInt>(14, 21), 7);
-  EXPECT_EQ(gcd<DecBigInt>(5, 0), 5);
+  EXPECT_EQ(gcd<slow_bigint::DecBigInt>(14, 21), 7);
+  EXPECT_EQ(gcd<slow_bigint::DecBigInt>(5, 0), 5);
 }
 
 TEST(MoreMathTest, LCMBigInt)
 {
-  EXPECT_EQ(lcm<DecBigInt>(21, 6), 42);
-  EXPECT_EQ(lcm<DecBigInt>(0, 5), 0);
+  EXPECT_EQ(lcm<slow_bigint::DecBigInt>(21, 6), 42);
+  EXPECT_EQ(lcm<slow_bigint::DecBigInt>(0, 5), 0);
 }

@@ -12,9 +12,9 @@ template <typename T> T pow(T base, uint64_t k)
   T result = 1;
   while (k > 0)
   {
-    if (k & 1) result *= base;
+    if (k % 2 == 1) result *= base;
     base *= base;
-    k >>= 1;
+    k /= 2;
   }
   return result;
 }
@@ -25,9 +25,9 @@ template <typename T> T pow(T base, uint64_t k, T mod)
   T b      = base % mod;
   while (k > 0)
   {
-    if (k & 1) result = (result * b) % mod;
+    if (k % 2 == 1) result = (result * b) % mod;
     b = (b * b) % mod;
-    k >>= 1;
+    k /= 2;
   }
   return result;
 }

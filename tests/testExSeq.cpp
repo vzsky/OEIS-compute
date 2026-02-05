@@ -28,7 +28,7 @@ TEST(TestExSeq, testA045345)
 TEST(TestExSeq, testA331373)
 {
   auto fraction = A331373::get_fraction<150>();
-  auto mantissa = fraction.expansion<DecBigInt>(70);
+  auto mantissa = fraction.expansion<slow_bigint::DecBigInt>(70);
   auto answers  = mantissa.digits();
   std::reverse(begin(answers), end(answers));
   EXPECT_EQ(answers,
