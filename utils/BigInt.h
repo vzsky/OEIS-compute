@@ -15,13 +15,20 @@ public:
   static constexpr uint8_t Base = 10;
 
   BigInt() : mValue(0) {}
-  BigInt(uint64_t v) { mpz_set_ui(mValue.get_mpz_t(), v); }
-  BigInt(unsigned long v) { mpz_set_ui(mValue.get_mpz_t(), v); }
-  BigInt(uint32_t v) { mpz_set_ui(mValue.get_mpz_t(), v); }
 
-  BigInt(int64_t v) { mpz_set_si(mValue.get_mpz_t(), v); }
-  BigInt(long v) { mpz_set_si(mValue.get_mpz_t(), v); }
-  BigInt(int32_t v) { mpz_set_si(mValue.get_mpz_t(), v); }
+  template <typename T>
+    requires std::is_signed_v<T>
+  BigInt(T v)
+  {
+    mpz_set_si(mValue.get_mpz_t(), static_cast<int64_t>(v));
+  }
+
+  template <typename T>
+    requires std::is_unsigned_v<T>
+  BigInt(T v)
+  {
+    mpz_set_ui(mValue.get_mpz_t(), static_cast<uint64_t>(v));
+  }
 
   BigInt(const std::string& s, int base = 10) : mValue(s, base) {}
 
