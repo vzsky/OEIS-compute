@@ -10,6 +10,7 @@
 #include <vector>
 
 using namespace complementNonnVector;
+// NOTE: bigint not needed for cache since limit is a uint64_t
 
 template <uint32_t N, uint64_t CacheLim> struct A389544
 {
