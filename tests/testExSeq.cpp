@@ -27,12 +27,34 @@ TEST(TestExSeq, testA045345)
 
 TEST(TestExSeq, testA331373)
 {
-  auto fraction = A331373::get_fraction<150>();
-  auto mantissa = fraction.expansion<slow_bigint::DecBigInt>(70);
+  // show correctness of fraction
+  constexpr size_t DIGITS        = 70;
+  std::vector<uint16_t> expected = {1, 2, 5, 3, 4, 9, 8, 7, 5, 5, 6, 9, 9, 9, 5, 3, 4, 7, 1, 6, 4, 3, 3, 6,
+                                    0, 9, 3, 7, 9, 0, 5, 7, 9, 8, 9, 4, 0, 3, 6, 9, 2, 3, 2, 2, 0, 8, 3, 3,
+                                    2, 0, 1, 3, 4, 1, 7, 0, 6, 3, 8, 3, 4, 7, 1, 6, 6, 4, 0, 9, 5, 2, 4};
+
+  auto fraction = A331373::get_fraction<2 * DIGITS>();
+  auto mantissa = fraction.expansion<slow_bigint::DecBigInt>(DIGITS);
   auto answers  = mantissa.digits();
   std::reverse(begin(answers), end(answers));
-  EXPECT_EQ(answers,
-            std::vector<uint16_t>({1, 2, 5, 3, 4, 9, 8, 7, 5, 5, 6, 9, 9, 9, 5, 3, 4, 7, 1, 6, 4, 3, 3, 6,
-                                   0, 9, 3, 7, 9, 0, 5, 7, 9, 8, 9, 4, 0, 3, 6, 9, 2, 3, 2, 2, 0, 8, 3, 3,
-                                   2, 0, 1, 3, 4, 1, 7, 0, 6, 3, 8, 3, 4, 7, 1, 6, 6, 4, 0, 9, 5, 2, 4}));
+  EXPECT_EQ(answers, expected);
+
+  // against slower bigint, sanity check validity of slow_bigint against gmp
+  constexpr size_t BIGINT_DIGITS = 1000;
+  auto bigint_answers            = A331373::get_answer<BigInt, BIGINT_DIGITS>().digits();
+  auto slow_bigint_result        = A331373::get_answer<slow_bigint::DenseBigInt, BIGINT_DIGITS>();
+  auto slow_bigint_answers       = (slow_bigint::DecBigInt(slow_bigint_result)).digits();
+  std::reverse(slow_bigint_answers.begin(), slow_bigint_answers.end());
+
+  const auto expect_match = [DIGITS](auto x, auto y)
+  {
+    std::vector<size_t> a(x.begin(), x.end());
+    std::vector<size_t> b(y.begin(), y.end());
+    a.resize(std::min(a.size(), b.size()));
+    b.resize(std::min(a.size(), b.size()));
+    EXPECT_GE(a.size(), DIGITS);
+    EXPECT_EQ(a, b);
+  };
+  expect_match(bigint_answers, expected);
+  expect_match(bigint_answers, slow_bigint_answers);
 }

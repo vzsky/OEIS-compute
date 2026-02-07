@@ -9,13 +9,10 @@
 #include <utils/Utils.h>
 #include <vector>
 
-using namespace slow_bigint;
-
 using namespace complementNonnVector;
 
 template <uint32_t N, uint64_t CacheLim> struct A389544
 {
-  using Int = PrimeInt;
   static_assert(CacheLim > N);
   static_assert(CacheLim < std::numeric_limits<uint64_t>::max());
 
@@ -31,7 +28,7 @@ private:
 
   void not_skip(uint64_t n)
   {
-    DenseBigInt cand = n;
+    BigInt cand = n;
     for (auto it = seq.it_at(seqSize - 1); it.idx() >= 0; --it)
     {
       cand *= *it;
@@ -73,28 +70,29 @@ public:
     seqSize = 1;
   }
 
-  Int toInteger(uint64_t n) const { return primeFactorizer.vector_factors_freq(n); }
+  PrimeInt toPrimeInt(uint64_t n) const { return primeFactorizer.vector_factors_freq(n); }
 
-  bool has_duplicate_product_cache(const DenseBigInt& targetProduct) const
+  bool has_duplicate_product_cache(const BigInt& targetProduct) const
   {
     assert(targetProduct < CacheLim);
     return consecCache.contains(targetProduct);
   }
 
-  bool product_is_div_lower_bound(size_t startInd, size_t endInd, const Int& targetProduct) const
+  bool product_is_div_lower_bound(size_t startInd, size_t endInd, const PrimeInt& targetProduct) const
   {
     return product_is_div_lower_bound(seq.it_at(startInd), endInd, targetProduct);
   }
 
-  bool product_is_div_lower_bound(Vector::iterator startIt, size_t endInd, const Int& targetProduct) const
+  bool product_is_div_lower_bound(Vector::iterator startIt, size_t endInd,
+                                  const PrimeInt& targetProduct) const
   {
     bool forward = endInd > startIt.idx();
 
-    Int candidate{1};
+    PrimeInt candidate{1};
     auto it = startIt;
     while (it.idx() != endInd)
     {
-      candidate *= toInteger(*it);
+      candidate *= toPrimeInt(*it);
       if (!targetProduct.is_divisible_by(candidate)) return false;
 
       if (forward)
@@ -103,12 +101,12 @@ public:
         --it;
     }
     if (targetProduct == candidate) return true;
-    candidate *= toInteger(*it);
+    candidate *= toPrimeInt(*it);
     if (!targetProduct.is_divisible_by(candidate)) return false;
     return true;
   }
 
-  bool optimization_1(const Int& targetProduct) const
+  bool optimization_1(const PrimeInt& targetProduct) const
   {
     const auto& factors = targetProduct.factors();
     for (auto it = factors.rbegin(); it != factors.rend(); ++it)
@@ -129,7 +127,7 @@ public:
     return false;
   }
 
-  bool optimization_2(const Int& targetProduct) const
+  bool optimization_2(const PrimeInt& targetProduct) const
   {
     const auto& factors         = targetProduct.factors();
     const uint64_t largestPrime = factors.back().first;
@@ -158,7 +156,7 @@ public:
     return true;
   }
 
-  bool optimization_3(const Int& targetProduct, const uint64_t multipliedTerms) const
+  bool optimization_3(const PrimeInt& targetProduct, const uint64_t multipliedTerms) const
   {
     // if there is a consecutive product = acc, it must has > (what constructed acc) terms;
     // (what constructed acc ~ log_n(acc))
@@ -181,7 +179,7 @@ public:
     return true;
   }
 
-  bool duplicate_product_impossible(const Int& targetProduct, const uint64_t multipliedTerms) const
+  bool duplicate_product_impossible(const PrimeInt& targetProduct, const uint64_t multipliedTerms) const
   {
     if (optimization_3(targetProduct, multipliedTerms)) return true;
     if (optimization_1(targetProduct)) return true;
@@ -189,18 +187,18 @@ public:
     return false;
   }
 
-  bool has_duplicate_product_loop(const Int& targetProduct) const
+  bool has_duplicate_product_loop(const PrimeInt& targetProduct) const
   {
-    Int candidate = 1;
-    size_t l      = 0;
+    PrimeInt candidate = 1;
+    size_t l           = 0;
 
     for (size_t r = 0; r < seqSize; r++)
     {
-      candidate *= toInteger(seq[r]);
+      candidate *= toPrimeInt(seq[r]);
 
       while (l < r && !targetProduct.is_divisible_by(candidate))
       {
-        candidate /= toInteger(seq[l]);
+        candidate /= toPrimeInt(seq[l]);
         l++;
       }
 
@@ -218,13 +216,13 @@ public:
       return skip(n);
 
     mCurrentProductsToCheck.clear();
-    Int acc               = toInteger(n);
-    DenseBigInt acc_small = n;
+    PrimeInt acc     = toPrimeInt(n);
+    BigInt acc_small = n;
 
     for (auto it = seq.it_at(seqSize - 1); it.idx() >= 0; --it)
     {
       if (primeFactorizer.is_prime(*it)) break;
-      acc *= toInteger(*it);
+      acc *= toPrimeInt(*it);
 
       acc_small *= *it;
       if (acc_small != 0 && acc_small < CacheLim)
@@ -245,7 +243,7 @@ public:
 
     stats.loop += mCurrentProductsToCheck.size();
     if (std::all_of(begin(mCurrentProductsToCheck), end(mCurrentProductsToCheck),
-                    [&](const Int& target) { return !has_duplicate_product_loop(target); }))
+                    [&](const PrimeInt& target) { return !has_duplicate_product_loop(target); }))
       return not_skip(n);
 
     return skip(n);
@@ -275,14 +273,14 @@ public:
 
   bool is_interesting(uint64_t skippedElement) const
   {
-    return !has_duplicate_product_loop(toInteger(skippedElement));
+    return !has_duplicate_product_loop(toPrimeInt(skippedElement));
   }
 
 private:
-  std::vector<Int> mCurrentProductsToCheck{};
+  std::vector<PrimeInt> mCurrentProductsToCheck{};
 
 public:
-  std::set<DenseBigInt> consecCache = std::set<DenseBigInt>();
+  std::set<BigInt> consecCache = std::set<BigInt>();
   Prime<N> primeFactorizer{};
 
   Vector seq{};

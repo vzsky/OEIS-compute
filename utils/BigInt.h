@@ -1,18 +1,29 @@
 #pragma once
 
 #include <compare>
+#include <cstdint>
 #include <gmpxx.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 class BigInt
 {
-public:
-  BigInt() : mValue(0) {}
-  BigInt(long v) : mValue(v) {}
-  BigInt(const std::string& s) : mValue(s) {}
-
   explicit BigInt(mpz_class v) : mValue(std::move(v)) {}
+
+public:
+  static constexpr uint8_t Base = 10;
+
+  BigInt() : mValue(0) {}
+  BigInt(uint64_t v) { mpz_set_ui(mValue.get_mpz_t(), v); }
+  BigInt(unsigned long v) { mpz_set_ui(mValue.get_mpz_t(), v); }
+  BigInt(uint32_t v) { mpz_set_ui(mValue.get_mpz_t(), v); }
+
+  BigInt(int64_t v) { mpz_set_si(mValue.get_mpz_t(), v); }
+  BigInt(long v) { mpz_set_si(mValue.get_mpz_t(), v); }
+  BigInt(int32_t v) { mpz_set_si(mValue.get_mpz_t(), v); }
+
+  BigInt(const std::string& s, int base = 10) : mValue(s, base) {}
 
   auto operator<=>(const BigInt& o) const
   {
@@ -26,53 +37,48 @@ public:
   bool is_neg() const { return mpz_sgn(mValue.get_mpz_t()) < 0; }
   bool is_zero() const { return mpz_sgn(mValue.get_mpz_t()) == 0; }
 
+  std::vector<uint8_t> digits() const
+  {
+    if (is_zero()) return {0};
+    std::string s = mValue.get_str(10);
+    std::vector<uint8_t> d;
+    d.reserve(s.size());
+    for (char c : s)
+      if (isdigit(c)) d.push_back(c - '0');
+    return d;
+  }
+
   BigInt abs() const { return BigInt(::abs(mValue)); }
 
-  BigInt& operator+=(const BigInt& o)
-  {
-    mValue += o.mValue;
-    return *this;
-  }
-  BigInt& operator-=(const BigInt& o)
-  {
-    mValue -= o.mValue;
-    return *this;
-  }
-  BigInt& operator*=(const BigInt& o)
-  {
-    mValue *= o.mValue;
-    return *this;
-  }
-  BigInt& operator/=(const BigInt& o)
-  {
-    mValue /= o.mValue;
-    return *this;
-  }
-  BigInt& operator%=(const BigInt& o)
-  {
-    mValue %= o.mValue;
-    return *this;
+#define MAKE_BINARY_OP(op)                                                                                   \
+  BigInt& operator op## = (const BigInt& o)                                                                  \
+  {                                                                                                          \
+    mValue op## = o.mValue;                                                                                  \
+    return *this;                                                                                            \
+  }                                                                                                          \
+  friend BigInt operator op(BigInt a, const BigInt& b)                                                       \
+  {                                                                                                          \
+    a op## = b;                                                                                              \
+    return a;                                                                                                \
   }
 
-  friend BigInt operator+(BigInt a, const BigInt& b)
+  MAKE_BINARY_OP(+);
+  MAKE_BINARY_OP(-);
+  MAKE_BINARY_OP(*);
+  MAKE_BINARY_OP(/);
+  MAKE_BINARY_OP(%);
+
+  MAKE_BINARY_OP(&);
+  MAKE_BINARY_OP(|);
+  MAKE_BINARY_OP(^);
+
+#undef MAKE_BINARY_OP
+
+  BigInt operator-() const
   {
-    a += b;
-    return a;
-  }
-  friend BigInt operator-(BigInt a, const BigInt& b)
-  {
-    a -= b;
-    return a;
-  }
-  friend BigInt operator*(BigInt a, const BigInt& b)
-  {
-    a *= b;
-    return a;
-  }
-  friend BigInt operator/(BigInt a, const BigInt& b)
-  {
-    a /= b;
-    return a;
+    BigInt result = *this;
+    mpz_neg(result.mValue.get_mpz_t(), result.mValue.get_mpz_t());
+    return result;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const BigInt& b) { return os << b.mValue; }

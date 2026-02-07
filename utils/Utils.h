@@ -81,7 +81,6 @@ read_bfile(const std::string& relative_path,
   if (!in) throw std::runtime_error("cannot open file");
 
   std::vector<T> out;
-  T n, a;
 
   std::string line;
   while (std::getline(in, line))
@@ -89,8 +88,8 @@ read_bfile(const std::string& relative_path,
     if (line.empty() || line[0] == '#') continue;
 
     std::istringstream iss(line);
-    T n, a;
 
+    size_t n, a; // index and number, be careful of reading to int8_t (char)
     if (iss >> n >> a) out.push_back(a);
   }
 

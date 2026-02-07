@@ -10,7 +10,7 @@ template <int N> std::vector<int> answers_upto()
   std::vector<int> answers;
   Prime<N> p;
   auto primes = p.all_primes();
-  std::vector<slow_bigint::DecBigInt> sum(primes.size());
+  std::vector<BigInt> sum(primes.size());
   for (int i = 1; i < primes.size(); i++)
   {
     sum[i] = sum[i - 1] + primes[i - 1];

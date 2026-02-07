@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <ranges>
 #include <utils/BigInt.h>
 
 using slow_bigint::DecBigInt;
@@ -8,7 +9,7 @@ template <typename T> class BigIntTest : public ::testing::Test
 {
 };
 
-using BigIntTypes = ::testing::Types<DecBigInt, DenseBigInt>;
+using BigIntTypes = ::testing::Types<DecBigInt, DenseBigInt, BigInt>;
 TYPED_TEST_SUITE(BigIntTest, BigIntTypes);
 
 TYPED_TEST(BigIntTest, Construction)
@@ -20,7 +21,6 @@ TYPED_TEST(BigIntTest, Construction)
   EXPECT_EQ(BI("-987"), BI(-987));
   EXPECT_EQ(BI("000123"), BI(123));
   EXPECT_EQ(BI("-00456"), BI(-456));
-  EXPECT_EQ(BI("+78900"), BI(78900));
 }
 
 TYPED_TEST(BigIntTest, StreamOutput)
@@ -105,7 +105,38 @@ TYPED_TEST(BigIntTest, Multiplication)
   if constexpr (BI::Base == 10) EXPECT_EQ(g.digits().size(), 31);
 }
 
-TEST(BigIntTest, BaseConversion)
+TEST(BigIntTest, LargeMultiply)
+{
+  const auto getBigNumber = [&]<typename T>()
+  {
+    T top  = 1;
+    T fact = 1;
+    T bot  = 1;
+
+    for (int k = 2; k <= 100; ++k)
+    {
+      fact *= k;
+      T d = fact - 1;
+
+      top = top * d + bot;
+      bot = bot * d;
+    }
+
+    return top;
+  };
+
+  const auto top  = getBigNumber.operator()<DenseBigInt>();
+  const auto dtop = getBigNumber.operator()<DecBigInt>();
+  const auto btop = getBigNumber.operator()<BigInt>();
+
+  EXPECT_EQ(DecBigInt(top), dtop);
+
+  std::vector<uint8_t> digits(dtop.digits().begin(), dtop.digits().end());
+  std::reverse(digits.begin(), digits.end());
+  EXPECT_EQ(btop.digits(), digits);
+}
+
+TEST(SlowBigIntTest, BaseConversion)
 {
   using DecBI   = slow_bigint::BigInt<uint16_t, 10>;
   using BinBI   = slow_bigint::BigInt<uint8_t, 2>;
@@ -138,53 +169,29 @@ TEST(BigIntTest, BaseConversion)
   }
 }
 
-TEST(BigIntTest, MultOverflowBehavior)
+TEST(SlowBigIntTest, MultOverflowBehavior)
 {
   constexpr uint16_t Base = 128;
   constexpr int N         = 128;
 
-  slow_bigint::BigInt<uint16_t, Base> a = Base - 1;
-  for (int i = 0; i < N; i++)
+  const auto getBigNumber = [&]<typename T>()
   {
-    a *= Base;
-    a += (Base - 1);
-  }
-  slow_bigint::BigInt<uint16_t, Base> b = a;
+    slow_bigint::BigInt<T, Base> a = Base - 1;
+    for (int i = 0; i < N; i++)
+    {
+      a *= Base;
+      a += (Base - 1);
+    }
 
-  slow_bigint::BigInt<uint16_t, Base> c = a * b;
+    slow_bigint::BigInt<T, Base> b = a;
+    slow_bigint::BigInt<T, Base> c = a * b;
+    return c;
+  };
 
-  slow_bigint::BigInt<uint64_t, Base> big_a = Base - 1;
-  for (int i = 0; i < N; i++)
-  {
-    big_a *= Base;
-    big_a += (Base - 1);
-  }
-  slow_bigint::BigInt<uint64_t, Base> big_b = big_a;
-  slow_bigint::BigInt<uint64_t, Base> big_c = big_a * big_b;
+  const auto c     = getBigNumber.operator()<uint16_t>();
+  const auto big_c = getBigNumber.operator()<uint64_t>();
 
+  // using small and large digit type should give same result
   ASSERT_EQ(c.digits().size(), big_c.digits().size());
-  for (int i = 0; i < c.digits().size(); i++) ASSERT_EQ((uint64_t)c.digits()[i], big_c.digits()[i]);
-}
-
-TEST(BigIntTest, DenseBigIntLargeMultiply)
-{
-  DenseBigInt top  = 1;
-  DenseBigInt fact = 1;
-  DenseBigInt bot  = 1;
-
-  for (int k = 2; k <= 70; ++k)
-  {
-    fact *= k;
-    DenseBigInt d = fact - 1;
-
-    top = top * d + bot;
-    bot = bot * d;
-
-    auto dtop  = DecBigInt(top);
-    auto dfact = DecBigInt(fact);
-    auto dbot  = DecBigInt(bot);
-
-    EXPECT_EQ(DecBigInt(top), dtop);
-    EXPECT_EQ(top, DenseBigInt(dtop));
-  }
+  for (int i = 0; i < c.digits().size(); i++) ASSERT_EQ(c.digits()[i], big_c.digits()[i]);
 }

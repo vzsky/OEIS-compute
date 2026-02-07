@@ -6,43 +6,14 @@
 namespace A331373
 {
 
-using namespace slow_bigint;
-
-// template <uint32_t DIGITS> std::vector<uint16_t> get_answer_gmp()
-// {
-//   mpz_class limit;
-//   mpz_ui_pow_ui(limit.get_mpz_t(), 10, DIGITS + 2);
-//
-//   mpz_class fact   = 1;
-//   mpz_class answer = 0;
-//
-//   for (uint32_t k = 2; fact <= limit; ++k)
-//   {
-//     fact *= k;
-//     answer += limit / (fact - 1);
-//   }
-//
-//   std::vector<uint16_t> digits;
-//   {
-//     std::string s = answer.get_str(10);
-//     digits.reserve(s.length());
-//
-//     for (char c : s)
-//     {
-//       digits.push_back(c - '0');
-//     }
-//   }
-//   return digits;
-// }
-
-template <uint32_t DIGITS> DecBigInt get_answer()
+template <typename BigIntType, uint32_t DIGITS> BigIntType get_answer()
 {
-  static DenseBigInt limit = math::pow(DenseBigInt(10), DIGITS + 2);
+  static BigIntType limit = math::pow(BigIntType(10), DIGITS + 2);
 
-  DenseBigInt fact(1);
-  DenseBigInt answer(0);
+  BigIntType fact   = 1;
+  BigIntType answer = 0;
 
-  for (uint64_t k = 2; fact <= limit; ++k)
+  for (uint32_t k = 2; fact <= limit; ++k)
   {
     fact *= k;
     answer += limit / (fact - 1);
@@ -51,6 +22,8 @@ template <uint32_t DIGITS> DecBigInt get_answer()
   return answer;
 }
 
+// testing fraction
+using slow_bigint::DenseBigInt;
 template <uint32_t DIGITS> Fraction<DenseBigInt> get_fraction(bool stats = false)
 {
   DenseBigInt limit = math::pow(DenseBigInt(10), DIGITS + 2);
