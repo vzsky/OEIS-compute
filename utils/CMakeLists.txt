@@ -29,21 +29,21 @@ foreach(i RANGE 0 ${_utils_len} 2)
   )
 endforeach()
 
-# target_include_directories(bigint
-#   PRIVATE
-#     ${CMAKE_CURRENT_SOURCE_DIR}
-#     ${GMP_INCLUDE_DIR}
-# )
-#
-# target_link_libraries(bigint PRIVATE 
-#     ${GMPXX_LIB} 
-#     ${GMP_LIB} 
-#     pthread
-# )
+target_include_directories(bigint
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GMP_INCLUDE_DIR}
+)
+
+target_link_libraries(bigint PUBLIC 
+    ${GMPXX_LIB} 
+    ${GMP_LIB} 
+    pthread
+)
+
+target_link_libraries(fraction PUBLIC bigint moremath)
+target_link_libraries(primeint PUBLIC prime)
 
 add_library(allutils INTERFACE)
 target_link_libraries(allutils INTERFACE ${ALLUTILS})
-target_include_directories(allutils INTERFACE
-  ${PROJECT_SOURCE_DIR}
-)
 

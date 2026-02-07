@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <utils/BigInt.h>
 
-using namespace slow_bigint;
+using slow_bigint::DecBigInt;
+using slow_bigint::DenseBigInt;
 
 template <typename T> class BigIntTest : public ::testing::Test
 {
@@ -106,9 +107,9 @@ TYPED_TEST(BigIntTest, Multiplication)
 
 TEST(BigIntTest, BaseConversion)
 {
-  using DecBI   = BigInt<uint16_t, 10>;
-  using BinBI   = BigInt<uint8_t, 2>;
-  using HexBI   = BigInt<uint16_t, 16>;
+  using DecBI   = slow_bigint::BigInt<uint16_t, 10>;
+  using BinBI   = slow_bigint::BigInt<uint8_t, 2>;
+  using HexBI   = slow_bigint::BigInt<uint16_t, 16>;
   using DenseBI = DenseBigInt;
 
   for (auto n : std::vector<uint64_t>{1234285, 8234692643, 6529385728935})
@@ -142,24 +143,24 @@ TEST(BigIntTest, MultOverflowBehavior)
   constexpr uint16_t Base = 128;
   constexpr int N         = 128;
 
-  BigInt<uint16_t, Base> a = Base - 1;
+  slow_bigint::BigInt<uint16_t, Base> a = Base - 1;
   for (int i = 0; i < N; i++)
   {
     a *= Base;
     a += (Base - 1);
   }
-  BigInt<uint16_t, Base> b = a;
+  slow_bigint::BigInt<uint16_t, Base> b = a;
 
-  BigInt<uint16_t, Base> c = a * b;
+  slow_bigint::BigInt<uint16_t, Base> c = a * b;
 
-  BigInt<uint64_t, Base> big_a = Base - 1;
+  slow_bigint::BigInt<uint64_t, Base> big_a = Base - 1;
   for (int i = 0; i < N; i++)
   {
     big_a *= Base;
     big_a += (Base - 1);
   }
-  BigInt<uint64_t, Base> big_b = big_a;
-  BigInt<uint64_t, Base> big_c = big_a * big_b;
+  slow_bigint::BigInt<uint64_t, Base> big_b = big_a;
+  slow_bigint::BigInt<uint64_t, Base> big_c = big_a * big_b;
 
   ASSERT_EQ(c.digits().size(), big_c.digits().size());
   for (int i = 0; i < c.digits().size(); i++) ASSERT_EQ((uint64_t)c.digits()[i], big_c.digits()[i]);

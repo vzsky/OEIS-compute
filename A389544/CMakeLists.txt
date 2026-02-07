@@ -1,8 +1,5 @@
 set(DEPENDENCIES
-  utils
-  primeint
-  complementnonnvector
-  prime
+  allutils
 )
 
 set(FILES

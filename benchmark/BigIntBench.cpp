@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <utils/BigInt.h>
 
-using namespace slow_bigint;
+using slow_bigint::DenseBigInt;
 
 template <typename T> static T make_big(int n)
 {
@@ -87,40 +87,32 @@ template <typename T> static void BM_div_impl(benchmark::State& state)
 #define RUN_BENCH(OP, TYPE) BENCHMARK(BM_##OP##_##TYPE)->Name(#TYPE "/" #OP)
 
 // --- ADD ---
-DEFINE_BENCH(add, DecBigInt);
-DEFINE_BENCH(add, DenseDecBigInt);
 DEFINE_BENCH(add, DenseBigInt);
+DEFINE_BENCH(add, BigInt);
 
-RUN_BENCH(add, DecBigInt)->Args({128});
-RUN_BENCH(add, DenseDecBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(add, DenseBigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(add, BigInt)->Args({128})->Args({512})->Args({8192});
 
 // --- SUB ---
-DEFINE_BENCH(sub, DecBigInt);
-DEFINE_BENCH(sub, DenseDecBigInt);
 DEFINE_BENCH(sub, DenseBigInt);
+DEFINE_BENCH(sub, BigInt);
 
-RUN_BENCH(sub, DecBigInt)->Args({128});
-RUN_BENCH(sub, DenseDecBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(sub, DenseBigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(sub, BigInt)->Args({128})->Args({512})->Args({8192});
 
 // --- MUL ---
-DEFINE_BENCH(mul, DecBigInt);
-DEFINE_BENCH(mul, DenseDecBigInt);
 DEFINE_BENCH(mul, DenseBigInt);
+DEFINE_BENCH(mul, BigInt);
 
-RUN_BENCH(mul, DecBigInt)->Args({128});
-RUN_BENCH(mul, DenseDecBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(mul, DenseBigInt)->Args({128})->Args({512})->Args({8192})->Args({32768});
+RUN_BENCH(mul, BigInt)->Args({128})->Args({512})->Args({8192})->Args({32768});
 
 // --- DIV ---
 
-DEFINE_BENCH(div, DecBigInt);
-DEFINE_BENCH(div, DenseDecBigInt);
 DEFINE_BENCH(div, DenseBigInt);
+DEFINE_BENCH(div, BigInt);
 
-RUN_BENCH(div, DecBigInt)->Args({128});
-RUN_BENCH(div, DenseDecBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(div, DenseBigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(div, BigInt)->Args({128})->Args({512})->Args({8192});
 
 BENCHMARK_MAIN();

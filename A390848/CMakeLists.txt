@@ -1,5 +1,5 @@
 set(DEPENDENCIES
-  utils
+  allutils
   A389544_lib
 )
 
