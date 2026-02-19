@@ -59,3 +59,27 @@ TEST(MoreMathTest, LCMBigInt)
   EXPECT_EQ(lcm<slow_bigint::DecBigInt>(21, 6), 42);
   EXPECT_EQ(lcm<slow_bigint::DecBigInt>(0, 5), 0);
 }
+
+TEST(MoreMathTest, NCkBasic)
+{
+  EXPECT_EQ(nCk(5, 0), 1);
+  EXPECT_EQ(nCk(5, 1), 5);
+  EXPECT_EQ(nCk(5, 2), 10);
+  EXPECT_EQ(nCk(5, 5), 1);
+  EXPECT_EQ(nCk(0, 0), 1);
+  EXPECT_EQ(nCk(10, 3), 120);
+
+  EXPECT_EQ(nCk(10, 11), 0);
+}
+
+TEST(MoreMathTest, FactorialBasic)
+{
+  EXPECT_EQ(fact(0), 1);
+  EXPECT_EQ(fact(1), 1);
+  EXPECT_EQ(fact(2), 2);
+  EXPECT_EQ(fact(3), 6);
+  EXPECT_EQ(fact(4), 24);
+  EXPECT_EQ(fact(5), 120);
+  EXPECT_EQ(fact(10), 3628800);
+  EXPECT_EQ(fact(12), 479001600);
+}

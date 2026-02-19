@@ -96,4 +96,10 @@ read_bfile(const std::string& relative_path,
   return out;
 }
 
+template <typename T> void print_vec(const std::vector<T>& v)
+{
+  for (auto x : v) std::cout << x << ' ';
+  std::cout << std::endl;
+}
+
 } // namespace utils

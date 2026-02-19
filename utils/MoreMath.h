@@ -54,4 +54,22 @@ template <typename T> T lcm(T a, T b)
   return a * b / gcd(a, b);
 }
 
+template <typename T> T fact(T n)
+{
+  if (n < 0) throw std::invalid_argument("n must be non-negative");
+  T ans = 1;
+  for (T i = 1; i <= n; i++) ans *= i;
+  return ans;
+}
+
+template <typename T> T nCk(T n, T k)
+{
+  if (k > n) return 0;
+  if (k > n - k) k = n - k;
+  T res = 1;
+  for (T i = 1; i <= k; i++) res *= (n - i + 1);
+  for (int i = 1; i <= k; i++) res /= i;
+  return res;
+}
+
 } // namespace math
