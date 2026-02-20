@@ -1,4 +1,5 @@
 set(TEST_MODULES
+  metaprog                  testMetaProg.cpp
   prime                     testPrime.cpp
   bigint                    testBigInt.cpp
   modint                    testModInt.cpp
