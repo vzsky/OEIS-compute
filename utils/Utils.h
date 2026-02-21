@@ -96,9 +96,9 @@ read_bfile(const std::string& relative_path,
   return out;
 }
 
-template <typename T> void print_vec(const std::vector<T>& v)
+template <std::ranges::range R> void print_range(const R& range, std::string sep = " ")
 {
-  for (auto x : v) std::cout << x << ' ';
+  for (auto x : range) std::cout << x << sep;
   std::cout << std::endl;
 }
 

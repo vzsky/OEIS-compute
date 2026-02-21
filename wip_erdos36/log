@@ -1,0 +1,45 @@
+1: 1
+Time elapsed: 0.0s
+2: 1
+Time elapsed: 0.0s
+3: 2
+Time elapsed: 0.0s
+4: 2
+Time elapsed: 0.0s
+5: 3
+Time elapsed: 0.0s
+6: 3
+Time elapsed: 0.0s
+7: 3
+Time elapsed: 0.2s
+8: 4
+Time elapsed: 0.8s
+9: 4
+Time elapsed: 0.26s
+10: 5
+Time elapsed: 0.81s
+11: 5
+Time elapsed: 0.341s
+12: 5
+Time elapsed: 1.783s
+13: 6
+Time elapsed: 7.490s
+14: 6
+Time elapsed: 28.5s
+15: 6
+Time elapsed: 119.973s
+16: 7
+Time elapsed: 513.101s
+17: 7
+Time elapsed: 2211.964s
+18: 8
+Time elapsed: 36906.562s
+
+
+a(19), a(20) <= 8
+- 1111011101100000000011000000101011101111
+a(21), a(22) <= 9
+a(23), a(24) <= 10
+a(25), a(26) <= 11
+a(27), a(28), a(29) <= 12
+

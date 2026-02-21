@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <mutex>
 #include <semaphore>
 #include <thread>
 #include <vector>

@@ -83,3 +83,27 @@ TEST(MoreMathTest, FactorialBasic)
   EXPECT_EQ(fact(10), 3628800);
   EXPECT_EQ(fact(12), 479001600);
 }
+
+TEST(MoreMathTest, Average)
+{
+  int N = 100;
+  std::vector<int> v;
+  for (int i = 0; i < N; i++) v.push_back(20);
+  EXPECT_EQ(stats::average(v), 20);
+  for (int i = 0; i < N; i++) v.push_back(30);
+  EXPECT_EQ(stats::average(v), 25);
+  for (int i = 0; i < N; i++) v.push_back(40);
+  EXPECT_EQ(stats::average(v), 30);
+}
+
+TEST(MoreMathTest, Variance)
+{
+  const auto simple_test = [](int n)
+  {
+    std::vector<int> v = {1 + n, 2 + n, 3 + n};
+    EXPECT_EQ(stats::variance(v), 2.0 / 3);
+  };
+  simple_test(0);
+  simple_test(10);
+  simple_test(50);
+}
