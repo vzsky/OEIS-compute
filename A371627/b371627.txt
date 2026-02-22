@@ -1,4 +1,4 @@
-# Computed by 
+# Computed by https://github.com/vzsky/OEIS-compute/commit/c7533a7e9a3f5076ef2d93d715d5b8862cf23587
 1 0
 2 1
 3 1
