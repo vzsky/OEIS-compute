@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <utils/MoreMath.h>
 #include <vector>
 
@@ -69,7 +70,7 @@ template <int N> int upperbound_answer(int l, int r)
   int m     = 2 * N;
   auto mask = common::nth_binary_permutation<N>(l);
 
-  int best = INT_MAX;
+  int best = std::numeric_limits<int>::max();
   std::vector<int> save;
   int cnt = l;
   do

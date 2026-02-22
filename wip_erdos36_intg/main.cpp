@@ -109,7 +109,7 @@ protected:
   }
 };
 
-template <int N, GeneConfig Cfg> std::uniform_int_distribution SymmetricGene<N, Cfg>::distN{0, N};
+template <int N, GeneConfig Cfg> std::uniform_int_distribution<int> SymmetricGene<N, Cfg>::distN{0, N};
 
 static_assert(genetic::IsGene<SymmetricGene<0, {}>>);
 
