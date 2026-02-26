@@ -1,0 +1,29 @@
+ninja: Entering directory `./build'
+[1/4] Building CXX object wip_erdos334/CMakeFiles/wip_erdos334.dir/main.cpp.o
+[2/4] Building CXX object wip_erdos334/CMakeFiles/wip_erdos334_lib.dir/main.cpp.o
+[3/4] Linking CXX static library lib/libwip_erdos334_lib.a
+[4/4] Linking CXX executable bin/wip_erdos334
+Compilation success
+2 7
+3 23
+5 71
+7 311
+11 479
+13 1559
+17 5711
+19 10559
+23 18191
+29 31391
+Time elapsed: 3.428s
+31 118271
+37 366791
+41 366791
+43 2155919
+47 2155919
+Time elapsed: 33.767s
+53 2155919
+59 6077111
+61 6077111
+Time elapsed: 44.453s
+67 98538359
+Time elapsed: 413.572s

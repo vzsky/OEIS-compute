@@ -5,6 +5,7 @@ set(TEST_MODULES
   modint                    testModInt.cpp
   fraction                  testFraction.cpp
   moremath                  testMoreMath.cpp
+  fft                       testFft.cpp
   treap                     testTreap.cpp
   primeint                  testPrimeInt.cpp
   complementnonnvector      testComplementNonnVector.cpp

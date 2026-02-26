@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
+// multipurpose class for prime related questions
 template <size_t N> class Prime
 {
   static_assert(N > 2);
@@ -15,7 +16,14 @@ public:
   std::vector<size_t> factors(size_t n) const;
   std::map<size_t, size_t> factors_freq(size_t n) const;
   std::vector<std::pair<size_t, size_t>> vector_factors_freq(size_t n) const;
-  const std::vector<size_t>& all_primes() const;
+  const std::vector<size_t>& all_primes() const { return mAllPrimes; };
+  size_t lowest_prime_factor(size_t n) const { return mLowestPrimeDiv[n]; }
+  size_t highest_prime_factor(size_t n) const
+  {
+    size_t result;
+    emit_factors(n, [&](size_t p) { result = p; });
+    return result;
+  }
 
 private:
   template <typename EmitCB> void emit_factors(size_t, EmitCB) const;
@@ -56,10 +64,9 @@ template <size_t N> bool Prime<N>::is_prime(size_t n) const
   return true;
 }
 
-template <size_t N> const std::vector<size_t>& Prime<N>::all_primes() const { return mAllPrimes; }
-
 template <size_t N> template <typename EmitCB> void Prime<N>::emit_factors(size_t n, EmitCB callback) const
 {
+  // callback will be called in sorted order (small to large primes)
   auto fastFactor = [&](size_t& n)
   {
     while (n != 1)

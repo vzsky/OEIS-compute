@@ -40,7 +40,7 @@ int main()
   const auto genetic_run = []
   {
     using namespace genetic;
-    mp::For<21, 30>([&](auto N)
+    mp::For<1000, 1001>([&](auto N)
     {
       utils::timeit([&]
       {
@@ -56,8 +56,8 @@ int main()
         }();
 
         GeneticSearcher<Gene> g{};
-        g.config.elite_count     = 6000;
-        g.config.population_size = 60000;
+        g.config.elite_count     = 1000;
+        g.config.population_size = 10000;
         g.setGenerationCB([](const Gene& g, int generation)
         { std::cout << g.get_score() << ' ' << g.get_max_count() << std::endl; });
 

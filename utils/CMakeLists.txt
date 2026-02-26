@@ -5,6 +5,7 @@ set(UTILS_LIBS
     modint                  ModInt.cpp
     fraction                Fraction.cpp
     primeint                PrimeInt.cpp
+    fft                     Fft.cpp
     prime                   Prime.cpp
     moremath                MoreMath.cpp
     complementnonnvector    ComplementNonnVector.cpp
