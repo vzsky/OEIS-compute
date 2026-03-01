@@ -7,7 +7,6 @@ set(UTILS_LIBS
     primeint                PrimeInt.cpp
     fft                     Fft.cpp
     prime                   Prime.cpp
-    moremath                MoreMath.cpp
     complementnonnvector    ComplementNonnVector.cpp
 )
 
@@ -42,7 +41,7 @@ target_link_libraries(bigint PUBLIC
     pthread
 )
 
-target_link_libraries(fraction PUBLIC bigint moremath)
+target_link_libraries(fraction PUBLIC bigint)
 target_link_libraries(primeint PUBLIC prime)
 
 add_library(allutils INTERFACE)

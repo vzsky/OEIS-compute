@@ -1,4 +1,3 @@
-#include "Utils.h"
 #include <cassert>
 #include <complex.h>
 #include <numbers>
@@ -9,21 +8,23 @@ namespace fft
 
 using cd = std::complex<double>;
 
-template <std::integral T> inline std::vector<T> round(std::vector<cd> v)
+template <std::integral T> std::vector<T> round(const std::vector<cd>& v)
 {
   std::vector<T> result;
   for (auto i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i].real() + 0.5));
   return result;
 }
 
-template <std::integral T> std::vector<T> round(std::vector<double> v)
+template <std::integral T> std::vector<T> round(const std::vector<double>& v)
 {
   std::vector<T> result;
   for (auto i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i] + 0.5));
   return result;
 }
 
-template <typename U, std::integral T> std::vector<U> fmap_cast(std::vector<T> v)
+// becareful when doing <int, double>.
+// make sure you don't want round<int, double>
+template <typename U, typename T> std::vector<U> fmap_cast(const std::vector<T>& v)
 {
   std::vector<U> result;
   for (auto x : v) result.push_back(static_cast<U>(x));

@@ -1,5 +1,5 @@
-#include "MoreMath.h"
 #include "lib.h"
+#include <math/Stats.h>
 #include <random>
 #include <utils/GeneticAlg.h>
 #include <utils/Utils.h>

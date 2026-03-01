@@ -4,7 +4,7 @@ set(TEST_MODULES
   bigint                    testBigInt.cpp
   modint                    testModInt.cpp
   fraction                  testFraction.cpp
-  moremath                  testMoreMath.cpp
+  math                      testMath.cpp
   fft                       testFft.cpp
   treap                     testTreap.cpp
   primeint                  testPrimeInt.cpp

@@ -1,5 +1,4 @@
-#include <cstdint>
-#include <utils/MoreMath.h>
+#include <math/Basic.h>
 #include <utils/Prime.h>
 
 template <int N> class A002326

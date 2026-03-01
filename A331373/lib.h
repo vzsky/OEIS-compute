@@ -1,7 +1,7 @@
 #include <iostream>
+#include <math/Basic.h>
 #include <utils/BigInt.h>
 #include <utils/Fraction.h>
-#include <utils/MoreMath.h>
 
 namespace A331373
 {

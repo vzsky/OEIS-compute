@@ -1,6 +1,5 @@
 set(DEPENDENCIES
   utils
-  moremath 
   bigint
   fraction
 )

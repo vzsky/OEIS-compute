@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
+#include <math/Basic.h>
+#include <math/Stats.h>
 #include <utils/BigInt.h>
-#include <utils/MoreMath.h>
 
 using namespace math;
 
-TEST(MoreMathTest, PowBasic)
+TEST(BasicMath, PowBasic)
 {
   EXPECT_EQ(pow(2, 0), 1);
   EXPECT_EQ(pow(2, 3), 8);
@@ -14,7 +15,7 @@ TEST(MoreMathTest, PowBasic)
   EXPECT_EQ(pow(0, 5), 0);
 }
 
-TEST(MoreMathTest, PowModBasic)
+TEST(BasicMath, PowModBasic)
 {
   EXPECT_EQ(pow(2, 0, 5), 1);
   EXPECT_EQ(pow(2, 3, 5), 3);
@@ -24,13 +25,13 @@ TEST(MoreMathTest, PowModBasic)
   EXPECT_EQ(pow(0, 5, 7), 0);
 }
 
-TEST(MoreMathTest, PowModLarge)
+TEST(BasicMath, PowModLarge)
 {
   EXPECT_EQ(pow(2, 30, 1000000007), 1073741824 % 1000000007);
   for (uint64_t a : {6, 1923, 5729, 9181}) EXPECT_EQ(pow<uint64_t>(a, 1e9 + 7, 1e9 + 7), a);
 }
 
-TEST(MoreMathTest, GCDBasic)
+TEST(BasicMath, GCDBasic)
 {
   EXPECT_EQ(gcd(10, 5), 5);
   EXPECT_EQ(gcd(14, 21), 7);
@@ -39,7 +40,7 @@ TEST(MoreMathTest, GCDBasic)
   EXPECT_EQ(gcd(5, 0), 5);
 }
 
-TEST(MoreMathTest, LCMBasic)
+TEST(BasicMath, LCMBasic)
 {
   EXPECT_EQ(lcm(4, 5), 20);
   EXPECT_EQ(lcm(6, 8), 24);
@@ -48,19 +49,19 @@ TEST(MoreMathTest, LCMBasic)
   EXPECT_EQ(lcm(5, 0), 0);
 }
 
-TEST(MoreMathTest, GCDBigInt)
+TEST(BasicMath, GCDBigInt)
 {
   EXPECT_EQ(gcd<slow_bigint::DecBigInt>(14, 21), 7);
   EXPECT_EQ(gcd<slow_bigint::DecBigInt>(5, 0), 5);
 }
 
-TEST(MoreMathTest, LCMBigInt)
+TEST(BasicMath, LCMBigInt)
 {
   EXPECT_EQ(lcm<slow_bigint::DecBigInt>(21, 6), 42);
   EXPECT_EQ(lcm<slow_bigint::DecBigInt>(0, 5), 0);
 }
 
-TEST(MoreMathTest, NCkBasic)
+TEST(BasicMath, NCkBasic)
 {
   EXPECT_EQ(nCk(5, 0), 1);
   EXPECT_EQ(nCk(5, 1), 5);
@@ -72,7 +73,7 @@ TEST(MoreMathTest, NCkBasic)
   EXPECT_EQ(nCk(10, 11), 0);
 }
 
-TEST(MoreMathTest, FactorialBasic)
+TEST(BasicMath, FactorialBasic)
 {
   EXPECT_EQ(fact(0), 1);
   EXPECT_EQ(fact(1), 1);
@@ -84,7 +85,7 @@ TEST(MoreMathTest, FactorialBasic)
   EXPECT_EQ(fact(12), 479001600);
 }
 
-TEST(MoreMathTest, Average)
+TEST(MathStats, Average)
 {
   int N = 100;
   std::vector<int> v;
@@ -96,7 +97,7 @@ TEST(MoreMathTest, Average)
   EXPECT_EQ(stats::average(v), 30);
 }
 
-TEST(MoreMathTest, Variance)
+TEST(MathStats, Variance)
 {
   const auto simple_test = [](int n)
   {

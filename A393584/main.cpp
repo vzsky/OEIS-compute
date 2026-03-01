@@ -1,8 +1,8 @@
 #include "libgenetic.h"
 #include "libnaive.h"
+#include <math/Basic.h>
 #include <utils/GeneticAlg.h>
 #include <utils/MetaProg.h>
-#include <utils/MoreMath.h>
 #include <utils/Utils.h>
 
 #include <iostream>
