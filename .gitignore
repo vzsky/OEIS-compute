@@ -1,12 +1,12 @@
-main
+.DS_Store
 log/*
 *.prof
 */log/*
 artifacts/*
-.DS_Store
 .ipynb_checkpoints/
 .cache/*
 build/*
 benchmark/local_baseline/*
+explore/*
 compile_commands.json
 reading_list

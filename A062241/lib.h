@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 
 bool has_sum(const std::vector<char>& active, int target)

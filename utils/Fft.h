@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cassert>
-#include <complex.h>
+#include <complex>
+#include <cstdint>
 #include <numbers>
 #include <vector>
 
@@ -98,7 +100,7 @@ template <Direction Dir> void transform(std::vector<cd>& a)
 
   if constexpr (Dir == Direction::Inverse)
   {
-    reverse(a.begin() + 1, a.end());
+    std::reverse(a.begin() + 1, a.end());
     for (cd& x : a) x /= n;
   }
 }
