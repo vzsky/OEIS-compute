@@ -1,5 +1,4 @@
 #include "lib.h"
-#include <map>
 #include <utils/Fft.h>
 #include <utils/MetaProg.h>
 #include <utils/Prime.h>
@@ -8,34 +7,8 @@
 // a(n) is the smallest k such that n = a + b where a and b are not divisible by any prime > k
 // equivalently, a(n) is the minimum of (maximum prime factor of a and b) across all choice of a, b
 
-template <int N> struct DataHelper
-{
-public:
-  DataHelper() : mHighestPrimeDiv(N, 1)
-  {
-    mHighestPrimeDiv[0] = 1;
-    mHighestPrimeDiv[1] = 1;
-    mGroupByHighestDiv[2].push_back(0);
-    mGroupByHighestDiv[2].push_back(1);
-
-    for (int i = 2; i < N; ++i)
-    {
-      int p               = mPrime.highest_prime_factor(i);
-      mHighestPrimeDiv[i] = p;
-      mGroupByHighestDiv[p].push_back(i);
-    }
-  }
-
-  const Prime<N>& prime() const { return mPrime; }
-  const std::vector<int>& highestPrimeDiv() const { return mHighestPrimeDiv; }
-  const std::map<int, std::vector<int>>& groupByHighestDiv() const { return mGroupByHighestDiv; }
-
-private:
-  Prime<N> mPrime;
-  std::vector<int> mHighestPrimeDiv;
-  std::map<int, std::vector<int>> mGroupByHighestDiv;
-};
-
+// one possible speed up is that the answer needs to be a number with the lowest prime factor higher than
+// the currently searching prime
 int main()
 {
   int lower_bound = -1;
@@ -53,7 +26,7 @@ int main()
       if (data.prime().is_prime(k))
       {
         for (int x : data.groupByHighestDiv().at(k)) active[x] = 1;
-        int answer = find_answer(lower_bound, active);
+        int answer = find_answer(data, k, lower_bound, active);
         std::cout << k << ' ' << answer << std::endl;
         lower_bound = answer;
       }
