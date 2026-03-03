@@ -1,16 +1,16 @@
 {
   "context": {
-    "date": "2026-03-01T11:13:58+00:00",
+    "date": "2026-03-03T21:13:25+00:00",
     "host_name": "runnervmnay03",
     "executable": "build/benchmark/a390848_bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 3253,
+    "mhz_per_cpu": 3092,
     "cpu_scaling_enabled": false,
     "caches": [
       {
         "type": "Data",
         "level": 1,
-        "size": 32768,
+        "size": 49152,
         "num_sharing": 2
       },
       {
@@ -22,17 +22,17 @@
       {
         "type": "Unified",
         "level": 2,
-        "size": 524288,
+        "size": 1310720,
         "num_sharing": 2
       },
       {
         "type": "Unified",
         "level": 3,
-        "size": 33554432,
+        "size": 50331648,
         "num_sharing": 4
       }
     ],
-    "load_avg": [3.10645,1.53271,0.589844],
+    "load_avg": [2.77197,1.43359,0.557617],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -46,8 +46,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 13,
-      "real_time": 5.1349564999998607e+07,
-      "cpu_time": 5.1346342461538464e+07,
+      "real_time": 5.1967084923076682e+07,
+      "cpu_time": 5.1961483076923080e+07,
       "time_unit": "ns"
     },
     {
@@ -60,8 +60,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 8.3120827299998724e+08,
-      "cpu_time": 8.3113936900000000e+08,
+      "real_time": 8.5438073599999595e+08,
+      "cpu_time": 8.5427744999999988e+08,
       "time_unit": "ns"
     }
   ]
