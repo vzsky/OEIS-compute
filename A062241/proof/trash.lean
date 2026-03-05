@@ -1,6 +1,5 @@
 import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
-open Int
 open NumberTheorySymbols
 
 def isSmooth (a k : ℕ) : Prop :=
@@ -17,6 +16,18 @@ lemma mod_4_to_even (A : ℕ) (h : (2 * A) % 4 = 0) : Even A := by
   have := Nat.dvd_of_mul_dvd_mul_left (by norm_num) this
   exact even_iff_two_dvd.mpr this
 
+lemma mod8_from_sum7 {a b : ℕ} (h : a + b ≡ 7 [MOD 8]) :
+  a ≡ 7 - b % 8 [MOD 8] := by
+  rw [Nat.ModEq] at h ⊢
+  omega
+
+lemma neg_mul_minus_1 (a : ℕ) : -(a:ℤ) = -1 * a := by simp
+
+lemma odd_minus_1_over_2 (A : ℕ) (ha_odd : Odd A) : A/2 = (A-1)/2 := by
+  obtain ⟨k, rfl⟩ := ha_odd
+  rw [<- Nat.div2_val, Nat.div2_bit1 k]
+  simp
+
 lemma jacobi_add_left (a c : ℤ) (p : ℕ) (h_div : (p : ℤ) ∣ c) :
   J(a + c| p) = J(a|p) := by
   nth_rewrite 1 [jacobiSym.mod_left]
@@ -28,87 +39,52 @@ lemma jacobi_add_left (a c : ℤ) (p : ℕ) (h_div : (p : ℤ) ∣ c) :
 lemma jacobi_eq_prod_factorization (a : ℤ) (b : ℕ) (hb_ne0 : b ≠ 0) (hb_odd : Odd b) :
   J(a|b) = b.factorization.prod (fun p k => J(a|p) ^ k) := by
   induction b using induction_on_primes with
-  | zero => simp
-  | one => simp
+  | zero | one => simp
   | prime_mul p q h_prime h_ind =>
     have hp_ne0 : p ≠ 0 := left_ne_zero_of_mul hb_ne0
     have hq_ne0 : q ≠ 0 := right_ne_zero_of_mul hb_ne0
     have : NeZero (p) := of_not_not ((not_iff_not.mpr not_neZero).mpr hp_ne0)
     have : NeZero q := of_not_not ((not_iff_not.mpr not_neZero).mpr hq_ne0)
-    rw [jacobiSym.mul_right, Nat.factorization_mul, Finsupp.prod_add_index, <- h_ind]
+    rw [jacobiSym.mul_right, Nat.factorization_mul hp_ne0 hq_ne0]
+    rw [Finsupp.prod_add_index (by simp), <- h_ind hq_ne0 (Nat.odd_mul.mp hb_odd).right]
     · rw [Nat.Prime.factorization h_prime]
       simp
-    · exact hq_ne0
-    · exact (Nat.odd_mul.mp hb_odd).right
     · intros
-      simp
-    · intro p hp_in b1 b2
       apply pow_add
-    · exact hp_ne0
-    · exact hq_ne0
 
-lemma jacobi_2_pow_2_is_1 (B : ℕ) (hB : Odd B) : J(2|B)^2 = 1 := by
-  rw [jacobiSym.at_two hB]
-  have h_lt : (B % 8) < 8 := Nat.mod_lt B (by norm_num)
-  interval_cases bmod : (B % 8)
-  all_goals -- even case
-    try have mod2 : B % 2 = 0 := by omega
-    try have := Nat.odd_iff.mp hB
-    try rw [this] at mod2
-    try contradiction
-  all_goals -- odd case
-    have := ZMod.χ₈_nat_mod_eight B
-    rw [bmod] at this
-    rw [this]
-    simp
-
-lemma neg_mul_minus_1 (a : ℕ) : -(a:ℤ) = -1 * a := by simp
-
-lemma odd_minus_1_over_2 (A : ℕ) (ha_odd : Odd A) :
-  A/2 = (A-1)/2 := by
-  obtain ⟨k, rfl⟩ := ha_odd
-  rw [<- Nat.div2_val]
-  rw [Nat.div2_bit1 k]
-  simp
+lemma jacobi_2_pow_2_is_1 (B : ℕ) (hB : Odd B) : jacobiSym 2 B ^ 2 = 1 := by
+  have h_jacobi_sq : J(2 | B) = 1 ∨ J(2 | B) = -1 := by
+    obtain ⟨k, rfl⟩ : ∃ k, B = 2 * k + 1 := hB
+    apply jacobiSym.eq_one_or_neg_one
+    norm_num [Int.gcd]
+  aesop
 
 lemma jacobi_reciprocity (A B : ℕ) (ha_odd : Odd A) (hb_odd : Odd B) (hab_coprime : B.gcd A = 1)
   : J(A|B) * J(B|A) = (-1)^(((A-1)/2) * ((B-1)/2)) := by
   rw [jacobiSym.quadratic_reciprocity ha_odd hb_odd]
   rw [Int.mul_assoc, <- pow_two, jacobiSym.sq_one]
-  · rw [odd_minus_1_over_2 A ha_odd]
-    rw [odd_minus_1_over_2 B hb_odd]
+  · rw [odd_minus_1_over_2 A ha_odd, odd_minus_1_over_2 B hb_odd]
     ring
   · exact hab_coprime
 
-lemma exists_prime_not_pseudosquare (m a b pn : ℕ)
+lemma sum_of_smooth_is_not_pseudosquare (m a b pn : ℕ)
 (h_pn : Nat.Prime pn ∧ pn ≠ 2) (h_sum : isSumOfTwoSmooth m pn) :
 ∃ pi : ℕ, Nat.Prime pi ∧ pi ≠ 2 ∧ pi ≤ pn ∧
 ¬ isPseudosquare (-(m : ℤ)) pi := by
---
 rcases h_sum with ⟨a, b, hm_ab, ha_smooth, hb_smooth, ha_pos, hb_pos⟩
---
 by_contra h_contra
 simp only [ne_eq, not_exists, not_and, not_not] at h_contra
---
 have h_contra_pn := h_contra pn h_pn.left h_pn.right (le_refl pn)
-unfold isPseudosquare at h_contra_pn
 have h_mod8 := Int.ModEq.neg h_contra_pn.right.right.left
-simp only [neg_neg, reduceNeg] at h_mod8
+simp only [neg_neg, Int.reduceNeg] at h_mod8
 --
 have hm_odd : Odd m := by
-  have : m ≡ 1 [ZMOD 2] := by
-    have h_2div8 : (2: ℤ) ∣ 8 := by decide
-    have h_mod2' := Int.ModEq.of_dvd h_2div8 h_mod8
-    exact h_mod2'
-  unfold ModEq at this
-  simp only [one_emod_two] at this
-  norm_cast at this
-  exact Nat.odd_iff.mpr this
+  have hm_div_2 : m % 2 = 1 := by
+    rw [Int.ModEq] at h_mod8;
+    omega
+  exact Nat.odd_iff.mpr hm_div_2
 --
-have h_parity : Odd a ↔ Even b := by
-  apply Nat.odd_add.mp
-  rw [<- hm_ab]
-  exact hm_odd
+have h_parity : Odd a ↔ Even b := Nat.odd_add.mp (by simpa [hm_ab] using hm_odd)
 --
 wlog ha_even: Even a
 { have hm_ba : m = b + a := by
@@ -147,10 +123,6 @@ have hab_coprime : B.gcd A = 1 := by
     by_contra
     rw [this] at hp_odd
     contradiction
-  have hp_not0: p ≠ 0 := by
-    by_contra
-    rw [this] at hp_odd
-    contradiction
   have hp_div_B := dvd_trans hp_dvd (Nat.gcd_dvd B A).left
   have hp_div_A := dvd_trans hp_dvd (Nat.gcd_dvd B A).right
   have hp_div_a : p ∣ a := by
@@ -166,13 +138,11 @@ have hab_coprime : B.gcd A = 1 := by
   have hp_lt_pn : p ≤ pn := by
     exact hb_smooth p hp_prime hp_div_B
   have h_pseudo := (h_contra p hp_prime hp_not2 hp_lt_pn).right.right.right
---
   have hp_gt0 := Nat.Prime.pos hp_prime
   have : p ≠ 0 ∧ (-(m : ℤ)).gcd p ≠ 1 := by
     constructor
-    · exact hp_not0
-    · have : (0 : ℤ) < p := by norm_cast
-      have := Int.gcd_eq_right (Int.le_of_lt this) hp_div_negm
+    · aesop
+    · have := Int.gcd_eq_right (Int.le_of_lt (by norm_cast)) hp_div_negm
       norm_cast at this
       rw [this]
       exact hp_prime.ne_one
@@ -191,16 +161,13 @@ have h_prime_div_A : ∀p, Nat.Prime p → p ∣ A → p ≤ pn ∧ p ≠ 2 := b
 have h_Jmp_ofA : ∀p, Nat.Prime p → p ∣ A → J(-m|p) = 1 := by
   intro p hp hp_div
   have h := h_prime_div_A p hp hp_div
-  have h_contra_p := h_contra p hp h.right h.left
-  unfold isPseudosquare at h_contra_p
-  exact h_contra_p.right.right.right
+  exact (h_contra p hp h.right h.left).right.right.right
 --
 have h_JBp_ofA : ∀p, Nat.Prime p → p ∣ A → J(-b|p) = 1 := by
   intro p hp hp_div
   have := h_Jmp_ofA p hp hp_div
   rw [hm_ab] at this
-  rw [<- this]
-  rw [<- jacobi_add_left (-b) (-a) p]
+  rw [<- this, <- jacobi_add_left (-b) (-a) p]
   · simp only [Nat.cast_add, neg_add_rev]
   · apply dvd_neg.mpr
     norm_cast
@@ -216,9 +183,7 @@ have h_prime_div_B : ∀p, Nat.Prime p → p ∣ B → p ≤ pn ∧ p ≠ 2 := b
 have h_Jmp_ofB : ∀p, Nat.Prime p → p ∣ B → J(-m|p) = 1 := by
   intro p hp hp_div
   have h := h_prime_div_B p hp hp_div
-  have h_contra_p := h_contra p hp h.right h.left
-  unfold isPseudosquare at h_contra_p
-  exact h_contra_p.right.right.right
+  exact (h_contra p hp h.right h.left).right.right.right
 --
 have h_JBA : J(-b|A) = 1 := by
   rw [jacobi_eq_prod_factorization (-b) A hA_ne0 hA_odd]
@@ -234,12 +199,10 @@ have h_JBA : J(-b|A) = 1 := by
   · simp only [Nat.cast_add, neg_add_rev] at h_jmp
     rw [h_jmp]
     simp
-  · have hp_div_a : (p : ℤ) ∣ (-a) := by
-      rw [h_eq]
-      have := (dvd_mul_of_dvd_right this.right (2^k))
-      apply dvd_neg.mpr
-      norm_cast
-    exact hp_div_a
+  · rw [h_eq]
+    have := (dvd_mul_of_dvd_right this.right (2^k))
+    apply dvd_neg.mpr
+    norm_cast
 --
 have h_JAB: J(-a|B) = 1 := by
   have hb_ne0 := ne_of_gt hb_pos
@@ -365,87 +328,54 @@ have then_J_neg_5 : (B % 8 = 5) → J(2|B) = -1 := by
   rw [this]
   simp
 -- the end is near, doing case on k
+rw [hm_ab, Nat.cast_add] at h_mod8
+have h_sum7 : a + b ≡ 7 [MOD 8] := by
+  exact_mod_cast (by exact h_mod8 : (a + b : ℤ) ≡ 7 [ZMOD 8])
+--
 have contra_k0 : (k = 0) → False := by
   intro h_k
-  rw [h_k] at h_eq
-  simp only [pow_zero, one_mul] at h_eq
-  rw [h_eq] at ha_even
+  rw [h_eq, h_k] at ha_even
+  simp only [pow_zero, one_mul] at ha_even
   have := Nat.not_even_iff_odd.mpr hA_odd
   contradiction
 --
-rw [hm_ab] at h_mod8
-rw [Nat.cast_add] at h_mod8
---
-have contra_k11 : (k = 1) → (B % 8 = 1)  → False := by
+have contra_k11 : (k = 1) → (B % 8 = 1) → False := by
   intro hk hb8
-  rw [hk] at h_eq
-  rw [hk] at h_product
-  have : a % 8 = 6 := by
-    have : b ≡ 1 [ZMOD 8] := by exact_mod_cast hb8
-    have := Int.ModEq.sub h_mod8 this
-    simp at this
-    have : (a : ℤ) ≡ 6 [ZMOD 8] := by
-      exact this.trans (by norm_num [Int.ModEq])
-    exact_mod_cast this
-  have hA_mod : A % 8 = 3 ∨ A % 8 = 7 := by
-    have : (2 * A) % 8 = 6 := by
-      rw [h_eq] at this; exact this
-    omega
-  have : A % 4 = 3 := by omega
-  have hE : (-1)^E = -1 := then_E_neg_A this
-  have hJ : J(2|B) = 1 := then_J_one_1 hb8
+  rw [hk] at h_eq h_product
   simp only [pow_one] at h_product
-  rw [hJ] at h_product
-  rw [hE] at h_product
+  have ha_mod := by
+    have := mod8_from_sum7 h_sum7
+    rw [hb8] at this
+    simpa
+  have hA_mod : A % 8 = 3 ∨ A % 8 = 7 := by
+    have : (2 * A) % 8 = 6 := by simpa [h_eq] using ha_mod
+    omega
+  have hE : (-1)^E = -1 := then_E_neg_A (by omega)
+  rw [(then_J_one_1 hb8), hE] at h_product
   contradiction
 have contra_k15 :  (k = 1) → (B % 8 = 5)  → False := by
   intro hk hb8
-  rw [hk] at h_eq
-  rw [hk] at h_product
-  have : a % 8 = 2 := by
-    have : b ≡ 5 [ZMOD 8] := by exact_mod_cast hb8
-    have := Int.ModEq.sub h_mod8 this
-    simp at this
-    have : (a : ℤ) ≡ 2 [ZMOD 8] := by
-      exact this.trans (by norm_num [Int.ModEq])
-    exact_mod_cast this
-  have h_A : A % 4 = 1 := by omega
-  have h_B : B % 4 = 1 := by omega
-  have hE : (-1)^E = 1 := then_E_pos h_A h_B
-  have hJ : J(2|B) = -1 := then_J_neg_5 hb8
+  rw [hk] at h_eq h_product
   simp only [pow_one] at h_product
-  rw [hJ] at h_product
-  rw [hE] at h_product
+  have ha_mod := by
+    have := mod8_from_sum7 h_sum7
+    rw [hb8] at this
+    simpa
+  have h_mod : A % 4 = 1 ∧ B % 4 = 1 := by
+    have : (2 * A) % 8 = 2 := by simpa [h_eq] using ha_mod
+    omega
+  rw [(then_J_neg_5 hb8), (then_E_pos h_mod.left h_mod.right)] at h_product
   contradiction
-have contra_k13 :  (k = 1) → (B % 8 = 3) → False := by
-  intro hk hb8
-  have h_A : a % 8 = 4 := by
-    have : b ≡ 3 [ZMOD 8] := by exact_mod_cast hb8
-    have := Int.ModEq.sub h_mod8 this
-    simp at this
-    have : (a : ℤ) ≡ 4 [ZMOD 8] := by
-      exact this.trans (by norm_num [Int.ModEq])
-    exact_mod_cast this
-  have h_A : a % 4 = 0 := by omega
-  rw [h_eq, hk] at h_A
-  simp only [pow_one] at h_A
-  have := mod_4_to_even A h_A
-  have := Nat.not_odd_iff_even.mpr this
-  contradiction
-have contra_k17 :  (k = 1) → (B % 8 = 7) → False := by
-  intro hk hb8
-  have h_A : a % 8 = 0 := by
-    have : b ≡ 7 [ZMOD 8] := by exact_mod_cast hb8
-    have := Int.ModEq.sub h_mod8 this
-    simp at this
-    have : (a : ℤ) ≡ 0 [ZMOD 8] := by
-      exact this.trans (by norm_num [Int.ModEq])
-    exact_mod_cast this
-  have h_A : a % 4 = 0 := by omega
-  rw [h_eq, hk] at h_A
-  simp only [pow_one] at h_A
-  have := mod_4_to_even A h_A
-  have := Nat.not_odd_iff_even.mpr this
+have contra_k13_k17 : (k = 1) → (B % 8 = 3 ∨ B % 8 = 7) → False := by
+  intro hk hB
+  have ha_mod : a % 8 = 7 - (B % 8) := by
+    have := mod8_from_sum7 h_sum7
+    match hB with
+    | Or.inl h | Or.inr h => rw [h] at this ⊢; simpa
+  have h_A : a % 4 = 0 := by
+    match hB with | _ => omega
+  rw [h_eq, hk, pow_one] at h_A
+  have := Nat.not_odd_iff_even.mpr (mod_4_to_even A h_A)
   contradiction
 --
 have contra_k2 :  (k = 2) → False := by
@@ -460,7 +390,7 @@ have contra_k2 :  (k = 2) → False := by
     exact Nat.ModEq.modulus_mul_add
   have : B ≡ 3 [ZMOD 8] := by
     have := Int.ModEq.sub h_mod8 ha_mod8
-    simp only [add_sub_cancel_left, reduceNeg, reduceSub] at this
+    simp only [add_sub_cancel_left, Int.reduceNeg, Int.reduceSub] at this
     exact this
   have : B % 8 = 3 := by exact_mod_cast this
   have h_B : B % 4 = 3 := by omega
@@ -481,17 +411,17 @@ have contra_k3 : (n : ℕ) → (k = n + 3) → False := by
     exact dvd_mul_right 8 (A * 2 ^ n)
   have hB : b ≡ 7 [ZMOD 8] := by
     have := Int.ModEq.sub h_mod8 hA
-    simp only [add_sub_cancel_left, reduceNeg, reduceSub] at this
+    simp only [add_sub_cancel_left, Int.reduceNeg, Int.reduceSub] at this
     exact this
   have : b % 8 = 7 := by exact_mod_cast hB
   have hJ : J(2|B) = 1 := then_J_one_7 this
   rw [jacobiSym.pow_left, hJ] at h_product
-  simp only [one_pow, reduceNeg, one_mul] at h_product
+  simp only [one_pow, Int.reduceNeg, one_mul] at h_product
   have : b % 4 = 3 := by omega
   have hE := then_E_neg_B this
   rw [hE] at h_product
   contradiction
--- YAY
+-- the end
 match k with
 | 0 => contradiction
 | 1 =>
@@ -502,14 +432,11 @@ match k with
       simp [hb8]
     have := Nat.not_odd_iff_even.mpr this
     contradiction
-  | 1 => simp at contra_k11; contradiction
-  | 5 => simp at contra_k15; contradiction
-  | 3 => simp at contra_k13; contradiction
-  | 7 => simp at contra_k17; contradiction
+  | 1 | 3 | 5 | 7 => aesop
   | x+8 =>
-    have : 0 < 8 := by simp
-    have : B % 8 < 8 := Nat.mod_lt B this
+    have : B % 8 < 8 := Nat.mod_lt B (by norm_num)
     rw [hb8] at this
     contradiction
 | 2 => contradiction
-| n + 3 => simp at contra_k3
+| n + 3 => aesop
+
