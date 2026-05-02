@@ -201,6 +201,6 @@ int main()
       return g.search(migrate_population<Config>(era2_population), 1000);
     }();
 
-    utils::print_range(era3_population.front().get_function().get_heights(), ", ");
+    logging::print_range(era3_population.front().get_function().get_heights(), ", ");
   });
 }

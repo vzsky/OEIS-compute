@@ -13,6 +13,52 @@
 #include <thread>
 #include <vector>
 
+namespace logging
+{
+
+namespace details
+{
+
+inline thread_local std::vector<std::string> env_stack;
+
+struct EnvGuard
+{
+  EnvGuard(std::string s) { env_stack.push_back(std::move(s)); }
+  ~EnvGuard() { env_stack.pop_back(); }
+};
+
+inline void print_env()
+{
+  for (auto& e : env_stack) std::cout << "[" << e << "] ";
+}
+
+template <typename... Ts> void log(Ts&&... xs)
+{
+  print_env();
+  ((std::cout << std::forward<Ts>(xs) << " "), ...);
+  std::cout << std::endl;
+}
+
+} // namespace details
+
+inline std::string print_time()
+{
+  const auto now = std::chrono::system_clock::now();
+  return std::format("{:%H:%M:%S}", now);
+}
+
+template <std::ranges::range R> void print_range(const R& range, std::string sep = " ")
+{
+  for (auto x : range) std::cout << x << sep;
+  std::cout << std::endl;
+}
+
+} // namespace logging
+
+#define Log(...) logging::details::log(__VA_ARGS__)
+#define PushLogScope(x)                                                                                      \
+  logging::details::EnvGuard _log_env_guard_##__LINE__ { x }
+
 namespace utils
 {
 
@@ -55,18 +101,6 @@ bool par_all_of(Iterator begin, Iterator end, Predicate pred,
   return true;
 }
 
-template <typename Func> auto timeit(Func f)
-{
-  using namespace std::chrono;
-  auto start = high_resolution_clock::now();
-
-  f();
-
-  auto end      = high_resolution_clock::now();
-  auto duration = duration_cast<milliseconds>(end - start).count();
-  std::cout << "Time elapsed: " << duration / 1000 << "." << duration % 1000 << "s" << std::endl;
-}
-
 template <typename T>
 [[nodiscard]] inline std::vector<T>
 read_bfile(const std::string& relative_path,
@@ -96,10 +130,31 @@ read_bfile(const std::string& relative_path,
   return out;
 }
 
-template <std::ranges::range R> void print_range(const R& range, std::string sep = " ")
+template <typename Func> auto timeit(const std::string& s, Func&& f)
 {
-  for (auto x : range) std::cout << x << sep;
-  std::cout << std::endl;
+  using namespace std::chrono;
+  const auto start    = high_resolution_clock::now();
+  const auto log_time = [&]
+  {
+    const auto us     = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+    const auto sec    = us / 1'000'000;
+    const auto rem_us = us % 1'000'000;
+    Log(s, std::format("-- Time elapsed: {}.{:06d} s", sec, rem_us));
+  };
+
+  if constexpr (std::is_void_v<std::invoke_result_t<Func>>)
+  {
+    f();
+    log_time();
+  }
+  else
+  {
+    auto result = f();
+    log_time();
+    return result;
+  }
 }
+
+template <typename Func> auto timeit(Func&& f) { return timeit("", f); }
 
 } // namespace utils

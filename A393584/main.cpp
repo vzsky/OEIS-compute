@@ -62,7 +62,7 @@ int main()
         { std::cout << g.get_score() << ' ' << g.get_max_count() << std::endl; });
 
         Gene best = g.search({adam}, 50).front();
-        utils::print_range(best.get_mask());
+        logging::print_range(best.get_mask());
         std::cout << "upperbound of a(" << N << ") is " << best.get_max_count() << std::endl;
       });
     });
