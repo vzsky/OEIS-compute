@@ -1,3 +1,5 @@
+#pragma once
+
 #include <compare>
 #include <math/Basic.h>
 #include <ostream>

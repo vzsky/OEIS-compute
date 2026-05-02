@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <utils/Prime.h>
 #include <vector>

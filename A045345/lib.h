@@ -1,3 +1,5 @@
+#pragma once
+
 #include <utils/BigInt.h>
 #include <utils/Prime.h>
 #include <vector>
