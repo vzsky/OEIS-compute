@@ -1,5 +1,3 @@
-#include "lib.hpp"
-
 #include <cassert>
 #include <cmath>
 #include <cstdint>

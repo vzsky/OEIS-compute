@@ -1,4 +1,4 @@
-#include "lib.hpp"
+#include <A002326/lib.hpp>
 #include <utils/Utils.hpp>
 
 int main()

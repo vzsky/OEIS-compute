@@ -1,4 +1,3 @@
-#include "lib.hpp"
 #include <cstdint>
 #include <iostream>
 #include <set>

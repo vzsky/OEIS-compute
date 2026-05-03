@@ -1,8 +1,7 @@
-#include "lib.hpp"
-#include <Treap.hpp>
 #include <array>
 #include <cassert>
 #include <random>
+#include <utils/Treap.hpp>
 #include <utils/Utils.hpp>
 #include <vector>
 

@@ -1,4 +1,3 @@
-#include "lib.hpp"
 #include <A389544/lib.hpp>
 #include <cassert>
 #include <cstdint>

@@ -1,4 +1,4 @@
-#include "lib.hpp"
+#include <A062241/lib.hpp>
 #include <utils/Fft.hpp>
 #include <utils/MetaProg.hpp>
 #include <utils/Prime.hpp>

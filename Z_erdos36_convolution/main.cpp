@@ -1,4 +1,4 @@
-#include "lib.hpp"
+#include <Z_erdos36_convolution/lib.hpp>
 #include <math/Stats.hpp>
 #include <random>
 #include <utils/GeneticAlg.hpp>

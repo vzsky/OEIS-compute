@@ -1,4 +1,3 @@
-#include "lib.hpp"
 #include <cmath>
 #include <utils/BigInt.hpp>
 #include <utils/Utils.hpp>
