@@ -1,9 +1,9 @@
-#include "lib.h"
+#include "lib.hpp"
 #include <cstdint>
 #include <iostream>
 #include <set>
 #include <unordered_map>
-#include <utils/Prime.h>
+#include <utils/Prime.hpp>
 
 std::set<uint64_t> primes_in_class[20];
 

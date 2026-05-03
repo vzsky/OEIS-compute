@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <gtest/gtest.h>
-#include <utils/Treap.h>
+#include <utils/Treap.hpp>
 #include <vector>
 
 TEST(TreapTest, BasicInsertAndAccess)

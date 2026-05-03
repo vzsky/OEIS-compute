@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include <ranges>
-#include <utils/BigInt.h>
+#include <utils/BigInt.hpp>
 
 using slow_bigint::DecBigInt;
 using slow_bigint::DenseBigInt;

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <compare>
-#include <math/Basic.h>
+#include <math/Basic.hpp>
 #include <ostream>
-#include <utils/BigInt.h>
+#include <utils/BigInt.hpp>
 
 template <typename Int>
 concept FractionCompatible = std::copyable<Int> && requires(Int a, Int b) {

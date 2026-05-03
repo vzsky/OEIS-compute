@@ -1,6 +1,6 @@
-#include "lib.h"
-#include <utils/BigInt.h>
-#include <utils/Utils.h>
+#include "lib.hpp"
+#include <utils/BigInt.hpp>
+#include <utils/Utils.hpp>
 
 constexpr std::string REFERENCE_BFILE = "./b331373.txt";
 constexpr size_t DIGITS               = 3500;

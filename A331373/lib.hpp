@@ -1,9 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include <math/Basic.h>
-#include <utils/BigInt.h>
-#include <utils/Fraction.h>
+#include <math/Basic.hpp>
+#include <utils/BigInt.hpp>
+#include <utils/Fraction.hpp>
 
 namespace A331373
 {

@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include <utils/Prime.h>
+#include <utils/Prime.hpp>
 
 Prime<5000> p;
 

@@ -1,7 +1,7 @@
-#include "lib.h"
+#include "lib.hpp"
 #include <cmath>
-#include <utils/BigInt.h>
-#include <utils/Utils.h>
+#include <utils/BigInt.hpp>
+#include <utils/Utils.hpp>
 
 using namespace slow_bigint;
 

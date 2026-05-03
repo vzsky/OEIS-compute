@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <utils/MetaProg.h>
+#include <utils/MetaProg.hpp>
 
 TEST(MetaProgrammingTest, For)
 {

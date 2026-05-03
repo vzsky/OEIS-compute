@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <gtest/gtest.h>
 #include <numeric>
-#include <utils/Fraction.h>
+#include <utils/Fraction.hpp>
 
 using Int = uint64_t;
 

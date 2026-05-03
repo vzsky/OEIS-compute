@@ -1,7 +1,7 @@
 #pragma once
 
-#include <math/Basic.h>
-#include <utils/Prime.h>
+#include <math/Basic.hpp>
+#include <utils/Prime.hpp>
 
 template <int N> class A002326
 {

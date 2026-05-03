@@ -1,8 +1,8 @@
-#include "lib.h"
-#include <A389544/lib.h>
+#include "lib.hpp"
+#include <A389544/lib.hpp>
 #include <cassert>
 #include <cstdint>
-#include <utils/Utils.h>
+#include <utils/Utils.hpp>
 
 constexpr uint32_t CacheLim = 2e9;
 

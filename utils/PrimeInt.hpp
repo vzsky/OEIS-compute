@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <ostream>
 #include <stdexcept>
-#include <utils/Prime.h>
+#include <utils/Prime.hpp>
 
 class PrimeInt
 {

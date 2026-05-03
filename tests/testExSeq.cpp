@@ -1,6 +1,6 @@
-#include <A002326/lib.h>
-#include <A045345/lib.h>
-#include <A331373/lib.h>
+#include <A002326/lib.hpp>
+#include <A045345/lib.hpp>
+#include <A331373/lib.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <limits>
-#include <math/Basic.h>
+#include <math/Basic.hpp>
 #include <vector>
 
 namespace common

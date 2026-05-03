@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <unordered_map>
-#include <utils/BigInt.h>
+#include <utils/BigInt.hpp>
 
 using slow_bigint::DenseBigInt;
 

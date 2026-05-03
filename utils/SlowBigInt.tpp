@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utils/BigInt.h>
+#include <utils/BigInt.hpp>
 #include <vector>
 #include <iostream>
 #include <string>

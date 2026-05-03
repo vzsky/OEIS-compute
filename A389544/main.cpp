@@ -1,4 +1,4 @@
-#include "lib.h"
+#include "lib.hpp"
 
 struct A389544_impl : public A389544<500000, 2'000'000'000>
 {

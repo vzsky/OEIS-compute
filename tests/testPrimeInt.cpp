@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
-#include <utils/Prime.h>
-#include <utils/PrimeInt.h>
+#include <utils/PrimeInt.hpp>
 
 TEST(PrimeIntTest, isDivisibleBy)
 {

@@ -1,9 +1,9 @@
-#include "lib.h"
+#include "lib.hpp"
 
 #include <cassert>
 #include <cmath>
 #include <cstdint>
-#include <utils/Utils.h>
+#include <utils/Utils.hpp>
 
 namespace
 {

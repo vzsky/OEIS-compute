@@ -1,1 +1,1 @@
-#include <utils/Prime.h>
+#include <utils/Prime.hpp>

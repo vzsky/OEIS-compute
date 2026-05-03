@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <cstdint>
 #include <set>
-#include <utils/BigInt.h>
-#include <utils/ComplementNonnVector.h>
-#include <utils/ModInt.h>
-#include <utils/Prime.h>
-#include <utils/PrimeInt.h>
-#include <utils/Utils.h>
+#include <utils/BigInt.hpp>
+#include <utils/ComplementNonnVector.hpp>
+#include <utils/ModInt.hpp>
+#include <utils/Prime.hpp>
+#include <utils/PrimeInt.hpp>
+#include <utils/Utils.hpp>
 #include <vector>
 
 using namespace complementNonnVector;

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
-#include <utils/Prime.h>
+#include <utils/Prime.hpp>
 
 using prime = size_t;
 

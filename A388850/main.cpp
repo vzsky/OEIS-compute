@@ -1,10 +1,10 @@
-#include "lib.h"
+#include "lib.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <set>
-#include <utils/Prime.h>
-#include <utils/PrimeInt.h>
-#include <utils/Utils.h>
+#include <utils/Prime.hpp>
+#include <utils/PrimeInt.hpp>
+#include <utils/Utils.hpp>
 
 Prime<5000000> p;
 

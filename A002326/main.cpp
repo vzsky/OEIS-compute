@@ -1,5 +1,5 @@
-#include "lib.h"
-#include <utils/Utils.h>
+#include "lib.hpp"
+#include <utils/Utils.hpp>
 
 int main()
 {

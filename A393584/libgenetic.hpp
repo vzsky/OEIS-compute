@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <random>
 #include <unordered_map>
-#include <utils/GeneticAlg.h>
+#include <utils/GeneticAlg.hpp>
 #include <vector>
 
 template <int N> class Gene

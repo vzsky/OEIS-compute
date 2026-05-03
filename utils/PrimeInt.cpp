@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include <utils/PrimeInt.h>
+#include <utils/PrimeInt.hpp>
 
 const Prime<PrimeInt::SmallN> PrimeInt::factorizer{};
 

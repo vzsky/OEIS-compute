@@ -1,7 +1,7 @@
 #include <benchmark/benchmark.h>
 #include <cstdint>
-#include <utils/Prime.h>
-#include <utils/PrimeInt.h>
+#include <utils/Prime.hpp>
+#include <utils/PrimeInt.hpp>
 #include <vector>
 
 Prime<10000> p{};

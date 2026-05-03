@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <utils/Fft.h>
+#include <utils/Fft.hpp>
 
 using namespace fft;
 

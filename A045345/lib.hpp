@@ -1,7 +1,7 @@
 #pragma once
 
-#include <utils/BigInt.h>
-#include <utils/Prime.h>
+#include <utils/BigInt.hpp>
+#include <utils/Prime.hpp>
 #include <vector>
 
 namespace A045345

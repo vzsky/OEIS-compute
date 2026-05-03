@@ -2,9 +2,9 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <utils/BigInt.h>
-#include <utils/Prime.h>
-#include <utils/Utils.h>
+#include <utils/BigInt.hpp>
+#include <utils/Prime.hpp>
+#include <utils/Utils.hpp>
 
 using namespace slow_bigint;
 

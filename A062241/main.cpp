@@ -1,8 +1,8 @@
-#include "lib.h"
-#include <utils/Fft.h>
-#include <utils/MetaProg.h>
-#include <utils/Prime.h>
-#include <utils/Utils.h>
+#include "lib.hpp"
+#include <utils/Fft.hpp>
+#include <utils/MetaProg.hpp>
+#include <utils/Prime.hpp>
+#include <utils/Utils.hpp>
 
 // a(n) is the smallest k such that n = a + b where a and b are not divisible by any prime > k
 // equivalently, a(n) is the minimum of (maximum prime factor of a and b) across all choice of a, b

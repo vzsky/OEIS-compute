@@ -1,9 +1,9 @@
-#include "libgenetic.h"
-#include "libnaive.h"
-#include <math/Basic.h>
-#include <utils/GeneticAlg.h>
-#include <utils/MetaProg.h>
-#include <utils/Utils.h>
+#include "libgenetic.hpp"
+#include "libnaive.hpp"
+#include <math/Basic.hpp>
+#include <utils/GeneticAlg.hpp>
+#include <utils/MetaProg.hpp>
+#include <utils/Utils.hpp>
 
 #include <iostream>
 #include <vector>

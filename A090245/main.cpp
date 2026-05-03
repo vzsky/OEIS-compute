@@ -1,9 +1,9 @@
-#include "lib.h"
-#include <Treap.h>
+#include "lib.hpp"
+#include <Treap.hpp>
 #include <array>
 #include <cassert>
 #include <random>
-#include <utils/Utils.h>
+#include <utils/Utils.hpp>
 #include <vector>
 
 auto score_to_order = [](auto score)

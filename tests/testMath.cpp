@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <math/Basic.h>
-#include <math/Stats.h>
-#include <utils/BigInt.h>
+#include <math/Basic.hpp>
+#include <math/Stats.hpp>
+#include <utils/BigInt.hpp>
 
 using namespace math;
 

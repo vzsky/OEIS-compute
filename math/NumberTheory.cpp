@@ -1,7 +1,7 @@
 #include <cassert>
-#include <math/Basic.h>
-#include <math/NumberTheory.h>
-#include <utils/Prime.h>
+#include <math/Basic.hpp>
+#include <math/NumberTheory.hpp>
+#include <utils/Prime.hpp>
 
 using namespace math;
 

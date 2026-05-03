@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <utils/ComplementNonnVector.h>
+#include <utils/ComplementNonnVector.hpp>
 
 using namespace complementNonnVector;
 

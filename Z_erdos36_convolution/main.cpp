@@ -1,8 +1,8 @@
-#include "lib.h"
-#include <math/Stats.h>
+#include "lib.hpp"
+#include <math/Stats.hpp>
 #include <random>
-#include <utils/GeneticAlg.h>
-#include <utils/Utils.h>
+#include <utils/GeneticAlg.hpp>
+#include <utils/Utils.hpp>
 
 namespace
 {

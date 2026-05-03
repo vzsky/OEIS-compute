@@ -1,5 +1,5 @@
-#include <A389544/lib.h>
-#include <A390848/lib.h>
+#include <A389544/lib.hpp>
+#include <A390848/lib.hpp>
 #include <benchmark/benchmark.h>
 
 constexpr uint32_t CacheLim = 2e9;
