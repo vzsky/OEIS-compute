@@ -24,5 +24,5 @@ target_link_libraries(bigint_bench
 
 add_executable(a390848_bench A390848Bench.cpp)
 target_link_libraries(a390848_bench
-    PRIVATE benchmark::benchmark A390848_lib
+    PRIVATE benchmark::benchmark allutils
 )

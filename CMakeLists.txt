@@ -13,6 +13,8 @@ project(OEIS LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(${PROJECT_SOURCE_DIR})
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -28,6 +30,8 @@ FetchContent_MakeAvailable(googletest)
 find_library(GMP_LIB gmp REQUIRED)
 find_library(GMPXX_LIB gmpxx REQUIRED)
 find_path(GMP_INCLUDE_DIR gmpxx.h REQUIRED)
+
+include_directories(${GMP_INCLUDE_DIR})
 
 file(GLOB children RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*)
 

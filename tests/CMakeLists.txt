@@ -9,6 +9,7 @@ set(TEST_MODULES
   treap                     testTreap.cpp
   primeint                  testPrimeInt.cpp
   complementnonnvector      testComplementNonnVector.cpp
+  exseq                     testExSeq.cpp
 )
 
 enable_testing()
@@ -26,8 +27,3 @@ foreach(i RANGE 0 ${_test_module_len} 2)
   target_link_libraries(${testname}_test PRIVATE gtest_main allutils)
 
 endforeach()
-
-# ExSeq test 
-add_executable(exseq_test testExSeq.cpp)
-target_link_libraries(exseq_test PRIVATE gtest_main utils A002326_lib A045345_lib A331373_lib)
-add_test(NAME exseq_test COMMAND exseq_test --gtest_shuffle)
