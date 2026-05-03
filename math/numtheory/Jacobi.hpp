@@ -1,14 +1,14 @@
+#pragma once
+
 #include <cassert>
 #include <math/Basic.hpp>
 #include <math/NumberTheory.hpp>
 #include <utils/Prime.hpp>
 
-using namespace math;
-
-namespace numtheory
+namespace math::numtheory
 {
 
-int legendre_symbol(int a, int p)
+inline int legendre_symbol(int a, int p)
 {
   assert(p > 2 && Prime<3>{}.is_prime(p));
   a %= p;
@@ -20,7 +20,7 @@ int legendre_symbol(int a, int p)
   return 0;
 }
 
-int jacobi_symbol(int a, int n)
+inline int jacobi_symbol(int a, int n)
 {
   assert(n > 0 && (n % 2 == 1));
   a %= n;
@@ -48,4 +48,4 @@ int jacobi_symbol(int a, int n)
   return (n == 1) ? result : 0;
 }
 
-} // namespace numtheory
+} // namespace math::numtheory
