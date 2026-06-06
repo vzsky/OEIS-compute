@@ -13,51 +13,7 @@
 #include <thread>
 #include <vector>
 
-namespace logging
-{
-
-namespace details
-{
-
-inline thread_local std::vector<std::string> env_stack;
-
-struct EnvGuard
-{
-  EnvGuard(std::string s) { env_stack.push_back(std::move(s)); }
-  ~EnvGuard() { env_stack.pop_back(); }
-};
-
-inline void print_env()
-{
-  for (auto& e : env_stack) std::cout << "[" << e << "] ";
-}
-
-template <typename... Ts> void log(Ts&&... xs)
-{
-  print_env();
-  ((std::cout << std::forward<Ts>(xs) << " "), ...);
-  std::cout << std::endl;
-}
-
-} // namespace details
-
-inline std::string print_time()
-{
-  const auto now = std::chrono::system_clock::now();
-  return std::format("{:%H:%M:%S}", now);
-}
-
-template <std::ranges::range R> void print_range(const R& range, std::string sep = " ")
-{
-  for (auto x : range) std::cout << x << sep;
-  std::cout << std::endl;
-}
-
-} // namespace logging
-
-#define Log(...) logging::details::log(__VA_ARGS__)
-#define PushLogScope(x)                                                                                      \
-  logging::details::EnvGuard _log_env_guard_##__LINE__ { x }
+#include <utils/Logging.hpp>
 
 namespace utils
 {

@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <math/Basic.hpp>
-#include <math/NumberTheory.hpp>
 #include <utils/Prime.hpp>
 
 namespace math::numtheory
