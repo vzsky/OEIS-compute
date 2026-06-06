@@ -1,3 +1,4 @@
+#include "Utils.hpp"
 #include <A389544/lib.hpp>
 
 struct A389544_impl : public A389544<500000, 2'000'000'000>
@@ -7,9 +8,9 @@ struct A389544_impl : public A389544<500000, 2'000'000'000>
 
 int main()
 {
-  utils::timeit([]
   {
+    utils::ScopeTimer _t{};
     A389544_impl e;
     e.get_sequence_until_N();
-  });
+  }
 }

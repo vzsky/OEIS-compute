@@ -32,7 +32,10 @@ int main()
   {
     constexpr int N = 30;
     mp::For<1, N>([](auto i)
-    { utils::timeit([&] { std::cout << i << ": " << naive::exact_answer<i>() << std::endl; }); });
+    {
+      utils::ScopeTimer _t{};
+      std::cout << i << ": " << naive::exact_answer<i>() << std::endl;
+    });
   };
 
   // naive_run();
@@ -42,29 +45,27 @@ int main()
     using namespace genetic;
     mp::For<1000, 1001>([&](auto N)
     {
-      utils::timeit([&]
+      utils::ScopeTimer _t{};
+      using Gene = Gene<N>;
+
+      Gene adam = [&]
       {
-        using Gene = Gene<N>;
+        std::vector<int> mask(2 * N);
+        for (int i = 0; i < (N + 1) / 2; i++) mask[i] = 1;
+        for (int i = (3 * N + 1) / 2; i < 2 * N; i++) mask[i] = 1;
+        assert(std::accumulate(mask.begin(), mask.end(), 0) == N);
+        return Gene{std::move(mask)};
+      }();
 
-        Gene adam = [&]
-        {
-          std::vector<int> mask(2 * N);
-          for (int i = 0; i < (N + 1) / 2; i++) mask[i] = 1;
-          for (int i = (3 * N + 1) / 2; i < 2 * N; i++) mask[i] = 1;
-          assert(std::accumulate(mask.begin(), mask.end(), 0) == N);
-          return Gene{std::move(mask)};
-        }();
+      GeneticSearcher<Gene> g{};
+      g.config.elite_count     = 1000;
+      g.config.population_size = 10000;
+      g.setGenerationCB([](const Gene& g, int generation)
+      { std::cout << g.get_score() << ' ' << g.get_max_count() << std::endl; });
 
-        GeneticSearcher<Gene> g{};
-        g.config.elite_count     = 1000;
-        g.config.population_size = 10000;
-        g.setGenerationCB([](const Gene& g, int generation)
-        { std::cout << g.get_score() << ' ' << g.get_max_count() << std::endl; });
-
-        Gene best = g.search({adam}, 50).front();
-        Log(logging::log_range(best.get_mask()));
-        std::cout << "upperbound of a(" << N << ") is " << best.get_max_count() << std::endl;
-      });
+      Gene best = g.search({adam}, 50).front();
+      Log(logging::log_range(best.get_mask()));
+      std::cout << "upperbound of a(" << N << ") is " << best.get_max_count() << std::endl;
     });
   };
 

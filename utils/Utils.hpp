@@ -1,61 +1,20 @@
 #pragma once
 
-#include <algorithm>
-#include <cassert>
-#include <chrono>
 #include <filesystem>
 #include <fstream>
-#include <future>
 #include <iostream>
-#include <iterator>
 #include <source_location>
 #include <stdexcept>
-#include <thread>
 #include <vector>
 
 #include <utils/Logging.hpp>
+#include <utils/Parallel.hpp>
+#include <utils/Timer.hpp>
 
 namespace utils
 {
 
-template <typename Iterator, typename Predicate>
-bool par_all_of(Iterator begin, Iterator end, Predicate pred,
-                size_t max_threads = std::thread::hardware_concurrency())
-{
-  assert(max_threads > 0);
-  const size_t length = std::distance(begin, end);
-  if (length == 0) return true;
-  if (length == 1) return pred(*begin);
-  const size_t num_threads = std::min(length, max_threads);
-
-  size_t block_size = (length + num_threads - 1) / num_threads;
-
-  std::vector<std::future<bool>> futures;
-  Iterator block_start = begin;
-
-  for (size_t t = 0; t < num_threads && block_start != end; ++t)
-  {
-    Iterator block_end = block_start;
-    size_t steps       = std::min(block_size, static_cast<size_t>(std::distance(block_start, end)));
-    std::advance(block_end, steps);
-
-    futures.push_back(std::async(std::launch::async, [block_start, block_end, &pred]()
-    {
-      for (auto it = block_start; it != block_end; ++it)
-        if (!pred(*it)) return false;
-      return true;
-    }));
-
-    block_start = block_end;
-  }
-
-  for (auto& f : futures)
-  {
-    if (!f.get()) return false;
-  }
-
-  return true;
-}
+using timer::ScopeTimer;
 
 template <typename T>
 [[nodiscard]] inline std::vector<T>
@@ -85,32 +44,5 @@ read_bfile(const std::string& relative_path,
 
   return out;
 }
-
-template <typename Func> auto timeit(const std::string& s, Func&& f)
-{
-  using namespace std::chrono;
-  const auto start    = high_resolution_clock::now();
-  const auto log_time = [&]
-  {
-    const auto us     = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-    const auto sec    = us / 1'000'000;
-    const auto rem_us = us % 1'000'000;
-    Log(s, std::format("-- Time elapsed: {}.{:06d} s", sec, rem_us));
-  };
-
-  if constexpr (std::is_void_v<std::invoke_result_t<Func>>)
-  {
-    f();
-    log_time();
-  }
-  else
-  {
-    auto result = f();
-    log_time();
-    return result;
-  }
-}
-
-template <typename Func> auto timeit(Func&& f) { return timeit("", f); }
 
 } // namespace utils

@@ -10,6 +10,7 @@ set(TEST_MODULES
   primeint                  testPrimeInt.cpp
   complementnonnvector      testComplementNonnVector.cpp
   exseq                     testExSeq.cpp
+  parallel                  testParallel.cpp
 )
 
 enable_testing()

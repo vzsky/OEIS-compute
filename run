@@ -40,6 +40,7 @@ if [ "$TARGET" = "profile" ]; then
   ninja -C "$BUILD_DIR" "$2" && echo "Compilation success"
   EXEC="$BUILD_DIR/bin/$2"
   if [ -x "$EXEC" ]; then
+    echo "Start: $(date)"
     DYLD_INSERT_LIBRARIES="/opt/homebrew/lib/libtcmalloc.dylib:/opt/homebrew/lib/libprofiler.dylib" \
     DYLD_FORCE_FLAT_NAMESPACE=1 \
     CPUPROFILE="$LOG_DIR/$2.prof" \
@@ -68,6 +69,7 @@ if [ "$TARGET" = "bench" ]; then
   FLAGS="--benchmark_out=$LOG_DIR/$TARGET.json --benchmark_out_format=json"
 
   if [ -x "$EXEC" ]; then
+    echo "Start: $(date)"
     "$EXEC" $FLAGS
 
     ./scripts/regression_test.py \
@@ -95,6 +97,7 @@ ninja -C "$BUILD_DIR" "$TARGET" && echo "Compilation success"
 # Run executable if it exists
 EXEC="$BUILD_DIR/bin/$TARGET"
 if [ -x "$EXEC" ]; then
+  echo "Start: $(date)"
   "$EXEC" $FLAGS
 else
   echo "Executable not found: $EXEC"

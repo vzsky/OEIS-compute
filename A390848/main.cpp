@@ -17,16 +17,16 @@ template <uint32_t N> struct A390848 : public A389544<N, CacheLim>
 
 int main()
 {
-  // utils::timeit([]()
   // {
+  //   utils::ScopeTimer _t{};
   //   A390848<101'000'000> e{};
   //   e.get_sequence_until_N();
-  // });
+  // }
 
-  utils::timeit([]()
   {
+    utils::ScopeTimer _t{};
     A390848<101'000'000> e{};
     // e.read_skipped(utils::read_bfile<uint64_t>("./b390848.txt"));
     e.get_sequence_until_N();
-  });
+  }
 }

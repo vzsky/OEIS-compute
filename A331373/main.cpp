@@ -20,17 +20,17 @@ template <typename T> void assert_compatible(std::vector<T> answer)
 int main()
 {
   // power of gmp!
-  utils::timeit([]
   {
+    utils::ScopeTimer _t{};
     auto answer = get_answer<BigInt, DIGITS>().digits();
     assert_compatible(answer);
-  });
+  }
 
-  utils::timeit([]
   {
+    utils::ScopeTimer _t{};
     auto r      = get_answer<DenseBigInt, DIGITS>();
     auto answer = ((DecBigInt)r).digits();
     std::reverse(answer.begin(), answer.end());
     assert_compatible(answer);
-  });
+  }
 }

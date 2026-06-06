@@ -138,18 +138,18 @@ int main()
 
   using namespace step_func;
 
-  utils::timeit([]
   {
+    utils::ScopeTimer _t{};
     std::cout << erdos_score(mirror(Haugland51)) << std::endl;
     assert(feq(erdos_score(mirror(Haugland51)), 0.380927));
     for (int i = 0; i < 1000; i++)
     {
       erdos_score(mirror(Haugland51));
     }
-  });
+  }
 
-  utils::timeit([]
   {
+    utils::ScopeTimer _t{};
     constexpr int K       = 1;
     constexpr int M       = 9;
     constexpr int N       = M * K;
@@ -202,5 +202,5 @@ int main()
     }();
 
     Log(logging::log_range(era3_population.front().get_function().get_heights(), ", "));
-  });
+  }
 }

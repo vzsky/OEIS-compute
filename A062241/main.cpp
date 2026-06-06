@@ -14,6 +14,8 @@ int main()
   int lower_bound = -1;
   const auto run  = [&]<int N, int M, int K>()
   {
+    utils::ScopeTimer _t{};
+
     DataHelper<N> data{};
     std::vector<char> active(N, 0);
     mp::For<2, M>([&](auto k)
@@ -32,16 +34,18 @@ int main()
       }
     });
   };
-  utils::timeit([&] { run.operator()<200'000, 2, 31>(); });
-  utils::timeit([&] { run.operator()<2'200'000, 31, 53>(); });
-  utils::timeit([&] { run.operator()<7'000'000, 53, 67>(); });
-  utils::timeit([&] { run.operator()<140'000'000, 67, 83>(); });
+  run.operator()<200'000, 2, 31>();
+  run.operator()<2'200'000, 31, 53>();
+  run.operator()<7'000'000, 53, 67>();
+  run.operator()<140'000'000, 67, 83>();
 }
 
 // int main()
 // {
 //   const auto run_fft = []<int N, int M, int K>()
 //   {
+//     utils::ScopeTimer _t{};
+//
 //     DataHelper<N> data{};
 //     std::vector<size_t> active(N, 0);
 //
@@ -65,7 +69,7 @@ int main()
 //       }
 //     });
 //   };
-//   utils::timeit([&] { run_fft.operator()<200'000, 2, 31>(); });
-//   utils::timeit([&] { run_fft.operator()<2'200'000, 31, 53>(); });
-//   utils::timeit([&] { run_fft.operator()<7'000'000, 53, 67>(); });
+//   run_fft.operator()<200'000, 2, 31>();
+//   run_fft.operator()<2'200'000, 31, 53>();
+//   run_fft.operator()<7'000'000, 53, 67>();
 // }

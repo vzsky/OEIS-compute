@@ -10,7 +10,8 @@
         "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/bin",
         "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/build/lib",
         "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/build/lib",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_CXX_FLAGS": "-O3"
       }
     }
   ],
