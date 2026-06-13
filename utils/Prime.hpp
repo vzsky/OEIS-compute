@@ -1,8 +1,19 @@
 #pragma once
 
 #include <map>
+#include <math/Basic.hpp>
 #include <stdexcept>
 #include <vector>
+
+[[nodiscard]] constexpr bool is_prime(uint32_t n)
+{
+  if (n < 2) return false;
+  for (uint64_t i = 2; i * i <= n; ++i)
+    if (n % i == 0) return false;
+  return true;
+}
+
+[[nodiscard]] constexpr bool is_coprime(uint32_t a, uint32_t b) { return math::gcd<uint32_t>(a, b) == 1; }
 
 // multipurpose class for prime related questions
 template <size_t N> class Prime
@@ -12,13 +23,14 @@ template <size_t N> class Prime
 public:
   Prime();
 
-  bool is_prime(size_t n) const;
-  std::vector<size_t> factors(size_t n) const;
-  std::map<size_t, size_t> factors_freq(size_t n) const;
-  std::vector<std::pair<size_t, size_t>> vector_factors_freq(size_t n) const;
-  const std::vector<size_t>& all_primes() const { return mAllPrimes; };
-  size_t lowest_prime_factor(size_t n) const { return mLowestPrimeDiv[n]; }
-  size_t highest_prime_factor(size_t n) const
+  [[nodiscard]] bool is_prime(size_t n) const;
+  [[nodiscard]] std::vector<size_t> distinct_factors(size_t n) const;
+  [[nodiscard]] std::vector<size_t> factors(size_t n) const;
+  [[nodiscard]] std::map<size_t, size_t> factors_freq(size_t n) const;
+  [[nodiscard]] std::vector<std::pair<size_t, size_t>> vector_factors_freq(size_t n) const;
+  [[nodiscard]] const std::vector<size_t>& all_primes() const { return mAllPrimes; };
+  [[nodiscard]] size_t lowest_prime_factor(size_t n) const { return mLowestPrimeDiv[n]; }
+  [[nodiscard]] size_t highest_prime_factor(size_t n) const
   {
     size_t result;
     emit_factors(n, [&](size_t p) { result = p; });
@@ -99,6 +111,16 @@ template <size_t N> template <typename EmitCB> void Prime<N>::emit_factors(size_
   }
 
   if (n != 1) callback(n);
+}
+
+template <size_t N> std::vector<size_t> Prime<N>::distinct_factors(size_t n) const
+{
+  std::vector<size_t> result;
+  emit_factors(n, [&](size_t p)
+  {
+    if (result.empty() || p != result.back()) result.push_back(p);
+  });
+  return result;
 }
 
 template <size_t N> std::vector<size_t> Prime<N>::factors(size_t n) const
