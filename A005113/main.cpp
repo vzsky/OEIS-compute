@@ -55,14 +55,14 @@ int main()
 {
   int target_class = 0;
   {
-    Log(Info, "Class\t| Smallest Prime");
-    Log(Info, "------------------------");
+    Log(LL::Info, "Class\t| Smallest Prime");
+    Log(LL::Info, "------------------------");
     for (size_t p : primeFact.all_primes())
     {
       int c = get_prime_class(p);
       if (c == target_class)
       {
-        LogF(Info, "  $\t| $", c, p);
+        Log(LL::Info, "  $\t| $"_f, c, p);
         target_class++;
       }
       primes_in_class[c].insert(p);
@@ -70,8 +70,8 @@ int main()
   }
 
   ensure_complete_until(14, 1704961513);
-  LogF(Info, "  13\t| $", *primes_in_class[13].begin());
-  LogF(Info, "  14\t| $", *primes_in_class[14].begin());
+  Log(LL::Info, "  13\t| $"_f, *primes_in_class[13].begin());
+  Log(LL::Info, "  14\t| $"_f, *primes_in_class[14].begin());
 
   return 0;
 }

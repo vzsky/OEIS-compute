@@ -98,7 +98,7 @@ template <int N> Elems<N> parse_from_file(const std::string& filename)
       line.pop_back();
     if (line.size() != N)
     {
-      LogF(Warn, "Skipping line: incorrect length = $, expected $", line.size(), N);
+      Log(LL::Warn, "Skipping line: incorrect length = $, expected $"_f, line.size(), N);
       continue;
     }
 
@@ -110,7 +110,7 @@ template <int N> Elems<N> parse_from_file(const std::string& filename)
         bits |= (uint64_t(1) << i);
       else if (c != '0')
       {
-        Log(Warn, "Skipping invalid line: contains non-binary char");
+        Log(LL::Warn, "Skipping invalid line: contains non-binary char");
         bits = 0;
         break;
       }

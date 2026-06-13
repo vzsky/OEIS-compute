@@ -29,7 +29,7 @@ int main()
       {
         for (int x : data.groupByHighestDiv().at(k)) active[x] = 1;
         int answer = find_answer(data, k, lower_bound, active);
-        Log(Info, k, answer);
+        Log(LL::Info, k, answer);
         lower_bound = answer;
       }
     });
@@ -60,9 +60,9 @@ int main()
 //       if (data.prime().is_prime(k))
 //       {
 //         for (int x : data.groupByHighestDiv().at(k)) active[x] = 1;
-//         Log(Info, logging::detail::print_range(active));
+//         Log(LL::Info, logging::detail::print_range(active));
 //         auto C = fft::round<size_t>(fft::self_convolution(active));
-//         Log(Info, logging::detail::print_range(C));
+//         Log(LL::Info, logging::detail::print_range(C));
 //         auto it    = std::find(C.begin() + 2, C.begin() + N, 0);
 //         int answer = (it == C.begin() + N) ? -1 : std::distance(C.begin(), it);
 //         std::cout << k << ' ' << answer << std::endl;

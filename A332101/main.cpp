@@ -44,7 +44,7 @@ bool exact_holds(int n, std::size_t m)
 
 std::size_t solve(int n)
 {
-  using _LogEnv_ = _LogEnv_::Logger<loggers::progress>;
+  logging::Scope _l = logging::Env{}.logger(loggers::progress);
 
   std::size_t hi = 2;
   while (!approx_holds(n, hi)) hi *= 2;
@@ -54,7 +54,7 @@ std::size_t solve(int n)
   {
     std::size_t mid                  = lo + (hi - lo) / 2;
     (approx_holds(n, mid) ? hi : lo) = mid;
-    LogF(Debug, "$ <= a($) <= $", lo, n, hi);
+    Log(LL::Debug, "$ <= a($) <= $"_f, lo, n, hi);
   }
   std::size_t m = hi;
 
@@ -66,7 +66,7 @@ std::size_t solve_conjecture(int n) { return static_cast<std::size_t>(std::llrou
 
 void check(int n, std::size_t m)
 {
-  using _LogEnv_ = _LogEnv_::Logger<loggers::progress>;
+  logging::Scope _l = logging::Env{}.logger(loggers::progress);
 
   const uint64_t e = static_cast<uint64_t>(n);
 
@@ -96,11 +96,12 @@ void check(int n, std::size_t m)
   assert(top <= S && "verification failed: m^n > Sum_{k<m} k^n");
   assert(below > S - below && "verification failed: m-1 also holds, so m is not least");
 
-  LogF(Info, "a($) = $ [$ adjustments]", n, m, adjustments);
+  // TODO log progress
+  Log(LL::Info, "a($) = $ [$ adjustments]"_f, n, m, adjustments);
   if (adjustments)
   {
-    using _LogEnv_ = _LogEnv_::Logger<loggers::normal>;
-    Log(Info, "Conjecture is false");
+    logging::Scope _l = logging::Env{}.logger(loggers::normal);
+    Log(LL::Info, "Conjecture is false");
   }
 }
 
@@ -109,7 +110,7 @@ void check(int n, std::size_t m)
 int main()
 {
   utils::ScopeTimer _t{"main"};
-  constexpr int N = 1500;
+  constexpr int N = 1000;
 
   // TODO: can just build one sum rather than N
   for (int n = 1; n <= N; ++n)

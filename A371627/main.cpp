@@ -44,7 +44,7 @@ int A371627_comment(std::int64_t n)
 
   if (feq(err(x1), err(x2)))
   {
-    LogF(Info, "careful with n=$", n);
+    Log(LL::Info, "careful with n=$"_f, n);
     assert(false);
   }
   return (err(x1) <= err(x2)) ? x1 : x2;
@@ -70,7 +70,7 @@ int main()
 
   for (int i = 1; i < 20001; i++)
   {
-    Log(Info, i, A371627(i));
+    Log(LL::Info, i, A371627(i));
     assert(A371627(i) == A371627_comment(i));
   }
 }

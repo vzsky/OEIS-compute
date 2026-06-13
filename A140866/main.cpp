@@ -36,7 +36,7 @@ int main()
       if (is_harshad(i)) cnt++;
       if (i == std::pow(10, current_n))
       {
-        Log(Info, current_n, cnt);
+        Log(LL::Info, current_n, cnt);
         current_n++;
       }
     }

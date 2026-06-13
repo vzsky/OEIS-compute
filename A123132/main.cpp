@@ -55,9 +55,9 @@ int main()
         std::ostringstream oss;
         oss << n << " -> ";
         for (auto& [p, c] : factorizer.factors_freq(n)) oss << p << ':' << c << ' ';
-        Log(Info, oss.str());
+        Log(LL::Info, oss.str());
       }
     }
-    LogF(Info, "total: $", cnt);
+    Log(LL::Info, "total: $"_f, cnt);
   }
 }

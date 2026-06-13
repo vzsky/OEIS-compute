@@ -33,7 +33,7 @@ int main()
     mp::For<1, N>([](auto i)
     {
       utils::ScopeTimer _t{};
-      LogF(Info, "$: $", i, naive::exact_answer<i>());
+      Log(LL::Info, "$: $"_f, i, naive::exact_answer<i>());
     });
   };
 
@@ -59,11 +59,12 @@ int main()
       GeneticSearcher<Gene> g{};
       g.config.elite_count     = 1000;
       g.config.population_size = 10000;
-      g.setGenerationCB([](const Gene& g, int generation) { Log(Info, g.get_score(), g.get_max_count()); });
+      g.setGenerationCB([](const Gene& g, int generation)
+      { Log(LL::Info, g.get_score(), g.get_max_count()); });
 
       Gene best = g.search({adam}, 50).front();
-      Log(Info, best.get_mask());
-      LogF(Info, "upperbound of a($) is $", N, best.get_max_count());
+      Log(LL::Info, best.get_mask());
+      Log(LL::Info, "upperbound of a($) is $"_f, N, best.get_max_count());
     });
   };
 

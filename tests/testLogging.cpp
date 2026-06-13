@@ -3,54 +3,64 @@
 #include <list>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <utils/Logging.hpp>
 #include <vector>
 
 namespace {
 
-std::vector<std::string> gCaptured;
-void captureSink(std::string_view msg) { gCaptured.emplace_back(msg); }
-using _LogEnv_ = _LogEnv_::Logger<captureSink>;
+void debugDownstream() { Log(LL::Debug, "downstream"); }
+void infoHello() { Log(LL::Info, "hi"); }
 
 struct Capture
 {
+  logging::Scope _l = logging::Env{}.logger(captureLog);
+
+  static std::vector<std::string> captured;
+  static void tlCaptureWrite(std::string_view msg) { captured.emplace_back(msg); }
+  constexpr static logging::Logger captureLog{&tlCaptureWrite};
+
   std::size_t pos = 0;
 
-  Capture() { gCaptured.clear(); }
+  Capture() { captured.clear(); }
+  ~Capture() { EXPECT_TRUE(empty()); }
 
   void expect(std::string_view expected)
   {
-    ASSERT_LT(pos, gCaptured.size()) << "no more output";
-    std::string_view line = gCaptured[pos++];
+    ASSERT_LT(pos, captured.size()) << "no more output";
+    std::string_view line = captured[pos++];
     while (!line.empty() && line.back() == ' ') line.remove_suffix(1);
     EXPECT_EQ(line, expected);
   }
 
-  bool empty() const { return gCaptured.empty(); }
+  bool empty() const { return pos == captured.size(); }
 };
+std::vector<std::string> Capture::captured{};
+
+} // namespace
 
 TEST(Logging, BareOutput)
 {
   Capture cap;
-  Log(Info, "bare");
+  Log(LL::Info, "bare");
   cap.expect("bare");
 }
 
 TEST(Logging, ModuleAppearsInBrackets)
 {
   Capture cap;
-  using _LogEnv_ = _LogEnv_::Module<"server">;
-  Log(Info, "started");
+  logging::Scope s = logging::Env{}.module("server");
+  Log(LL::Info, "started");
   cap.expect("[server] started");
 }
 
 TEST(Logging, NestedModuleAppends)
 {
   Capture cap;
-  using _LogEnv_ = _LogEnv_::Module<"server">;
+  logging::Scope s = logging::Env{}.module("server");
   {
-    using _LogEnv_ = _LogEnv_::Module<"db">;
-    Log(Info, "connected");
+    logging::Scope inner = logging::Env{}.module("db");
+    Log(LL::Info, "connected");
   }
   cap.expect("[server::db] connected");
 }
@@ -59,10 +69,10 @@ TEST(Logging, ScopeExitRestoresModule)
 {
   Capture cap;
   {
-    using _LogEnv_ = _LogEnv_::Module<"inner">;
-    Log(Info, "inside");
+    logging::Scope s = logging::Env{}.module("inner");
+    Log(LL::Info, "inside");
   }
-  Log(Info, "outside");
+  Log(LL::Info, "outside");
   cap.expect("[inner] inside");
   cap.expect("outside");
 }
@@ -70,17 +80,17 @@ TEST(Logging, ScopeExitRestoresModule)
 TEST(Logging, DebugSilencedAtInfoThreshold)
 {
   Capture cap;
-  Log(Debug, "should not appear");
+  Log(LL::Debug, "should not appear");
   EXPECT_TRUE(cap.empty());
 }
 
 TEST(Logging, LevelFiltering)
 {
   Capture cap;
-  using _LogEnv_ = _LogEnv_::Level<LL::Warn>;
-  Log(Info, "silenced");
-  Log(Warn, "warn fires");
-  Log(Error, "error fires");
+  logging::Scope s = logging::Env{}.level(LL::Warn);
+  Log(LL::Info, "silenced");
+  Log(LL::Warn, "warn fires");
+  Log(LL::Error, "error fires");
   cap.expect("warn fires");
   cap.expect("error fires");
 }
@@ -88,33 +98,63 @@ TEST(Logging, LevelFiltering)
 TEST(Logging, ModuleAndLevelChained)
 {
   Capture cap;
-  using _LogEnv_ = _LogEnv_::Module<"quiet">::Level<LL::Warn>;
-  Log(Info, "silenced");
-  Log(Warn, "fires");
+  logging::Scope s = logging::Env{}.module("quiet").level(LL::Warn);
+  Log(LL::Info, "silenced");
+  Log(LL::Warn, "fires");
   cap.expect("[quiet] fires");
 }
 
-TEST(Logging, RangeVector)
+TEST(Logging, EnvPropagatesToCallee)
+{
+  Capture cap;
+  {
+    logging::Scope s = logging::Env{}.level(LL::Debug);
+    debugDownstream();
+    cap.expect("downstream");
+  }
+  {
+    logging::Scope s = logging::Env{}.level(LL::Info);
+    debugDownstream();
+    EXPECT_TRUE(cap.empty());
+  }
+}
+
+TEST(Logging, ModulePropagatesToCallee)
+{
+  Capture cap;
+  {
+    logging::Scope s = logging::Env{}.module("svc");
+    infoHello();
+    cap.expect("[svc] hi");
+  }
+  {
+    logging::Scope s = logging::Env{}.module("nice logger");
+    infoHello();
+    cap.expect("[nice logger] hi");
+  }
+}
+
+TEST(Logging, printRanges)
 {
   Capture cap;
   std::vector<int> v = {1, 2, 3};
-  Log(Info, v);
+  Log(LL::Info, v);
   cap.expect("{1, 2, 3}");
-}
 
-TEST(Logging, RangeArray)
-{
-  Capture cap;
   std::array<int, 3> a = {10, 20, 30};
-  Log(Info, a);
+  Log(LL::Info, a);
   cap.expect("{10, 20, 30}");
+
+  std::span<int> s = v;
+  Log(LL::Info, s);
+  cap.expect("{1, 2, 3}");
 }
 
 TEST(Logging, RangeList)
 {
   Capture cap;
   std::list<std::string> l = {"foo", "bar"};
-  Log(Info, l);
+  Log(LL::Info, l);
   cap.expect("{foo, bar}");
 }
 
@@ -125,20 +165,14 @@ TEST(Logging, StringNotTreatedAsRange)
   std::string_view s2 = "hello";
   char s3[]           = "hello";
   auto s4             = "hello"_ms;
-  Log(Info, s1);
-  Log(Info, s2);
-  Log(Info, s3);
-  Log(Info, s4);
-  cap.expect("hello");
-  cap.expect("hello");
-  cap.expect("hello");
-  cap.expect("hello");
+  Log(LL::Info, s1, s2, s3, s4);
+  cap.expect("hello hello hello hello");
 }
 
 TEST(Logging, LogFBasic)
 {
   Capture cap;
-  LogF(Info, "x=$ y=$", 3, 4);
+  Log(LL::Info, "x=$ y=$"_f, 3, 4);
   cap.expect("x=3 y=4");
 }
 
@@ -146,18 +180,26 @@ TEST(Logging, LogFRange)
 {
   Capture cap;
   std::vector<int> v = {1, 2, 3};
-  LogF(Info, "v=$", v);
+  Log(LL::Info, "v=$"_f, v);
   cap.expect("v={1, 2, 3}");
 }
 
-// TODO can we have this
-void f() { Log(Debug, "downstream"); }
-TEST(Logging, LogDeclare)
+TEST(Logging, EnvInheritsSnapshot)
 {
   Capture cap;
-  using _LogEnv_ = _LogEnv_::Level<LL::Debug>;
-  f();
-  cap.expect("downstream");
-}
+  logging::Scope _l = logging::Env{}.module("global");
 
-} // namespace
+  constexpr int kThreads = 16;
+
+  std::vector<std::thread> pool;
+  for (int i = 0; i < kThreads; ++i)
+  {
+    pool.emplace_back([snap = logging::snapshot()]
+    {
+      logging::Scope _l = snap;
+      Log(LL::Info, "from thread");
+    });
+  }
+  for (std::thread& t : pool) t.join();
+  for (int i = 0; i < kThreads; i++) cap.expect("[global] from thread");
+}

@@ -33,13 +33,13 @@ struct ProgressMonitor
   ProgressMonitor(const std::atomic<size_t>& done, size_t length, MonitorConfig conf)
       : mFinished(false), mFuture(std::async(std::launch::async, [&done, this, length, conf]()
   {
-    using _LogEnv_ = _LogEnv_::Logger<loggers::progress>;
+    logging::Scope _l = logging::Env{}.logger(loggers::progress);
     while (!mFinished.load(std::memory_order_relaxed))
     {
       std::this_thread::sleep_for(std::chrono::seconds(conf.intervalSeconds));
       size_t d = done.load(std::memory_order_relaxed);
       if (!mFinished.load(std::memory_order_relaxed))
-        LogF(Info, "progress: $/$ ($%)", d, length, 100 * d / length);
+        Log(LL::Info, "progress: $/$ ($%)"_f, d, length, 100 * d / length);
     }
   }))
   {
@@ -49,7 +49,6 @@ struct ProgressMonitor
   {
     mFinished.store(true);
     mFuture.wait();
-    std::cerr << '\n';
   }
 
   ProgressMonitor(const ProgressMonitor&)            = delete;

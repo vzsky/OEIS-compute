@@ -53,19 +53,21 @@ Do not use anything inside any `::detail` namespace — those are implementation
 - `math/numtheory/Jacobi.hpp` — Jacobi symbol
 
 **Logging** (from `utils/Logging.hpp`, included transitively via `Utils.hpp`):
-- `Log(lvl, ...)` — variadic print with optional module prefix; `lvl` is `Debug`/`Info`/`Warn`/`Error`
-- `LogF(lvl, fmt, ...)` — `$`-placeholder format string, compile-time placeholder count check
-- `_LogEnv_` — compile-time type alias tracking current module name and log level; default is empty name + `Info`
-- `LL` — shorthand for `logging::details::LogLevel`
+- `Log(lvl, ...)` — variadic print with optional module prefix; `lvl` is `LL::Debug`/`LL::Info`/`LL::Warn`/`LL::Error`
+- `Log(lvl, "fmt $"_ms, ...)` — `$`-placeholder format string when first arg after level is a maya format string; placeholder count is checked at compile time
+- `LL` — shorthand for `logging::detail::LogLevel`
 - `"name"_ms` — compile-time string value; exported from `Logging.hpp`
 
-Set module name or level inline with `using _LogEnv_ = _LogEnv_::...` — operations can be chained:
+The active environment (module label, level threshold, output sink) is a **runtime,
+thread-local stack** read at log time, so it propagates into functions you call.
+Override it for the current scope (and everything it calls) with an RAII `logging::Scope`
+built from a fluent spec; the previous env is restored at scope exit:
 ```cpp
-using _LogEnv_ = _LogEnv_::Module<"server">;           // append module label (separator " | " is baked in)
-using _LogEnv_ = _LogEnv_::Level<LL::Warn>;            // raise threshold
-using _LogEnv_ = _LogEnv_::Module<"db">::Level<LL::Debug>; // both at once
+logging::Scope _l = logging::Env{}.module("server");              // append module label
+logging::Scope _l = logging::Env{}.level(LL::Warn);               // raise threshold
+logging::Scope _l = logging::Env{}.module("db").level(LL::Debug); // both at once
+logging::Scope _l = logging::Env{}.logger(loggers::progress);     // swap sink (normal/timestamp/progress/noop)
 ```
-Nesting blocks is how scoped restore works — inner `using _LogEnv_` shadows outer; exiting the block restores it.
 
 ### Adding a new sequence
 
@@ -98,7 +100,11 @@ Private member variables use `mVar` naming (camelCase with `m` prefix), not `var
 
 Include order: standard library headers with `<angle brackets>`, then project headers also with `<angle brackets>` using their full path (e.g. `<utils/Logging.hpp>`), never with `"quotes"`.
 
-Use `Log`/`LogF` instead of `std::cout` or `std::cerr` for all output.
+Use `Log` instead of `std::cout` or `std::cerr` for all output.
+
+Scope-guard conventions: name a `logging::Scope` `_l` and a `utils::ScopeTimer` `_t`, and declare it
+as the **first statement** of its enclosing scope. If a scope has both, the timer (`_t`) comes first,
+then the log scope (`_l`).
 
 ### Artifacts / CI
 

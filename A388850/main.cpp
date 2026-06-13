@@ -40,7 +40,8 @@ struct MaxPrime
 
 void print_from_start(size_t start, size_t width)
 {
-  for (size_t i = start; i <= start + width; i++) LogF(Info, "$ == $", i, PrimeInt(p.vector_factors_freq(i)));
+  for (size_t i = start; i <= start + width; i++)
+    Log(LL::Info, "$ == $"_f, i, PrimeInt(p.vector_factors_freq(i)));
 }
 
 bool is_valid_start(size_t start, size_t width)
@@ -63,8 +64,8 @@ void find_short_sequence()
       for (int i = u; i <= v; i++) prod *= MaxPrime(p.vector_factors_freq(i));
       if (prod.mult >= 2)
       {
-        LogF(Info, "prime: $^$ = $", prod.maxP, prod.mult, (long long)std::pow(prod.maxP, prod.mult));
-        Log(Info, distance, u);
+        Log(LL::Info, "prime: $^$ = $"_f, prod.maxP, prod.mult, (long long)std::pow(prod.maxP, prod.mult));
+        Log(LL::Info, distance, u);
         break;
       }
     }
@@ -95,9 +96,9 @@ void find_upper_bound(int width)
 
       if (found)
       {
-        LogF(Info, "Prime $", prime);
+        Log(LL::Info, "Prime $"_f, prime);
         print_from_start(start, width);
-        if (is_valid_start(start, width)) Log(Info, width, start);
+        if (is_valid_start(start, width)) Log(LL::Info, width, start);
         return; // or width ++ to continue the search
       }
     }
@@ -110,25 +111,29 @@ void upper_bound_cert()
     size_t start = 4'928'180'396;
     size_t width = 9;
     // print_from_start(start, width);
-    if (is_valid_start(start, width) && !is_valid_start(start, width + 1)) LogF(Info, "$ confirmed", width);
+    if (is_valid_start(start, width) && !is_valid_start(start, width + 1))
+      Log(LL::Info, "$ confirmed"_f, width);
   }
   {
     size_t start = 40'533'366'231;
     size_t width = 10;
     // print_from_start(start, width);
-    if (is_valid_start(start, width) && !is_valid_start(start, width + 1)) LogF(Info, "$ confirmed", width);
+    if (is_valid_start(start, width) && !is_valid_start(start, width + 1))
+      Log(LL::Info, "$ confirmed"_f, width);
   }
   {
     size_t start = 111'460'496'439;
     size_t width = 11;
     // print_from_start(start, width);
-    if (is_valid_start(start, width) && !is_valid_start(start, width + 1)) LogF(Info, "$ confirmed", width);
+    if (is_valid_start(start, width) && !is_valid_start(start, width + 1))
+      Log(LL::Info, "$ confirmed"_f, width);
   }
   {
     size_t start = 436'502'026'483;
     size_t width = 12;
     // print_from_start(start, width);
-    if (is_valid_start(start, width) && !is_valid_start(start, width + 1)) LogF(Info, "$ confirmed", width);
+    if (is_valid_start(start, width) && !is_valid_start(start, width + 1))
+      Log(LL::Info, "$ confirmed"_f, width);
   }
 }
 

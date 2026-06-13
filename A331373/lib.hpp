@@ -39,7 +39,7 @@ template <uint32_t DIGITS> Fraction<DenseBigInt> get_fraction(bool stats = false
 
     if (d > limit)
     {
-      if (stats) LogF(Info, "Calculated until k=$ prefix sum", k);
+      if (stats) Log(LL::Info, "Calculated until k=$ prefix sum"_f, k);
 
       fact *= k + 1;
       break;

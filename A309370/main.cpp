@@ -88,8 +88,8 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
   {
     if (show_smaller_output && i == (1 << smaller_output_cnt))
     {
-      Log(Info, "#============================");
-      LogF(Info, "N = $", smaller_output_cnt);
+      Log(LL::Info, "#============================");
+      Log(LL::Info, "N = $"_f, smaller_output_cnt);
       auto result = frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
       result.print(smaller_output_cnt);
       assert(check(result));
@@ -117,7 +117,7 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
 
     prune_alg(frontier);
   }
-  if (show_progress) Log(Info, "Done!");
+  if (show_progress) Log(LL::Info, "Done!");
   return frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
 }
 
@@ -170,6 +170,6 @@ int main()
     auto result = find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
 
     assert(check(result));
-    Log(Info, result);
+    Log(LL::Info, result);
   }
 }

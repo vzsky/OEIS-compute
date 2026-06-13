@@ -50,7 +50,7 @@ int main()
   constexpr size_t minN       = 10'000'000;
   constexpr size_t sieveLimit = 7072; // ceil(sqrt(5e7))
 
-  LogF(Info, "N=$  minN=$  sieveLimit=$", N, minN, sieveLimit);
+  Log(LL::Info, "N=$  minN=$  sieveLimit=$"_f, N, minN, sieveLimit);
 
   Prime<N> allPrimes;
   std::vector<uint8_t> valid(N + 1, 1);
@@ -63,7 +63,7 @@ int main()
       if (p > sieveLimit) break;
       for (uint64_t pk = p; pk <= sieveLimit; pk *= p) sieveMods.push_back(pk);
     }
-    LogF(Info, "Sieve moduli = $", sieveMods.size());
+    Log(LL::Info, "Sieve moduli = $"_f, sieveMods.size());
 
     // benign race: threads only ever write 0
     prl::foreach<monConf>(sieveMods, [&](uint64_t m)
@@ -83,7 +83,7 @@ int main()
       if (!valid[n]) continue;
       candidates.push_back(static_cast<int>(n));
     }
-    Log(Info, "candidates:", candidates.size());
+    Log(LL::Info, "candidates:", candidates.size());
   }
 
   {
@@ -96,7 +96,7 @@ int main()
 
     prl::foreach<monConf>(balanced, [](int n)
     {
-      if (concat_mod(n, n) == 0) Log(Info, n);
+      if (concat_mod(n, n) == 0) Log(LL::Info, n);
     });
   }
 }

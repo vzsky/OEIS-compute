@@ -241,7 +241,7 @@ public:
       const auto multipliedTerms = seqSize - it.idx() + 1;
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
-      LogF(Info, "need to loop $ $ -> $", n, multipliedTerms, acc);
+      Log(LL::Info, "need to loop $ $ -> $"_f, n, multipliedTerms, acc);
     }
 
     stats.loop += mCurrentProductsToCheck.size();
@@ -259,7 +259,7 @@ public:
     {
       if (n % 1000000 == 0)
       {
-        LogF(Info, "==== Progress: $ / $", n, N);
+        Log(LL::Info, "==== Progress: $ / $"_f, n, N);
         stats.print();
       }
       try_add_number(n);
@@ -271,7 +271,7 @@ public:
     for (auto n : skipped) seq.add_skip(n);
     seqSize = skipped.back() + 1 - skipped.size();
     make_conseccache();
-    Log(Info, "read skipped");
+    Log(LL::Info, "read skipped");
   }
 
   bool is_interesting(uint64_t skippedElement) const
@@ -302,14 +302,14 @@ public:
 
     void print() const
     {
-      Log(Info, "Cached", cached);
-      Log(Info, "Loop", loop);
-      Log(Info, "Opt1 size", opt1_size);
-      Log(Info, "Opt1 div", opt1_div);
-      Log(Info, "Opt2 size", opt2_size);
-      Log(Info, "Opt2 div", opt2_div);
-      Log(Info, "Opt3 size", opt3_size);
-      Log(Info, "Opt3 div", opt3_div);
+      Log(LL::Info, "Cached", cached);
+      Log(LL::Info, "Loop", loop);
+      Log(LL::Info, "Opt1 size", opt1_size);
+      Log(LL::Info, "Opt1 div", opt1_div);
+      Log(LL::Info, "Opt2 size", opt2_size);
+      Log(LL::Info, "Opt2 div", opt2_div);
+      Log(LL::Info, "Opt3 size", opt3_size);
+      Log(LL::Info, "Opt3 div", opt3_div);
     }
   } stats;
 };

@@ -85,7 +85,7 @@ TEST(PrimeTest, IsPrime)
 {
   Prime<100> pf;
 
-  ASSERT_THROW(pf.is_prime(0), std::invalid_argument);
+  ASSERT_THROW((void)pf.is_prime(0), std::invalid_argument);
   ASSERT_FALSE(pf.is_prime(1));
   ASSERT_TRUE(pf.is_prime(2));
   ASSERT_TRUE(pf.is_prime(19));

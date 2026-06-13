@@ -1,16 +1,18 @@
 #pragma once
 
+#include <cassert>
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <optional>
+#include <ranges>
 #include <sstream>
+#include <string>
 #include <string_view>
-#include <utils/maya/Dictionary.hpp>
-#include <utils/maya/String.hpp>
+#include <utils/maya/StringFormat.hpp>
+#include <vector>
 
 namespace logging::detail {
-
-using namespace maya;
 
 enum class LogLevel
 {
@@ -20,31 +22,10 @@ enum class LogLevel
   Error,
 };
 
-using Logger = void (*)(std::string_view);
-
-template <IsMayaStr NameT, LogLevel level_, Logger logger_>
-struct LogEnv : maya::Dict<                                        //
-                    maya::DictEntry<decltype("name"_ms), NameT{}>, //
-                    maya::DictEntry<decltype("level"_ms), level_>  //
-                    >
+struct Logger
 {
-  static constexpr auto name      = NameT{};
-  static constexpr LogLevel level = level_;
-  static constexpr Logger logger  = logger_;
-
-  // for `using _Env_ = _Env_::Module<"module">`
-  template <maya::detail::CharCapture S>
-  using Module = LogEnv<                                                 //
-      std::conditional_t<NameT::empty(),                                 //
-                         maya::StrT<S>,                                  //
-                         decltype(NameT{} + "::"_ms + maya::StrT<S>{})>, //
-      level, logger>;
-
-  // for `using _Env_ = _Env_::Level<newL>`
-  template <LogLevel newLevel> using Level = LogEnv<NameT, newLevel, logger>;
-
-  // for `using _Env_ = _Env_::Logger<loggers::progress>`
-  template <Logger newLogger> using Logger = LogEnv<NameT, level, newLogger>;
+  void (*write)(std::string_view);
+  void (*on_log_done)() = nullptr;
 };
 
 namespace print {
@@ -66,11 +47,11 @@ template <PrintableRange T> void print_one(std::ostream& os, T&& x)
 {
   os << '{';
   bool first = true;
-  for (const auto& elem : x)
+  for (const auto& e : x)
   {
     if (!first) os << ", ";
     first = false;
-    os << elem;
+    os << e;
   }
   os << '}';
 }
@@ -88,26 +69,139 @@ void print_format(std::ostream& os, std::string_view s, std::size_t i, T&& x, Ts
 
 } // namespace print
 
-template <typename T>
-concept IsLogEnv = requires {
-  requires IsMayaStr<decltype(T::name)>;
-  requires std::same_as<std::remove_cv_t<decltype(T::level)>, LogLevel>;
-  requires std::same_as<std::remove_cv_t<decltype(T::logger)>, Logger>;
-};
+namespace loggers {
 
-template <LogLevel MsgLevel, IsLogEnv Mod, typename... Ts> void log(Mod, Ts&&... xs)
+inline void normal_write(std::string_view msg) { std::cout << msg << '\n' << std::flush; }
+
+inline void noop_write(std::string_view) {}
+
+inline void timestamp_write(std::string_view msg)
 {
-  if constexpr (MsgLevel >= Mod::level)
-  {
-    std::ostringstream oss;
-    print::print_module(oss, Mod::name);
-    ((print::print_one(oss, std::forward<Ts>(xs)), oss << " "), ...);
-    Mod::logger(oss.str());
-  }
+  std::cout << logging::detail::print::time() << ' ' << msg << '\n' << std::flush;
 }
 
-template <LogLevel MsgLevel, IsLogEnv Mod, IsMayaStr Fmt, typename... Ts>
-void log_format(Mod, Fmt, Ts&&... xs)
+inline void progress_write(std::string_view msg) { std::cout << '\r' << msg << "\033[K" << std::flush; }
+
+inline void progress_done() { std::cout << '\n' << std::flush; }
+
+inline constexpr Logger normal{&normal_write};
+inline constexpr Logger noop{&noop_write};
+inline constexpr Logger timestamp{&timestamp_write};
+inline constexpr Logger progress{&progress_write, &progress_done};
+
+} // namespace loggers
+
+struct Env
+{
+  std::optional<std::string> mModule;
+  std::optional<LogLevel> mLevel;
+  std::optional<Logger> mLogger;
+
+  Env module(std::string_view m) const
+  {
+    Env e     = *this;
+    e.mModule = std::string(m);
+    return e;
+  }
+
+  Env level(LogLevel l) const
+  {
+    Env e    = *this;
+    e.mLevel = l;
+    return e;
+  }
+
+  Env logger(Logger l) const
+  {
+    Env e     = *this;
+    e.mLogger = l;
+    return e;
+  }
+
+  Env operator+(const Env& delta) const
+  {
+    Env out = *this;
+
+    if (delta.mModule)
+    {
+      if (mModule && !mModule->empty())
+        out.mModule = *mModule + "::" + *delta.mModule;
+      else
+        out.mModule = delta.mModule;
+    }
+
+    if (delta.mLevel) out.mLevel = delta.mLevel;
+    if (delta.mLogger) out.mLogger = delta.mLogger;
+    return out;
+  }
+};
+
+inline std::vector<Env>& env_stack()
+{
+  thread_local std::vector<Env> s{Env{std::string{}, LogLevel::Info, loggers::normal}};
+  return s;
+}
+
+inline Env& current() { return detail::env_stack().back(); }
+
+inline void emit_log(LogLevel level, std::string_view str)
+{
+  const Env& env = detail::current();
+  assert(env.mLevel && env.mLogger && env.mModule);
+  if (level < *env.mLevel) return;
+
+  std::ostringstream oss;
+  detail::print::print_module(oss, *env.mModule);
+  oss << str;
+  env.mLogger->write(oss.str());
+}
+
+} // namespace logging::detail
+
+namespace logging {
+
+using detail::Env;
+using detail::Logger;
+using detail::LogLevel;
+
+inline Env snapshot() { return detail::current(); }
+
+class Scope
+{
+public:
+  Scope(const Env& delta)
+  {
+    detail::env_stack().push_back(detail::current() + delta);
+    if (delta.mLogger) mOnExit = detail::current().mLogger->on_log_done;
+  }
+
+  ~Scope()
+  {
+    detail::env_stack().pop_back();
+    if (mOnExit) mOnExit();
+  }
+
+  Scope(const Scope&)            = delete;
+  Scope& operator=(const Scope&) = delete;
+
+private:
+  void (*mOnExit)() = nullptr;
+};
+
+} // namespace logging
+
+namespace loggers {
+
+using logging::detail::loggers::noop;
+using logging::detail::loggers::normal;
+using logging::detail::loggers::progress;
+using logging::detail::loggers::timestamp;
+
+} // namespace loggers
+
+using LL = logging::detail::LogLevel;
+
+template <maya::IsMayaFormat Fmt, typename... Ts> void Log(LL level, Fmt, Ts&&... xs)
 {
   constexpr std::size_t dollars = []
   {
@@ -115,55 +209,16 @@ void log_format(Mod, Fmt, Ts&&... xs)
     for (char c : Fmt::view()) n += (c == '$');
     return n;
   }();
-  static_assert(dollars == sizeof...(Ts), "LogF: number of $ placeholders must match argument count");
-  if constexpr (MsgLevel >= Mod::level)
-  {
-    std::ostringstream oss;
-    print::print_module(oss, Mod::name);
-    print::print_format(oss, Fmt::view(), 0, std::forward<Ts>(xs)...);
-    Mod::logger(oss.str());
-  }
+  static_assert(dollars == sizeof...(Ts));
+  std::ostringstream oss;
+  logging::detail::print::print_format(oss, Fmt::view(), 0, std::forward<Ts>(xs)...);
+  logging::detail::emit_log(level, oss.str());
 }
 
-} // namespace logging::detail
-
-using maya::operator""_ms;
-using LL = logging::detail::LogLevel;
-
-namespace loggers {
-
-inline void noop(std::string_view) {}
-
-inline void timestamp(std::string_view msg)
+template <typename... Ts> void Log(LL level, Ts&&... xs)
 {
-  std::string line = logging::detail::print::time();
-  line += ' ';
-  line += msg;
-  line += '\n';
-  std::cout << line;
-  std::cout.flush();
+  std::ostringstream oss;
+  std::string_view sep;
+  ((oss << sep, logging::detail::print::print_one(oss, std::forward<Ts>(xs)), sep = " "), ...);
+  logging::detail::emit_log(level, oss.str());
 }
-
-inline void normal(std::string_view msg)
-{
-  std::string line(msg);
-  line += '\n';
-  std::cout << line;
-  std::cout.flush();
-}
-
-inline void progress(std::string_view msg)
-{
-  std::string line = "\r";
-  line += msg;
-  line += "\033[K";
-  std::cerr << line;
-  std::cerr.flush();
-}
-
-} // namespace loggers
-
-using _LogEnv_ = logging::detail::LogEnv<maya::emptyStrT, LL::Info, loggers::normal>;
-#define Log(lvl, ...) logging::detail::log<logging::detail::LogLevel::lvl>(_LogEnv_{}, __VA_ARGS__)
-#define LogF(lvl, fmt, ...)                                                                                  \
-  logging::detail::log_format<logging::detail::LogLevel::lvl>(_LogEnv_{}, maya::StrT<fmt>{}, __VA_ARGS__)

@@ -28,6 +28,17 @@ template <char... Cs1, char... Cs2> constexpr auto operator+(String<Cs1...>, Str
   return String<Cs1..., Cs2...>{};
 }
 
+// TODO make it a tagged
+template <char... Cs> struct FormatString
+{
+  static constexpr char buf[] = {Cs..., '\0'};
+  static constexpr std::string_view view() noexcept { return {buf, sizeof...(Cs)}; }
+  static constexpr bool empty() noexcept { return sizeof...(Cs) == 0; }
+
+  constexpr operator std::string_view() const noexcept { return view(); }
+  friend std::ostream& operator<<(std::ostream& os, FormatString) { return os << view(); }
+};
+
 template <std::size_t N> struct CharCapture
 {
   char value[N];
@@ -52,7 +63,8 @@ template <maya::detail::CharCapture S> using StrT = decltype(maya::detail::mayaS
 template <maya::detail::CharCapture S> consteval auto operator""_ms() noexcept { return StrT<S>{}; }
 
 template <typename T>
-concept IsMayaStr = requires { []<char... Cs>(maya::detail::String<Cs...>) {}(T{}); };
+concept IsMayaStr = requires { []<char... Cs>(maya::detail::String<Cs...>) {}(T{}); } ||
+                    requires { []<char... Cs>(maya::detail::FormatString<Cs...>) {}(T{}); };
 
 using emptyStrT = decltype(""_ms);
 
@@ -66,3 +78,5 @@ static_assert(""_ms.empty());
 static_assert(!"a"_ms.empty());
 
 } // namespace maya
+
+using maya::operator""_ms;

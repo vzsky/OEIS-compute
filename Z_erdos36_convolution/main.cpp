@@ -139,7 +139,7 @@ int main()
 
   {
     utils::ScopeTimer _t{};
-    Log(Info, erdos_score(mirror(Haugland51)));
+    Log(LL::Info, erdos_score(mirror(Haugland51)));
     assert(feq(erdos_score(mirror(Haugland51)), 0.380927));
     for (int i = 0; i < 1000; i++)
     {
@@ -157,7 +157,7 @@ int main()
 
     const auto print_score = [](const auto& g, int gen)
     {
-      if (gen % 100 == 0) LogF(Info, "gen: $ = $", gen, g.get_score());
+      if (gen % 100 == 0) Log(LL::Info, "gen: $ = $"_f, gen, g.get_score());
     };
 
     auto era1_population = [&]
@@ -200,6 +200,6 @@ int main()
       return g.search(migrate_population<Config>(era2_population), 1000);
     }();
 
-    Log(Info, era3_population.front().get_function().get_heights());
+    Log(LL::Info, era3_population.front().get_function().get_heights());
   }
 }

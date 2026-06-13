@@ -3,7 +3,7 @@
 
 struct A389544_impl : public A389544<500000, 2'000'000'000>
 {
-  void _not_skip(uint64_t n) override { Log(Info, n); }
+  void _not_skip(uint64_t n) override { Log(LL::Info, n); }
 };
 
 int main()
