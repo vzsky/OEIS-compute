@@ -1,21 +1,21 @@
 #pragma once
 
 #include <utils/maya/String.hpp>
+#include <utils/maya/Tagged.hpp>
 
 namespace maya {
 
-template <detail::CharCapture S>
-using FmtT = decltype([]<std::size_t... Is>(std::index_sequence<Is...>)
-{ return detail::FormatString<S.value[Is]...>{}; }(std::make_index_sequence<sizeof(S.value) - 1>{}));
-
-template <detail::CharCapture S> consteval auto operator""_f() noexcept { return FmtT<S>{}; }
+constexpr auto format_tag          = "maya_format_str"_ms;
+template <IsMayaStrT S> using FmtT = Tagged<S, format_tag>;
+template <detail::CharCapture S> consteval auto operator""_f() noexcept { return FmtT<StrT<S>>{StrT<S>{}}; }
 
 template <typename T>
-concept IsMayaFormat = requires { []<char... Cs>(detail::FormatString<Cs...>) {}(T{}); };
+concept IsMayaFormatT = requires(T t) { []<IsMayaStrT S>(Tagged<S, format_tag>) {}(t); };
 
-static_assert(IsMayaStr<decltype("test"_f)>);
-static_assert(IsMayaFormat<decltype("test"_f)>);
-static_assert(!IsMayaFormat<decltype("test"_ms)>);
+static_assert(IsMayaStrT<decltype("x=$"_f)>);
+static_assert(IsMayaFormatT<decltype("x=$"_f)>);
+static_assert(!IsMayaFormatT<decltype("x=$"_ms)>);
+static_assert(!IsMayaFormatT<int>);
 
 } // namespace maya
 

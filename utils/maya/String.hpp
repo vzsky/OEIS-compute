@@ -8,7 +8,11 @@
 
 namespace maya::detail {
 
-template <char... Cs> struct String
+struct MayaStrBase
+{
+};
+
+template <char... Cs> struct String : MayaStrBase
 {
   static constexpr char buf[] = {Cs..., '\0'};
   static constexpr std::string_view view() noexcept { return {buf, sizeof...(Cs)}; }
@@ -27,17 +31,6 @@ template <char... Cs1, char... Cs2> constexpr auto operator+(String<Cs1...>, Str
 {
   return String<Cs1..., Cs2...>{};
 }
-
-// TODO make it a tagged
-template <char... Cs> struct FormatString
-{
-  static constexpr char buf[] = {Cs..., '\0'};
-  static constexpr std::string_view view() noexcept { return {buf, sizeof...(Cs)}; }
-  static constexpr bool empty() noexcept { return sizeof...(Cs) == 0; }
-
-  constexpr operator std::string_view() const noexcept { return view(); }
-  friend std::ostream& operator<<(std::ostream& os, FormatString) { return os << view(); }
-};
 
 template <std::size_t N> struct CharCapture
 {
@@ -63,14 +56,25 @@ template <maya::detail::CharCapture S> using StrT = decltype(maya::detail::mayaS
 template <maya::detail::CharCapture S> consteval auto operator""_ms() noexcept { return StrT<S>{}; }
 
 template <typename T>
-concept IsMayaStr = requires { []<char... Cs>(maya::detail::String<Cs...>) {}(T{}); } ||
-                    requires { []<char... Cs>(maya::detail::FormatString<Cs...>) {}(T{}); };
+concept IsPureMayaStrT = requires { []<char... Cs>(maya::detail::String<Cs...>) {}(T{}); };
 
-using emptyStrT = decltype(""_ms);
+template <auto V>
+concept IsPureMayaStr = IsPureMayaStrT<decltype(V)>;
 
-static_assert(IsMayaStr<emptyStrT>);
-static_assert(IsMayaStr<decltype("test"_ms)>);
+template <typename T>
+concept IsMayaStrT = std::is_convertible_v<T, maya::detail::MayaStrBase>;
+
+template <auto V>
+concept IsMayaStr = IsMayaStrT<decltype(V)>;
+
+static_assert(IsPureMayaStrT<StrT<"">>);
+static_assert(IsPureMayaStrT<decltype("test"_ms)>);
+static_assert(IsPureMayaStr<""_ms>);
+static_assert(IsPureMayaStr<"test"_ms>);
+static_assert(IsMayaStrT<StrT<"">>);
+static_assert(IsMayaStr<""_ms>);
 static_assert("test"_ms.view() == "test");
+static_assert(StrT<"sth">::view() == "sth");
 static_assert("ab"_ms == "ab"_ms);
 static_assert("ab"_ms != "cd"_ms);
 static_assert(("hello"_ms + " world"_ms) == "hello world"_ms);

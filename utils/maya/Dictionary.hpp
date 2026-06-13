@@ -1,60 +1,47 @@
 #pragma once
 
-#include <type_traits>
 #include <utils/maya/String.hpp>
 
 namespace maya {
 
-template <IsMayaStr Key, auto Value> struct DictEntry
+template <IsMayaStrT auto Key, auto Value> struct DictEntry
 {
-  using key_t                 = Key;
+  static constexpr auto key   = Key;
   static constexpr auto value = Value;
 };
 
 namespace detail {
 
 template <typename T>
-concept IsEntry = requires { []<IsMayaStr K, auto V>(DictEntry<K, V>) {}(T{}); };
+concept IsEntry = requires { []<IsMayaStrT auto K, auto V>(DictEntry<K, V>) {}(T{}); };
 
-template <IsMayaStr Key, IsEntry... Entries> struct Lookup;
-
-template <IsMayaStr Key, IsEntry First, IsEntry... Rest> struct Lookup<Key, First, Rest...>
+template <IsMayaStrT auto Key, IsEntry... Entries> struct Lookup;
+template <IsMayaStrT auto Key, IsEntry First, IsEntry... Rest> struct Lookup<Key, First, Rest...>
 {
   static constexpr auto value() noexcept
   {
-    if constexpr (std::is_same_v<Key, typename First::key_t>)
+    if constexpr (First::key == Key)
       return First::value;
     else
       return Lookup<Key, Rest...>::value();
   }
 };
 
-template <IsMayaStr Key> struct Lookup<Key>
+template <IsMayaStrT auto Key> struct Lookup<Key>
 {
-  static_assert(sizeof(Key) == 0, "Key not found in Dict");
+  static_assert(false, "Key not found in Dict");
 };
 
 } // namespace detail
 
-// A compile-time dictionary keyed by MayaString.
-// The dict IS its type
-// Set prepends, so the most recently set value wins on lookup.
 template <detail::IsEntry... Entries> struct Dict
 {
-  template <auto Key, auto Value>
-    requires IsMayaStr<decltype(Key)>
-  using Set = Dict<DictEntry<decltype(Key), Value>, Entries...>;
+  template <IsMayaStrT auto Key, auto Value> using Set = Dict<DictEntry<Key, Value>, Entries...>;
 
-  template <auto Key>
-    requires IsMayaStr<decltype(Key)>
-  static constexpr auto get = detail::Lookup<decltype(Key), Entries...>::value();
+  template <IsMayaStrT auto Key> static constexpr auto get = detail::Lookup<Key, Entries...>::value();
 
-  template <auto Key>
-    requires IsMayaStr<decltype(Key)>
-  static constexpr bool contains = (std::is_same_v<decltype(Key), typename Entries::key_t> || ...);
+  template <IsMayaStrT auto Key> static constexpr bool contains = ((Entries::key == Key) || ...);
 };
-
-// ---- spec / documentation ----
 
 using D0 = maya::Dict<>;
 static_assert(!D0::contains<"x"_ms>);

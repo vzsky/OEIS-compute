@@ -5,11 +5,10 @@
 #include <format>
 #include <iostream>
 #include <optional>
-#include <ranges>
 #include <sstream>
 #include <string>
 #include <string_view>
-#include <utils/maya/StringFormat.hpp>
+#include <utils/Format.hpp>
 #include <vector>
 
 namespace logging::detail {
@@ -37,37 +36,11 @@ inline void print_module(std::ostream& os, std::string_view module)
   if (!module.empty()) os << "[" << module << "] ";
 }
 
-template <typename T> void print_one(std::ostream& os, T&& x) { os << std::forward<T>(x); }
-
-template <typename T>
-concept PrintableRange = std::ranges::range<std::remove_cvref_t<T>> &&
-                         !std::convertible_to<std::remove_cvref_t<T>, std::string_view>;
-
-template <PrintableRange T> void print_one(std::ostream& os, T&& x)
-{
-  os << '{';
-  bool first = true;
-  for (const auto& e : x)
-  {
-    if (!first) os << ", ";
-    first = false;
-    os << e;
-  }
-  os << '}';
-}
-
-inline void print_format(std::ostream& os, std::string_view s, std::size_t i) { os << s.substr(i); }
-
-template <typename T, typename... Ts>
-void print_format(std::ostream& os, std::string_view s, std::size_t i, T&& x, Ts&&... xs)
-{
-  auto pos = s.find('$', i);
-  os << s.substr(i, pos - i);
-  print_one(os, std::forward<T>(x));
-  print_format(os, s, pos + 1, std::forward<Ts>(xs)...);
-}
-
 } // namespace print
+
+} // namespace logging::detail
+
+namespace logging::detail {
 
 namespace loggers {
 
@@ -201,24 +174,12 @@ using logging::detail::loggers::timestamp;
 
 using LL = logging::detail::LogLevel;
 
-template <maya::IsMayaFormat Fmt, typename... Ts> void Log(LL level, Fmt, Ts&&... xs)
+template <maya::IsMayaFormatT Fmt, typename... Ts> void Log(LL level, Fmt fmt, Ts&&... xs)
 {
-  constexpr std::size_t dollars = []
-  {
-    std::size_t n = 0;
-    for (char c : Fmt::view()) n += (c == '$');
-    return n;
-  }();
-  static_assert(dollars == sizeof...(Ts));
-  std::ostringstream oss;
-  logging::detail::print::print_format(oss, Fmt::view(), 0, std::forward<Ts>(xs)...);
-  logging::detail::emit_log(level, oss.str());
+  logging::detail::emit_log(level, format::format(fmt, std::forward<Ts>(xs)...));
 }
 
 template <typename... Ts> void Log(LL level, Ts&&... xs)
 {
-  std::ostringstream oss;
-  std::string_view sep;
-  ((oss << sep, logging::detail::print::print_one(oss, std::forward<Ts>(xs)), sep = " "), ...);
-  logging::detail::emit_log(level, oss.str());
+  logging::detail::emit_log(level, format::format(std::forward<Ts>(xs)...));
 }
