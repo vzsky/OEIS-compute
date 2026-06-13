@@ -1,6 +1,6 @@
 #include <cmath>
-#include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 #include <utils/BigInt.hpp>
 #include <utils/Prime.hpp>
@@ -52,15 +52,12 @@ int main()
       if (n >= a.describe_prime_factors(n))
       {
         cnt++;
-        std::cout << n << " -> ";
-
-        for (auto& [p, c] : factorizer.factors_freq(n))
-        {
-          std::cout << p << ':' << c << ' ';
-        }
-        std::cout << std::endl;
+        std::ostringstream oss;
+        oss << n << " -> ";
+        for (auto& [p, c] : factorizer.factors_freq(n)) oss << p << ':' << c << ' ';
+        Log(Info, oss.str());
       }
     }
-    std::cout << "total: " << cnt << std::endl;
+    LogF(Info, "total: $", cnt);
   }
 }

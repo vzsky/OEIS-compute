@@ -4,8 +4,7 @@
 #include <math/Basic.hpp>
 #include <vector>
 
-namespace common
-{
+namespace common {
 
 inline int max_diff_count(const std::vector<int>& mask)
 {
@@ -62,8 +61,7 @@ template <int N> std::vector<int> nth_binary_permutation(uint64_t idx)
 
 } // namespace common
 
-namespace naive
-{
+namespace naive {
 
 template <int N> int upperbound_answer(int l, int r)
 {

@@ -5,7 +5,6 @@
 #include <utils/MetaProg.hpp>
 #include <utils/Utils.hpp>
 
-#include <iostream>
 #include <vector>
 
 // min across all equal partitions, A, B
@@ -34,7 +33,7 @@ int main()
     mp::For<1, N>([](auto i)
     {
       utils::ScopeTimer _t{};
-      std::cout << i << ": " << naive::exact_answer<i>() << std::endl;
+      LogF(Info, "$: $", i, naive::exact_answer<i>());
     });
   };
 
@@ -60,12 +59,11 @@ int main()
       GeneticSearcher<Gene> g{};
       g.config.elite_count     = 1000;
       g.config.population_size = 10000;
-      g.setGenerationCB([](const Gene& g, int generation)
-      { std::cout << g.get_score() << ' ' << g.get_max_count() << std::endl; });
+      g.setGenerationCB([](const Gene& g, int generation) { Log(Info, g.get_score(), g.get_max_count()); });
 
       Gene best = g.search({adam}, 50).front();
-      Log(logging::log_range(best.get_mask()));
-      std::cout << "upperbound of a(" << N << ") is " << best.get_max_count() << std::endl;
+      Log(Info, best.get_mask());
+      LogF(Info, "upperbound of a($) is $", N, best.get_max_count());
     });
   };
 

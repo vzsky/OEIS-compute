@@ -7,8 +7,7 @@
 #include <numbers>
 #include <vector>
 
-namespace fft
-{
+namespace fft {
 
 using cd = std::complex<double>;
 

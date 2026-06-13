@@ -1,7 +1,7 @@
 #include <cstdint>
-#include <iostream>
 #include <set>
 #include <unordered_map>
+#include <utils/Logging.hpp>
 #include <utils/Prime.hpp>
 
 std::set<uint64_t> primes_in_class[20];
@@ -55,14 +55,14 @@ int main()
 {
   int target_class = 0;
   {
-    std::cout << "Class\t| Smallest Prime" << std::endl;
-    std::cout << "------------------------" << std::endl;
+    Log(Info, "Class\t| Smallest Prime");
+    Log(Info, "------------------------");
     for (size_t p : primeFact.all_primes())
     {
       int c = get_prime_class(p);
       if (c == target_class)
       {
-        std::cout << "  " << c << "\t| " << p << std::endl;
+        LogF(Info, "  $\t| $", c, p);
         target_class++;
       }
       primes_in_class[c].insert(p);
@@ -70,8 +70,8 @@ int main()
   }
 
   ensure_complete_until(14, 1704961513);
-  std::cout << "  13" << "\t| " << *primes_in_class[13].begin() << std::endl;
-  std::cout << "  14" << "\t| " << *primes_in_class[14].begin() << std::endl;
+  LogF(Info, "  13\t| $", *primes_in_class[13].begin());
+  LogF(Info, "  14\t| $", *primes_in_class[14].begin());
 
   return 0;
 }

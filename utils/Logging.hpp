@@ -3,73 +3,167 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <sstream>
 #include <string_view>
+#include <utils/maya/Dictionary.hpp>
+#include <utils/maya/String.hpp>
 
-namespace logging
-{
+namespace logging::detail {
 
-namespace details
-{
+using namespace maya;
 
-inline void print_module(std::string_view module)
+enum class LogLevel
 {
-  if (!module.empty()) std::cout << "[" << module << "] ";
+  Debug,
+  Info,
+  Warn,
+  Error,
+};
+
+using Logger = void (*)(std::string_view);
+
+template <IsMayaStr NameT, LogLevel level_, Logger logger_>
+struct LogEnv : maya::Dict<                                        //
+                    maya::DictEntry<decltype("name"_ms), NameT{}>, //
+                    maya::DictEntry<decltype("level"_ms), level_>  //
+                    >
+{
+  static constexpr auto name      = NameT{};
+  static constexpr LogLevel level = level_;
+  static constexpr Logger logger  = logger_;
+
+  // for `using _Env_ = _Env_::Module<"module">`
+  template <maya::detail::CharCapture S>
+  using Module = LogEnv<                                                 //
+      std::conditional_t<NameT::empty(),                                 //
+                         maya::StrT<S>,                                  //
+                         decltype(NameT{} + "::"_ms + maya::StrT<S>{})>, //
+      level, logger>;
+
+  // for `using _Env_ = _Env_::Level<newL>`
+  template <LogLevel newLevel> using Level = LogEnv<NameT, newLevel, logger>;
+
+  // for `using _Env_ = _Env_::Logger<loggers::progress>`
+  template <Logger newLogger> using Logger = LogEnv<NameT, level, newLogger>;
+};
+
+namespace print {
+
+inline std::string time() { return std::format("{:%H:%M:%S}", std::chrono::system_clock::now()); }
+
+inline void print_module(std::ostream& os, std::string_view module)
+{
+  if (!module.empty()) os << "[" << module << "] ";
 }
 
-template <typename... Ts> void log(std::string_view module, Ts&&... xs)
+template <typename T> void print_one(std::ostream& os, T&& x) { os << std::forward<T>(x); }
+
+template <typename T>
+concept PrintableRange = std::ranges::range<std::remove_cvref_t<T>> &&
+                         !std::convertible_to<std::remove_cvref_t<T>, std::string_view>;
+
+template <PrintableRange T> void print_one(std::ostream& os, T&& x)
 {
-  print_module(module);
-  ((std::cout << std::forward<Ts>(xs) << " "), ...);
-  std::cout << std::endl;
+  os << '{';
+  bool first = true;
+  for (const auto& elem : x)
+  {
+    if (!first) os << ", ";
+    first = false;
+    os << elem;
+  }
+  os << '}';
 }
 
-inline void log_format_impl(std::string_view s, std::size_t i)
-{
-  if (s.find('$', i) != std::string_view::npos) throw std::invalid_argument("format/argument count mismatch");
-  std::cout << s.substr(i);
-}
+inline void print_format(std::ostream& os, std::string_view s, std::size_t i) { os << s.substr(i); }
 
 template <typename T, typename... Ts>
-void log_format_impl(std::string_view s, std::size_t i, T&& x, Ts&&... xs)
+void print_format(std::ostream& os, std::string_view s, std::size_t i, T&& x, Ts&&... xs)
 {
   auto pos = s.find('$', i);
-  if (pos == std::string_view::npos) throw std::invalid_argument("format/argument count mismatch");
-  std::cout << s.substr(i, pos - i);
-  std::cout << std::forward<T>(x);
-  log_format_impl(s, pos + 1, std::forward<Ts>(xs)...);
+  os << s.substr(i, pos - i);
+  print_one(os, std::forward<T>(x));
+  print_format(os, s, pos + 1, std::forward<Ts>(xs)...);
 }
 
-template <typename... Ts> void log_format(std::string_view module, std::string_view fmt, Ts&&... xs)
-{
-  print_module(module);
-  log_format_impl(fmt, 0, std::forward<Ts>(xs)...);
-  std::cout << std::endl;
-}
+} // namespace print
 
-} // namespace details
+template <typename T>
+concept IsLogEnv = requires {
+  requires IsMayaStr<decltype(T::name)>;
+  requires std::same_as<std::remove_cv_t<decltype(T::level)>, LogLevel>;
+  requires std::same_as<std::remove_cv_t<decltype(T::logger)>, Logger>;
+};
 
-inline std::string print_time()
+template <LogLevel MsgLevel, IsLogEnv Mod, typename... Ts> void log(Mod, Ts&&... xs)
 {
-  const auto now = std::chrono::system_clock::now();
-  return std::format("{:%H:%M:%S}", now);
-}
-
-template <std::ranges::range R> std::string log_range(R&& range, std::string_view sep = " ")
-{
-  std::ostringstream oss;
-  bool first = true;
-  for (const auto& x : range)
+  if constexpr (MsgLevel >= Mod::level)
   {
-    if (!first) oss << sep;
-    first = false;
-    oss << x;
+    std::ostringstream oss;
+    print::print_module(oss, Mod::name);
+    ((print::print_one(oss, std::forward<Ts>(xs)), oss << " "), ...);
+    Mod::logger(oss.str());
   }
-  return oss.str();
 }
 
-} // namespace logging
+template <LogLevel MsgLevel, IsLogEnv Mod, IsMayaStr Fmt, typename... Ts>
+void log_format(Mod, Fmt, Ts&&... xs)
+{
+  constexpr std::size_t dollars = []
+  {
+    std::size_t n = 0;
+    for (char c : Fmt::view()) n += (c == '$');
+    return n;
+  }();
+  static_assert(dollars == sizeof...(Ts), "LogF: number of $ placeholders must match argument count");
+  if constexpr (MsgLevel >= Mod::level)
+  {
+    std::ostringstream oss;
+    print::print_module(oss, Mod::name);
+    print::print_format(oss, Fmt::view(), 0, std::forward<Ts>(xs)...);
+    Mod::logger(oss.str());
+  }
+}
 
-inline constexpr std::string_view _LogModule_ = "";
-#define Log(...) logging::details::log(_LogModule_, __VA_ARGS__)
-#define LogF(fmt, ...) logging::details::log_format(_LogModule_, fmt, __VA_ARGS__)
-#define LogModule(x) constexpr std::string_view _LogModule_ = x
+} // namespace logging::detail
+
+using maya::operator""_ms;
+using LL = logging::detail::LogLevel;
+
+namespace loggers {
+
+inline void noop(std::string_view) {}
+
+inline void timestamp(std::string_view msg)
+{
+  std::string line = logging::detail::print::time();
+  line += ' ';
+  line += msg;
+  line += '\n';
+  std::cout << line;
+  std::cout.flush();
+}
+
+inline void normal(std::string_view msg)
+{
+  std::string line(msg);
+  line += '\n';
+  std::cout << line;
+  std::cout.flush();
+}
+
+inline void progress(std::string_view msg)
+{
+  std::string line = "\r";
+  line += msg;
+  line += "\033[K";
+  std::cerr << line;
+  std::cerr.flush();
+}
+
+} // namespace loggers
+
+using _LogEnv_ = logging::detail::LogEnv<maya::emptyStrT, LL::Info, loggers::normal>;
+#define Log(lvl, ...) logging::detail::log<logging::detail::LogLevel::lvl>(_LogEnv_{}, __VA_ARGS__)
+#define LogF(lvl, fmt, ...)                                                                                  \
+  logging::detail::log_format<logging::detail::LogLevel::lvl>(_LogEnv_{}, maya::StrT<fmt>{}, __VA_ARGS__)

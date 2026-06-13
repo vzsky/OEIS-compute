@@ -88,12 +88,11 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
   {
     if (show_smaller_output && i == (1 << smaller_output_cnt))
     {
-      std::cout << "#============================" << std::endl;
-      std::cout << "N = " << smaller_output_cnt << std::endl;
+      Log(Info, "#============================");
+      LogF(Info, "N = $", smaller_output_cnt);
       auto result = frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
       result.print(smaller_output_cnt);
       assert(check(result));
-      std::cout << std::flush;
       smaller_output_cnt++;
     }
 
@@ -118,7 +117,7 @@ Elems<N> find_using_frontier(Heuristic h, PruneFunc prune_alg, bool show_smaller
 
     prune_alg(frontier);
   }
-  if (show_progress) std::cout << "\rDone!            " << std::endl;
+  if (show_progress) Log(Info, "Done!");
   return frontier.max([](const auto& x) { return x.size(); }, Elems<N>());
 }
 
@@ -171,6 +170,6 @@ int main()
     auto result = find_using_frontier<N>(score_to_order(heuristic), prune, true, false);
 
     assert(check(result));
-    std::cout << result << std::endl;
+    Log(Info, result);
   }
 }

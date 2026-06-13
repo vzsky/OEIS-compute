@@ -11,6 +11,7 @@ set(TEST_MODULES
   complementnonnvector      testComplementNonnVector.cpp
   exseq                     testExSeq.cpp
   parallel                  testParallel.cpp
+  logging                   testLogging.cpp
 )
 
 enable_testing()

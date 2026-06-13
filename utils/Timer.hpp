@@ -5,8 +5,7 @@
 
 #include <utils/Logging.hpp>
 
-namespace utils::timer
-{
+namespace utils::timer {
 
 struct [[nodiscard]] ScopeTimer
 {
@@ -21,7 +20,7 @@ struct [[nodiscard]] ScopeTimer
     const auto us     = duration_cast<microseconds>(high_resolution_clock::now() - mStart).count();
     const auto sec    = us / 1'000'000;
     const auto rem_us = us % 1'000'000;
-    Log(mLabel, "-- Time elapsed:", std::format("{}.{:06d} s", sec, rem_us));
+    Log(Info, mLabel, "-- Time elapsed:", std::format("{}.{:06d} s", sec, rem_us));
   }
 
   ScopeTimer(ScopeTimer&&)                 = delete;

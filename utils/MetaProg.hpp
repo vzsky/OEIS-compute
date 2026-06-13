@@ -2,8 +2,7 @@
 
 #include <type_traits>
 
-namespace mp
-{
+namespace mp {
 
 template <int I, int N, typename F> constexpr void For(F&& f)
 {

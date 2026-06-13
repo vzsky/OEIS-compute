@@ -4,8 +4,7 @@
 #include <utils/Utils.hpp>
 #include <vector>
 
-namespace
-{
+namespace {
 
 struct NoOp
 {
@@ -45,15 +44,13 @@ int main()
   utils::ScopeTimer _t{"main"};
   namespace prl = utils::parallel;
 
-  constexpr prl::MonitorConfig monConf{3};
-  constexpr size_t N    = 50'000'000;
-  constexpr size_t minN = 10'000'000; // results below this covered by prior run
-  // sqrt(N) is the optimal sieve limit: every composite <= N has a prime factor
-  // <= sqrt(N), so sieving beyond sqrt(N) can only test secondary factors of
-  // composites that already passed the primary test — empirically negligible.
+  // ran [10M, 50M] (28h run), doesn't find any
+  constexpr prl::MonitorConfig monConf{.intervalSeconds = 3};
+  constexpr size_t N          = 50'000'000;
+  constexpr size_t minN       = 10'000'000;
   constexpr size_t sieveLimit = 7072; // ceil(sqrt(5e7))
 
-  LogF("N=$  minN=$  sieveLimit=$", N, minN, sieveLimit);
+  LogF(Info, "N=$  minN=$  sieveLimit=$", N, minN, sieveLimit);
 
   Prime<N> allPrimes;
   std::vector<uint8_t> valid(N + 1, 1);
@@ -66,7 +63,7 @@ int main()
       if (p > sieveLimit) break;
       for (uint64_t pk = p; pk <= sieveLimit; pk *= p) sieveMods.push_back(pk);
     }
-    LogF("Sieve moduli = $", sieveMods.size());
+    LogF(Info, "Sieve moduli = $", sieveMods.size());
 
     // benign race: threads only ever write 0
     prl::foreach<monConf>(sieveMods, [&](uint64_t m)
@@ -86,7 +83,7 @@ int main()
       if (!valid[n]) continue;
       candidates.push_back(static_cast<int>(n));
     }
-    Log("candidates:", candidates.size());
+    Log(Info, "candidates:", candidates.size());
   }
 
   {
@@ -99,7 +96,7 @@ int main()
 
     prl::foreach<monConf>(balanced, [](int n)
     {
-      if (concat_mod(n, n) == 0) Log(n);
+      if (concat_mod(n, n) == 0) Log(Info, n);
     });
   }
 }

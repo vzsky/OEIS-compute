@@ -10,8 +10,7 @@ constexpr double DOUBLE_COMPARE_EPS = 1e-6;
 inline bool feq(double a, double b) { return abs(a - b) < DOUBLE_COMPARE_EPS; }
 inline bool fgt(double a, double b) { return a - b > DOUBLE_COMPARE_EPS; }
 
-namespace step_func
-{
+namespace step_func {
 
 // piecewise step defined on [0, 1)
 template <typename Impl, std::size_t N> class PiecewiseStepView

@@ -1,4 +1,3 @@
-namespace fft
-{
+namespace fft {
 
 }

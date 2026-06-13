@@ -3,8 +3,7 @@
 #include <functional>
 #include <random>
 
-namespace genetic
-{
+namespace genetic {
 
 struct SearchContext;
 

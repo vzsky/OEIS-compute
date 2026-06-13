@@ -1,12 +1,11 @@
 #pragma once
 
-#include <iostream>
 #include <math/Basic.hpp>
 #include <utils/BigInt.hpp>
 #include <utils/Fraction.hpp>
+#include <utils/Logging.hpp>
 
-namespace A331373
-{
+namespace A331373 {
 
 template <typename BigIntType, uint32_t DIGITS> BigIntType get_answer()
 {
@@ -40,7 +39,7 @@ template <uint32_t DIGITS> Fraction<DenseBigInt> get_fraction(bool stats = false
 
     if (d > limit)
     {
-      if (stats) std::cout << "Calculated until k=" << k << " prefix sum" << std::endl;
+      if (stats) LogF(Info, "Calculated until k=$ prefix sum", k);
 
       fact *= k + 1;
       break;

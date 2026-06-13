@@ -3,8 +3,7 @@
 #include <cstddef>
 #include <functional>
 
-namespace hash
-{
+namespace hash {
 
 template <typename T> void add(size_t& seed, const T& v)
 {

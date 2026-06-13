@@ -5,10 +5,9 @@
 #include <stdexcept>
 #include <utility>
 
-namespace math
-{
+namespace math {
 
-template <typename T> T pow(T base, uint64_t k)
+template <typename T> [[nodiscard]] constexpr T pow(T base, uint64_t k)
 {
   T result = 1;
   while (k > 0)
@@ -20,7 +19,7 @@ template <typename T> T pow(T base, uint64_t k)
   return result;
 }
 
-template <typename T> T pow(T base, uint64_t k, T mod)
+template <typename T> [[nodiscard]] constexpr T pow(T base, uint64_t k, T mod)
 {
   T result = 1;
   T b      = base % mod;
@@ -33,7 +32,7 @@ template <typename T> T pow(T base, uint64_t k, T mod)
   return result;
 }
 
-template <typename T> T gcd(T a, T b)
+template <typename T> [[nodiscard]] constexpr T gcd(T a, T b)
 {
   if (a == 0 && b == 0) throw std::invalid_argument("gcd of zeros");
   if (a < 0) a = -a;
@@ -49,13 +48,13 @@ template <typename T> T gcd(T a, T b)
   return a;
 }
 
-template <typename T> T lcm(T a, T b)
+template <typename T> [[nodiscard]] constexpr T lcm(T a, T b)
 {
   if (a == 0 && b == 0) throw std::invalid_argument("lcm of zeros");
   return a * b / gcd(a, b);
 }
 
-template <typename T> T fact(T n)
+template <typename T> [[nodiscard]] constexpr T fact(T n)
 {
   if (n < 0) throw std::invalid_argument("n must be non-negative");
   T ans = 1;
@@ -63,7 +62,7 @@ template <typename T> T fact(T n)
   return ans;
 }
 
-template <typename T> T nCk(T n, T k)
+template <typename T> [[nodiscard]] constexpr T nCk(T n, T k)
 {
   if (k > n) return 0;
   if (k > n - k) k = n - k;

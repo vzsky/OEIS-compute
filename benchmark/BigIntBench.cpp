@@ -1,8 +1,10 @@
 #include <benchmark/benchmark.h>
 #include <unordered_map>
 #include <utils/BigInt.hpp>
+#include <utils/ModInt.hpp>
 
 using slow_bigint::DenseBigInt;
+using ModInt_ = ModInt<static_cast<int>(1e9 + 7)>;
 
 template <typename T> static T make_big(int n)
 {
@@ -89,30 +91,38 @@ template <typename T> static void BM_div_impl(benchmark::State& state)
 // --- ADD ---
 DEFINE_BENCH(add, DenseBigInt);
 DEFINE_BENCH(add, BigInt);
+DEFINE_BENCH(add, ModInt_);
 
 RUN_BENCH(add, DenseBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(add, BigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(add, ModInt_)->Args({128})->Args({512})->Args({8192});
 
 // --- SUB ---
 DEFINE_BENCH(sub, DenseBigInt);
 DEFINE_BENCH(sub, BigInt);
+DEFINE_BENCH(sub, ModInt_);
 
 RUN_BENCH(sub, DenseBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(sub, BigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(sub, ModInt_)->Args({128})->Args({512})->Args({8192});
 
 // --- MUL ---
 DEFINE_BENCH(mul, DenseBigInt);
 DEFINE_BENCH(mul, BigInt);
+DEFINE_BENCH(mul, ModInt_);
 
 RUN_BENCH(mul, DenseBigInt)->Args({128})->Args({512})->Args({8192})->Args({32768});
 RUN_BENCH(mul, BigInt)->Args({128})->Args({512})->Args({8192})->Args({32768});
+RUN_BENCH(mul, ModInt_)->Args({128})->Args({512})->Args({8192})->Args({32768});
 
 // --- DIV ---
 
 DEFINE_BENCH(div, DenseBigInt);
 DEFINE_BENCH(div, BigInt);
+DEFINE_BENCH(div, ModInt_);
 
 RUN_BENCH(div, DenseBigInt)->Args({128})->Args({512})->Args({8192});
 RUN_BENCH(div, BigInt)->Args({128})->Args({512})->Args({8192});
+RUN_BENCH(div, ModInt_)->Args({128})->Args({512})->Args({8192});
 
 BENCHMARK_MAIN();

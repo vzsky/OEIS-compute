@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utils/Logging.hpp>
 #include <vector>
 
 template <int N> struct Elem
@@ -97,7 +98,7 @@ template <int N> Elems<N> parse_from_file(const std::string& filename)
       line.pop_back();
     if (line.size() != N)
     {
-      std::cerr << "Skipping line: incorrect length = " << line.size() << ", expected " << N << "\n";
+      LogF(Warn, "Skipping line: incorrect length = $, expected $", line.size(), N);
       continue;
     }
 
@@ -109,7 +110,7 @@ template <int N> Elems<N> parse_from_file(const std::string& filename)
         bits |= (uint64_t(1) << i);
       else if (c != '0')
       {
-        std::cerr << "Skipping invalid line: contains non-binary char\n";
+        Log(Warn, "Skipping invalid line: contains non-binary char");
         bits = 0;
         break;
       }

@@ -4,8 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace complementNonnVector
-{
+namespace complementNonnVector {
 using value_type = uint64_t;
 
 class Vector

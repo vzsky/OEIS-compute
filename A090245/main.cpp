@@ -178,19 +178,19 @@ int main()
     { auto v = allElems<1>();
       auto setFree = frontierSearchCapSet<1>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
-      std::cout << setFree.size() << std::endl; }
+      Log(Info, setFree.size()); }
     { auto v = allElems<2>();
       auto setFree = frontierSearchCapSet<2>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
-      std::cout << setFree.size() << std::endl; }
+      Log(Info, setFree.size()); }
     { auto v = allElems<3>();
       auto setFree = frontierSearchCapSet<3>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
-      std::cout << setFree.size() << std::endl; }
+      Log(Info, setFree.size()); }
     { auto v = allElems<4>();
       auto setFree = frontierSearchCapSet<4>(score_to_order(heuristic), prune);
       assert(!hasSet(setFree));
-      std::cout << setFree.size() << std::endl; }
+      Log(Info, setFree.size()); }
   */
 
   {

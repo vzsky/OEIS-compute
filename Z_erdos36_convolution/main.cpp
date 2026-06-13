@@ -4,8 +4,7 @@
 #include <utils/GeneticAlg.hpp>
 #include <utils/Utils.hpp>
 
-namespace
-{
+namespace {
 
 using namespace step_func;
 
@@ -140,7 +139,7 @@ int main()
 
   {
     utils::ScopeTimer _t{};
-    std::cout << erdos_score(mirror(Haugland51)) << std::endl;
+    Log(Info, erdos_score(mirror(Haugland51)));
     assert(feq(erdos_score(mirror(Haugland51)), 0.380927));
     for (int i = 0; i < 1000; i++)
     {
@@ -158,7 +157,7 @@ int main()
 
     const auto print_score = [](const auto& g, int gen)
     {
-      if (gen % 100 == 0) std::cout << "gen: " << gen << " = " << g.get_score() << std::endl;
+      if (gen % 100 == 0) LogF(Info, "gen: $ = $", gen, g.get_score());
     };
 
     auto era1_population = [&]
@@ -201,6 +200,6 @@ int main()
       return g.search(migrate_population<Config>(era2_population), 1000);
     }();
 
-    Log(logging::log_range(era3_population.front().get_function().get_heights(), ", "));
+    Log(Info, era3_population.front().get_function().get_heights());
   }
 }

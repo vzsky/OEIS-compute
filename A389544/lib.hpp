@@ -241,7 +241,7 @@ public:
       const auto multipliedTerms = seqSize - it.idx() + 1;
       if (duplicate_product_impossible(acc, multipliedTerms)) continue;
       mCurrentProductsToCheck.push_back(acc);
-      std::cout << "need to loop " << n << ' ' << multipliedTerms << " -> " << acc << std::endl;
+      LogF(Info, "need to loop $ $ -> $", n, multipliedTerms, acc);
     }
 
     stats.loop += mCurrentProductsToCheck.size();
@@ -259,7 +259,7 @@ public:
     {
       if (n % 1000000 == 0)
       {
-        std::cout << "==== Progress: " << n << " / " << N << std::endl;
+        LogF(Info, "==== Progress: $ / $", n, N);
         stats.print();
       }
       try_add_number(n);
@@ -271,7 +271,7 @@ public:
     for (auto n : skipped) seq.add_skip(n);
     seqSize = skipped.back() + 1 - skipped.size();
     make_conseccache();
-    std::cout << "read skipped" << std::endl;
+    Log(Info, "read skipped");
   }
 
   bool is_interesting(uint64_t skippedElement) const
@@ -302,14 +302,14 @@ public:
 
     void print() const
     {
-      std::cout << "Cached " << cached << std::endl;
-      std::cout << "Loop " << loop << std::endl;
-      std::cout << "Opt1 size " << opt1_size << std::endl;
-      std::cout << "Opt1 div " << opt1_div << std::endl;
-      std::cout << "Opt2 size " << opt2_size << std::endl;
-      std::cout << "Opt2 div " << opt2_div << std::endl;
-      std::cout << "Opt3 size " << opt3_size << std::endl;
-      std::cout << "Opt3 div " << opt3_div << std::endl;
+      Log(Info, "Cached", cached);
+      Log(Info, "Loop", loop);
+      Log(Info, "Opt1 size", opt1_size);
+      Log(Info, "Opt1 div", opt1_div);
+      Log(Info, "Opt2 size", opt2_size);
+      Log(Info, "Opt2 div", opt2_div);
+      Log(Info, "Opt3 size", opt3_size);
+      Log(Info, "Opt3 div", opt3_div);
     }
   } stats;
 };

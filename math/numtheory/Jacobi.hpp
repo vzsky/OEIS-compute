@@ -4,8 +4,7 @@
 #include <math/Basic.hpp>
 #include <utils/Prime.hpp>
 
-namespace math::numtheory
-{
+namespace math::numtheory {
 
 inline int legendre_symbol(int a, int p)
 {

@@ -10,10 +10,10 @@
 #include <mutex>
 #include <optional>
 #include <thread>
+#include <utils/Logging.hpp>
 #include <vector>
 
-namespace utils::parallel
-{
+namespace utils::parallel {
 
 struct MonitorConfig
 {
@@ -26,22 +26,20 @@ inline constexpr MonitorConfig noMonitor{
     .enabled         = false,
 };
 
-namespace detail
-{
+namespace detail {
 
-// Writes in-place progress to stderr.
-// Can visually conflict with any concurrent Log/LogF output (which goes to stdout).
 struct ProgressMonitor
 {
   ProgressMonitor(const std::atomic<size_t>& done, size_t length, MonitorConfig conf)
       : mFinished(false), mFuture(std::async(std::launch::async, [&done, this, length, conf]()
   {
+    using _LogEnv_ = _LogEnv_::Logger<loggers::progress>;
     while (!mFinished.load(std::memory_order_relaxed))
     {
       std::this_thread::sleep_for(std::chrono::seconds(conf.intervalSeconds));
       size_t d = done.load(std::memory_order_relaxed);
       if (!mFinished.load(std::memory_order_relaxed))
-        std::cerr << "\rprogress: " << d << "/" << length << " (" << (100 * d / length) << "%)" << std::flush;
+        LogF(Info, "progress: $/$ ($%)", d, length, 100 * d / length);
     }
   }))
   {
@@ -149,14 +147,15 @@ template <MonitorConfig monConf = noMonitor, typename Iterator, typename Predica
 
   std::mutex mtx;
   std::vector<T> result;
-  foreach<monConf>(begin, end, [&](const T& elem)
-  {
-    if (pred(elem))
+  foreach
+    <monConf>(begin, end, [&](const T& elem)
     {
-      std::lock_guard lock(mtx);
-      result.push_back(elem);
-    }
-  }, max_threads);
+      if (pred(elem))
+      {
+        std::lock_guard lock(mtx);
+        result.push_back(elem);
+      }
+    }, max_threads);
   return result;
 }
 

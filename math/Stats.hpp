@@ -3,8 +3,7 @@
 #include <numeric>
 #include <ranges>
 
-namespace stats
-{
+namespace stats {
 
 template <std::ranges::input_range R> double average(R&& r)
 {

@@ -3,8 +3,7 @@
 #include <cstdint>
 #include <utils/Utils.hpp>
 
-namespace
-{
+namespace {
 
 double DOUBLE_COMPARE_EPS = 1e-10;
 inline bool feq(double a, double b) { return std::abs(a - b) < DOUBLE_COMPARE_EPS; }
@@ -45,7 +44,7 @@ int A371627_comment(std::int64_t n)
 
   if (feq(err(x1), err(x2)))
   {
-    std::cout << "careful with n=" << n << std::endl;
+    LogF(Info, "careful with n=$", n);
     assert(false);
   }
   return (err(x1) <= err(x2)) ? x1 : x2;
@@ -71,7 +70,7 @@ int main()
 
   for (int i = 1; i < 20001; i++)
   {
-    std::cout << i << " " << A371627(i) << std::endl;
+    Log(Info, i, A371627(i));
     assert(A371627(i) == A371627_comment(i));
   }
 }

@@ -11,8 +11,7 @@
 #include <utils/Parallel.hpp>
 #include <utils/Timer.hpp>
 
-namespace utils
-{
+namespace utils {
 
 using timer::ScopeTimer;
 

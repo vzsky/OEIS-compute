@@ -4,8 +4,7 @@
 #include <utils/Prime.hpp>
 #include <vector>
 
-namespace A045345
-{
+namespace A045345 {
 
 template <int N> std::vector<int> answers_upto()
 {
