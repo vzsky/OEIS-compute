@@ -3,6 +3,7 @@
 #include <map>
 #include <math/Basic.hpp>
 #include <stdexcept>
+#include <utils/Logging.hpp>
 #include <vector>
 
 [[nodiscard]] constexpr bool is_prime(uint32_t n)
@@ -46,6 +47,8 @@ private:
 
 template <size_t N> Prime<N>::Prime()
 {
+  Log(LL::Infra, "constructing a prime helper with N=$", N);
+
   for (size_t i = 0; i <= N; ++i) mLowestPrimeDiv[i] = i;
 
   for (size_t i = 2; i * i <= N; ++i)

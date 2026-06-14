@@ -61,7 +61,7 @@ void find_short_sequence()
     {
       uint64_t v = u + distance;
       MaxPrime prod({{0, 0}});
-      for (int i = u; i <= v; i++) prod *= MaxPrime(p.vector_factors_freq(i));
+      for (uint64_t i = u; i <= v; i++) prod *= MaxPrime(p.vector_factors_freq(i));
       if (prod.mult >= 2)
       {
         Log(LL::Info, "prime: $^$ = $"_f, prod.maxP, prod.mult, (long long)std::pow(prod.maxP, prod.mult));
@@ -73,19 +73,18 @@ void find_short_sequence()
   }
 }
 
-void find_upper_bound(int width)
+void find_upper_bound(size_t width)
 {
   for (auto prime : p.all_primes())
   {
     if (prime < width) continue;
 
-    uint64_t firstTerm = 0;
-    uint64_t psqr      = prime * prime;
+    uint64_t psqr = prime * prime;
 
     for (uint64_t start = psqr - width; start <= psqr; ++start)
     {
       bool found = true;
-      for (int i = 0; i <= width; ++i)
+      for (size_t i = 0; i <= width; ++i)
       {
         if (p.factors(start + i).back() > prime)
         {

@@ -7,43 +7,47 @@
 #include <numbers>
 #include <vector>
 
+#include <utils/Logging.hpp>
+
 namespace fft {
 
 using cd = std::complex<double>;
 
-template <std::integral T> std::vector<T> round(const std::vector<cd>& v)
+template <std::integral T> [[nodiscard]] std::vector<T> round(const std::vector<cd>& v)
 {
   std::vector<T> result;
-  for (auto i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i].real() + 0.5));
+  for (size_t i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i].real() + 0.5));
   return result;
 }
 
-template <std::integral T> std::vector<T> round(const std::vector<double>& v)
+template <std::integral T> [[nodiscard]] std::vector<T> round(const std::vector<double>& v)
 {
   std::vector<T> result;
-  for (auto i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i] + 0.5));
+  for (size_t i = 0; i < v.size(); i++) result.push_back(static_cast<T>(v[i] + 0.5));
   return result;
 }
 
-// becareful when doing <int, double>.
-// make sure you don't want round<int, double>
-template <typename U, typename T> std::vector<U> fmap_cast(const std::vector<T>& v)
+template <typename U, typename T> [[nodiscard]] std::vector<U> fmap_cast(const std::vector<T>& v)
 {
+  if constexpr (std::is_same_v<U, int> && std::is_same_v<T, double>)
+  {
+    Log(LL::Infra, "cast'ing double to int. Are you sure you don't want round?");
+  }
   std::vector<U> result;
   for (auto x : v) result.push_back(static_cast<U>(x));
   return result;
 }
 
-inline std::vector<uint64_t> reverse_bit(int n)
+[[nodiscard]] inline std::vector<uint64_t> reverse_bit(size_t n)
 {
   std::vector<uint64_t> rev;
-  int k = __builtin_ctz(n);
+  size_t k = __builtin_ctz(n);
   rev.assign(n, 0);
-  for (int i = 0; i < n; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (k - 1));
+  for (size_t i = 0; i < n; i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (k - 1));
   return rev;
 }
 
-inline std::vector<cd> unity_roots(int n)
+[[nodiscard]] inline std::vector<cd> unity_roots(size_t n)
 {
   std::vector<cd> roots{{0, 0}, {1, 0}};
   if (roots.size() < n)
@@ -65,7 +69,7 @@ inline std::vector<cd> unity_roots(int n)
   return roots;
 }
 
-inline size_t round_up_to_binary_power(int k)
+[[nodiscard]] inline size_t round_up_to_binary_power(int k)
 {
   int n = 1;
   while (n < k) n <<= 1;
@@ -80,18 +84,18 @@ enum class Direction
 
 template <Direction Dir> void transform(std::vector<cd>& a)
 {
-  int n = a.size();
+  size_t n = a.size();
   assert((n & (n - 1)) == 0 && "input size is not power of 2");
 
   auto rev   = reverse_bit(n);
   auto roots = unity_roots(n);
 
-  for (int i = 0; i < n; i++)
+  for (size_t i = 0; i < n; i++)
     if (i < rev[i]) swap(a[i], a[rev[i]]);
 
-  for (int len = 1; len < n; len <<= 1)
-    for (int i = 0; i < n; i += 2 * len)
-      for (int j = 0; j < len; j++)
+  for (size_t len = 1; len < n; len <<= 1)
+    for (size_t i = 0; i < n; i += 2 * len)
+      for (size_t j = 0; j < len; j++)
       {
         cd u           = a[i + j];
         cd v           = a[i + j + len] * roots[len + j];
@@ -106,7 +110,8 @@ template <Direction Dir> void transform(std::vector<cd>& a)
   }
 }
 
-template <typename T> std::vector<cd> convolution(const std::vector<T>& a, const std::vector<T>& b)
+template <typename T>
+[[nodiscard]] std::vector<cd> convolution(const std::vector<T>& a, const std::vector<T>& b)
 {
   std::vector<cd> fa = fmap_cast<cd>(a);
   std::vector<cd> fb = fmap_cast<cd>(b);
@@ -116,21 +121,21 @@ template <typename T> std::vector<cd> convolution(const std::vector<T>& a, const
 
   transform<Direction::Forward>(fa);
   transform<Direction::Forward>(fb);
-  for (int i = 0; i < n; i++) fa[i] *= fb[i];
+  for (size_t i = 0; i < n; i++) fa[i] *= fb[i];
   transform<Direction::Inverse>(fa);
 
   fa.resize(a.size() + b.size() - 1);
   return fa;
 }
 
-template <typename T> std::vector<cd> self_convolution(const std::vector<T>& a)
+template <typename T> [[nodiscard]] std::vector<cd> self_convolution(const std::vector<T>& a)
 {
   std::vector<cd> fa = fmap_cast<cd>(a);
   size_t n           = round_up_to_binary_power(2 * a.size());
   fa.resize(n);
 
   transform<Direction::Forward>(fa);
-  for (int i = 0; i < n; i++) fa[i] *= fa[i];
+  for (size_t i = 0; i < n; i++) fa[i] *= fa[i];
   transform<Direction::Inverse>(fa);
 
   fa.resize(2 * a.size() - 1);

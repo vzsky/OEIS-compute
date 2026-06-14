@@ -24,8 +24,6 @@ template <int N> bool check(const Elems<N>& cands)
       for (size_t k = 0; k < cands.size(); k++)
       {
         if (k == i || k == j) continue;
-        const Elem<N>& c = cands[k];
-
         uint64_t result = 0;
         bool valid      = true;
         for (int ind = 0; ind < N; ind++)
@@ -52,13 +50,13 @@ template <int N> bool can_add(const Elems<N>& sidon_set, const Elem<N>& next)
   if (sidon_set.size() < 3) return true;
   // check if a + b - c for all c<a<b is next or not
 
-  for (int i = 0; i < sidon_set.size(); i++)
+  for (size_t i = 0; i < sidon_set.size(); i++)
   {
     auto R1 = sidon_set[i].mUnd ^ next.mUnd;
     auto R2 = sidon_set[i].mUnd & next.mUnd;
-    for (int j = i + 1; j < sidon_set.size(); j++)
+    for (size_t j = i + 1; j < sidon_set.size(); j++)
     {
-      for (int k = j + 1; k < sidon_set.size(); k++)
+      for (size_t k = j + 1; k < sidon_set.size(); k++)
       {
 
         auto L1 = sidon_set[j].mUnd ^ sidon_set[k].mUnd;

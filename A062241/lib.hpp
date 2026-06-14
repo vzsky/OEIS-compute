@@ -41,9 +41,9 @@ inline bool has_sum(const std::vector<char>& active, int target)
   return false;
 }
 
-inline int bruteforce_answer(const std::vector<char>& active)
+inline size_t bruteforce_answer(const std::vector<char>& active)
 {
-  for (int i = 0; i < active.size(); i++)
+  for (size_t i = 0; i < active.size(); i++)
   {
     if (!has_sum(active, i)) return i;
   }
@@ -51,7 +51,7 @@ inline int bruteforce_answer(const std::vector<char>& active)
 }
 
 template <int N>
-int find_answer(const DataHelper<N>& data, int P, int lower_bound, const std::vector<char>& active)
+int find_answer(const DataHelper<N>& data, size_t P, int lower_bound, const std::vector<char>& active)
 {
   const int n = active.size();
 

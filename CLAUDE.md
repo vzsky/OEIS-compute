@@ -31,20 +31,28 @@ The root `CMakeLists.txt` auto-discovers and adds all subdirectories that contai
 
 **`utils/maya/`** — compile-time-only headers (no runtime presence; "maya" = illusion). Header-only, nothing to link:
 - `maya/String.hpp` — `maya::StrT<"lit">` (compile-time string type); `"lit"_ms` (UDL); `IsMayaStr` concept
+- `maya/StringFormat.hpp` — `maya::FmtT<S>` (format string wrapper); `"lit"_f` (UDL, distinct from `_ms`); `IsMayaFormatT` concept. Only `_f` strings satisfy `IsMayaFormatT` — `_ms` strings do not.
+- `maya/Tagged.hpp` — `maya::Tagged<Tag, T>` strongly-typed value wrapper; implicit conversions to/from `T` in context; not the same as an explicit cast
 - `maya/Dictionary.hpp` — `maya::Dict<Entries...>`, compile-time key-value store
 
 Do not use anything inside any `::detail` namespace — those are implementation namespaces.
 
 **Shared libraries** live in `utils/` and are compiled as individual static libraries:
-- `utils` / `Utils.hpp` — `par_all_of`, `ScopeTimer`, `read_bfile` - utils functions 
-- `prime` / `Prime.hpp` — prime sieve/testing
-- `primeint` — prime-backed integer type (depends on `prime`)
-- `bigint` / `BigInt.hpp` — arbitrary precision integers backed by GMP (`libgmp`, `libgmpxx`)
-- `fraction` / `Fraction.hpp` — rational arithmetic (depends on `bigint`)
-- `modint` / `ModInt.hpp` — modular arithmetic
-- `fft` / `Fft.hpp` — FFT
-- `treap` / `Treap.hpp` — treap data structure
+- `utils` / `Utils.hpp` — `utils::ScopeTimer` (re-export), `read_bfile`; also pulls in `Parallel.hpp` and `Timer.hpp`
+- `prime` / `Prime.hpp` — `Prime<N>` sieve; free functions `is_prime`, `is_coprime`
+- `primeint` / `PrimeInt.hpp` — prime-factorization integer type (depends on `prime`)
+- `bigint` / `BigInt.hpp` — GMP-backed arbitrary precision integers (`libgmp`, `libgmpxx`); also `#include`s `SlowBigInt.tpp` which provides `slow_bigint::DecBigInt`, `DenseDecBigInt`, `DenseBigInt` (software bigint, base-parameterized)
+- `fraction` / `Fraction.hpp` — `Fraction<Int>` rational arithmetic (depends on `bigint`)
+- `modint` / `ModInt.hpp` — `ModInt<Mods...>` CRT residue vector; division enabled only when all Mods are prime
+- `fft` / `Fft.hpp` — `fft::convolution`, `fft::self_convolution`, `fft::transform<Direction>`
+- `treap` / `Treap.hpp` — `Treap<Value, Compare>` with parallel `gather`/`fmap`
 - `complementnonnvector` / `ComplementNonnVector.hpp` — complement of non-negative vector
+- `parallel` / `Parallel.hpp` — `utils::parallel::foreach`, `all_of`, `filter`; all accept `MonitorConfig` template arg for progress logging
+- `timer` / `Timer.hpp` — `utils::timer::ScopeTimer` RAII timer (re-exported as `utils::ScopeTimer` via `Utils.hpp`)
+- `hash` / `Hash.hpp` — `hash::combine(vs...)`, `hash::Hasher<T>` (calls `v.hash()`)
+- `format` / `Format.hpp` — `format::format(fmt, args...)` using `_f` format strings
+- `metaprog` / `MetaProg.hpp` — `mp::For<I, N>(f)` compile-time integer loop
+- `geneticalg` / `GeneticAlg.hpp` — `genetic::GeneticSearcher<Gene>` roulette-selection GA
 - `allutils` — interface target that links all of the above
 
 **Math headers** in `math/`:
@@ -53,8 +61,9 @@ Do not use anything inside any `::detail` namespace — those are implementation
 - `math/numtheory/Jacobi.hpp` — Jacobi symbol
 
 **Logging** (from `utils/Logging.hpp`, included transitively via `Utils.hpp`):
-- `Log(lvl, ...)` — variadic print with optional module prefix; `lvl` is `LL::Debug`/`LL::Info`/`LL::Warn`/`LL::Error`
-- `Log(lvl, "fmt $"_ms, ...)` — `$`-placeholder format string when first arg after level is a maya format string; placeholder count is checked at compile time
+- `Log(lvl, ...)` — variadic print with optional module prefix; `lvl` is `LL::Infra`/`LL::Debug`/`LL::Info`/`LL::Warn`/`LL::Error` (lowest to highest)
+- `Log(lvl, "fmt $"_f, ...)` — `$`-placeholder format string when first arg after level is a maya format string (`_f` UDL); placeholder count is checked at compile time. Use `_f`, not `_ms` — `_ms` strings do not satisfy `IsMayaFormatT`.
+- `LL::Infra` — lowest level; use for construction/initialization noise (e.g. "constructing Prime<N>", "reading file"). Below `Debug` in severity.
 - `LL` — shorthand for `logging::detail::LogLevel`
 - `"name"_ms` — compile-time string value; exported from `Logging.hpp`
 
@@ -107,6 +116,8 @@ Use `Log` instead of `std::cout` or `std::cerr` for all output.
 Scope-guard conventions: name a `logging::Scope` `_l` and a `utils::ScopeTimer` `_t`, and declare it
 as the **first statement** of its enclosing scope. If a scope has both, the timer (`_t`) comes first,
 then the log scope (`_l`).
+
+Mark all pure functions (those that return a value whose discard is likely a bug) with `[[nodiscard]]`. This includes: all `const` member functions returning by value or reference, all free functions that compute and return a result, arithmetic/comparison operators, accessor getters, and factory functions. Compound-assignment operators (`+=`, `/=`, …) and `void`-returning functions are exempt.
 
 ### Artifacts / CI
 

@@ -60,7 +60,7 @@ std::vector<int> solutions = {0,  1,  1,  1,  2,  2,  3,  3,  3,  4,  4,  5,  5,
 int main()
 {
   assert(feq((1.0 + std::sqrt(5.0)) / 2.0, PHI));
-  for (int i = 1; i < solutions.size(); i++) assert(A371627(i) == solutions[i - 1]);
+  for (size_t i = 1; i < solutions.size(); i++) assert(A371627(static_cast<int>(i)) == solutions[i - 1]);
 
   // manually checked
   // std::unordered_map<int,int> manual;

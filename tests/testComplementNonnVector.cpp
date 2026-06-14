@@ -76,6 +76,7 @@ TEST(ComplementNonnVectorTest, BinarySearch)
   };
 
   for (int i = 0; i <= 10; i++) checkLowerbound(i);
+  for (int i = 0; i <= 10; i++) checkUpperbound(i);
 }
 
 class ComplementNonnVectorIteratorTest : public ::testing::Test

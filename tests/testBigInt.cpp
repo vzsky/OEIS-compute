@@ -192,5 +192,5 @@ TEST(SlowBigIntTest, MultOverflowBehavior)
 
   // using small and large digit type should give same result
   ASSERT_EQ(c.digits().size(), big_c.digits().size());
-  for (int i = 0; i < c.digits().size(); i++) ASSERT_EQ(c.digits()[i], big_c.digits()[i]);
+  for (size_t i = 0; i < c.digits().size(); i++) ASSERT_EQ(c.digits()[i], big_c.digits()[i]);
 }

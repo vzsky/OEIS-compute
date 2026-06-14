@@ -25,13 +25,13 @@ public:
 
     iterator(const Vector* seq, size_t index);
 
-    reference operator*() const;
+    [[nodiscard]] reference operator*() const;
     iterator& operator++();
     iterator& operator--();
-    bool operator==(const iterator& o) const;
-    bool operator!=(const iterator& o) const;
+    [[nodiscard]] bool operator==(const iterator& o) const;
+    [[nodiscard]] bool operator!=(const iterator& o) const;
 
-    int idx() const { return mValue - mComplementIndex; }
+    [[nodiscard]] size_t idx() const { return mValue - mComplementIndex; }
 
   private:
     iterator(const Vector* seq, value_type val, size_t skipInd)
@@ -51,17 +51,17 @@ private:
   size_t count_sequence_lt(value_type num) const;
 
 public:
-  value_type operator[](size_t idx) const;
+  [[nodiscard]] value_type operator[](size_t idx) const;
   void add_skip(value_type n);
 
-  iterator it_at(size_t idx) const { return iterator{this, idx}; }
-  iterator lower_bound(value_type value) const
+  [[nodiscard]] iterator it_at(size_t idx) const { return iterator{this, idx}; }
+  [[nodiscard]] iterator lower_bound(value_type value) const
   {
     size_t skipInd = count_complement_lt(value);
     return iterator{this, value, skipInd};
   }
   // since sequence is increasing
-  iterator upper_bound(value_type value) const { return lower_bound(value + 1); }
+  [[nodiscard]] iterator upper_bound(value_type value) const { return lower_bound(value + 1); }
 
 private:
   std::vector<value_type> mComplement{};

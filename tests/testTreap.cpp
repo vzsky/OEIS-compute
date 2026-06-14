@@ -38,7 +38,7 @@ TEST(TreapTest, RestrictKeepsSmallest)
   ASSERT_EQ(t.size(), 5);
 
   std::vector<int> expected{1, 2, 3, 4, 5};
-  for (int i = 0; i < t.size(); ++i) ASSERT_EQ(t[i], expected[i]);
+  for (size_t i = 0; i < t.size(); ++i) ASSERT_EQ(t[i], expected[i]);
 }
 
 TEST(TreapTest, ContainsWorks)
@@ -98,7 +98,7 @@ TEST(TreapTest, MergeTwoTreaps)
   ASSERT_EQ(t1.size(), 6);
 
   std::vector<int> expected{1, 2, 3, 4, 5, 6};
-  for (int i = 0; i < t1.size(); ++i) ASSERT_EQ(t1[i], expected[i]);
+  for (size_t i = 0; i < t1.size(); ++i) ASSERT_EQ(t1[i], expected[i]);
 }
 
 TEST(TreapTest, LargeInsertPerformance)

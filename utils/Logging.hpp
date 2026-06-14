@@ -15,6 +15,7 @@ namespace logging::detail {
 
 enum class LogLevel
 {
+  Infra,
   Debug,
   Info,
   Warn,
@@ -70,28 +71,28 @@ struct Env
   std::optional<LogLevel> mLevel;
   std::optional<Logger> mLogger;
 
-  Env module(std::string_view m) const
+  [[nodiscard]] Env module(std::string_view m) const
   {
     Env e     = *this;
     e.mModule = std::string(m);
     return e;
   }
 
-  Env level(LogLevel l) const
+  [[nodiscard]] Env level(LogLevel l) const
   {
     Env e    = *this;
     e.mLevel = l;
     return e;
   }
 
-  Env logger(Logger l) const
+  [[nodiscard]] Env logger(Logger l) const
   {
     Env e     = *this;
     e.mLogger = l;
     return e;
   }
 
-  Env operator+(const Env& delta) const
+  [[nodiscard]] Env operator+(const Env& delta) const
   {
     Env out = *this;
 
@@ -137,7 +138,7 @@ using detail::Env;
 using detail::Logger;
 using detail::LogLevel;
 
-inline Env snapshot() { return detail::current(); }
+[[nodiscard]] inline Env snapshot() { return detail::current(); }
 
 class Scope
 {
@@ -174,7 +175,7 @@ using logging::detail::loggers::timestamp;
 
 using LL = logging::detail::LogLevel;
 
-template <maya::IsMayaFormatT Fmt, typename... Ts> void Log(LL level, Fmt fmt, Ts&&... xs)
+template <format::IsMayaFormatT Fmt, typename... Ts> void Log(LL level, Fmt fmt, Ts&&... xs)
 {
   logging::detail::emit_log(level, format::format(fmt, std::forward<Ts>(xs)...));
 }

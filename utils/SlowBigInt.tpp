@@ -56,12 +56,12 @@ public:
   BigInt& operator=(const BigInt&)     = default;
   BigInt& operator=(BigInt&&) noexcept = default;
 
-  BigInt abs() const;
-  BigInt operator-() const;
+  [[nodiscard]] BigInt abs() const;
+  [[nodiscard]] BigInt operator-() const;
 
   friend std::ostream& operator<< <>(std::ostream& os, const BigInt& b);
-  std::strong_ordering operator<=>(const BigInt& o) const;
-  inline bool operator==(const BigInt& o) const { return (*this <=> o) == std::strong_ordering::equal; };
+  [[nodiscard]] std::strong_ordering operator<=>(const BigInt& o) const;
+  [[nodiscard]] inline bool operator==(const BigInt& o) const { return (*this <=> o) == std::strong_ordering::equal; };
 
   inline BigInt& operator+=(const BigInt& o)
   {
@@ -77,21 +77,21 @@ public:
     return *this;
   }
 
-  inline BigInt operator+(const BigInt& o) const
+  [[nodiscard]] inline BigInt operator+(const BigInt& o) const
   {
     BigInt r = *this;
     r += o;
     return r;
   }
 
-  inline BigInt operator-(const BigInt& o) const
+  [[nodiscard]] inline BigInt operator-(const BigInt& o) const
   {
     BigInt r = *this;
     r -= o;
     return r;
   }
 
-  inline BigInt operator*(const BigInt& o) const
+  [[nodiscard]] inline BigInt operator*(const BigInt& o) const
   {
     BigInt ret = mult_karatsuba(*this, o);
     ret.normalize();
@@ -105,7 +105,7 @@ public:
     return *this;
   }
 
-  inline BigInt operator/(const BigInt& o) const
+  [[nodiscard]] inline BigInt operator/(const BigInt& o) const
   {
     BigInt ret = divmod(*this, o).first;
     ret.normalize();
@@ -119,7 +119,7 @@ public:
     return *this;
   }
 
-  inline BigInt operator%(const BigInt& o) const
+  [[nodiscard]] inline BigInt operator%(const BigInt& o) const
   {
     BigInt ret = divmod(*this, o).second;
     ret.normalize();
@@ -133,13 +133,13 @@ public:
     return *this;
   }
 
-  inline const std::vector<Digit>& digits() const { return mDigits; };
-  inline bool is_neg() const { return mIsNeg; };
-  inline bool is_zero() const { return mDigits.empty(); }
+  [[nodiscard]] inline const std::vector<Digit>& digits() const { return mDigits; };
+  [[nodiscard]] inline bool is_neg() const { return mIsNeg; };
+  [[nodiscard]] inline bool is_zero() const { return mDigits.empty(); }
 
 public:
-  static int abs_cmp(const BigInt& a, const BigInt& b);
-  static std::pair<BigInt, BigInt> divmod(const BigInt& a, const BigInt& b);
+  [[nodiscard]] static int abs_cmp(const BigInt& a, const BigInt& b);
+  [[nodiscard]] static std::pair<BigInt, BigInt> divmod(const BigInt& a, const BigInt& b);
 
   void shift_left(size_t digits);
   void shift_right(size_t digits);
@@ -173,12 +173,12 @@ public:
   View(const Digit* ptr, size_t len, bool isneg) : mPtr(ptr), mSize(len), mIsNeg(isneg) {}
   View(const BigInt& x) : mPtr(x.mDigits.data()), mSize(x.mDigits.size()), mIsNeg(x.mIsNeg) {}
 
-  const Digit& operator[](size_t i) const { return mPtr[i]; }
-  const Digit* data() const { return mPtr; }
-  size_t size() const { return mSize; }
-  bool is_neg() const { return mIsNeg; }
+  [[nodiscard]] const Digit& operator[](size_t i) const { return mPtr[i]; }
+  [[nodiscard]] const Digit* data() const { return mPtr; }
+  [[nodiscard]] size_t size() const { return mSize; }
+  [[nodiscard]] bool is_neg() const { return mIsNeg; }
 
-  View subview(size_t offset, size_t len) const
+  [[nodiscard]] View subview(size_t offset, size_t len) const
   {
     if (offset >= mSize) return View(nullptr, 0, false);
     return View(mPtr + offset, std::min(len, mSize - offset), mIsNeg);

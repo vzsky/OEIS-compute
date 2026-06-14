@@ -11,7 +11,7 @@
 #include <utils/Utils.hpp>
 #include <vector>
 
-using namespace complementNonnVector;
+using complementNonnVector::Vector;
 // NOTE: bigint not needed for cache since limit is a uint64_t
 
 template <uint32_t N, uint64_t CacheLim> struct A389544
@@ -20,8 +20,8 @@ template <uint32_t N, uint64_t CacheLim> struct A389544
   static_assert(CacheLim < std::numeric_limits<uint64_t>::max());
 
 private:
-  virtual void _skip(uint64_t n) {}
-  virtual void _not_skip(uint64_t n) {}
+  virtual void _skip(uint64_t) {}
+  virtual void _not_skip(uint64_t) {}
 
   void skip(uint64_t n)
   {
@@ -140,7 +140,7 @@ public:
 
     uint64_t endForward  = largestPrime;
     uint64_t endBackward = largestPrime;
-    for (int k = 2; k <= factors.size(); k++)
+    for (size_t k = 2; k <= factors.size(); k++)
     {
       const auto nextPrime = factors[factors.size() - k].first;
       endForward           = std::max(endForward, largestPrime - (largestPrime % nextPrime) + nextPrime);
@@ -164,8 +164,8 @@ public:
     // if there is a consecutive product = acc, it must has > (what constructed acc) terms;
     // (what constructed acc ~ log_n(acc))
     // since all numbers are less than n
-    uint64_t minimumTerms = multipliedTerms + 1;
-    const auto& factors   = targetProduct.factors();
+    size_t minimumTerms = multipliedTerms + 1;
+    const auto& factors = targetProduct.factors();
 
     const auto largestPrime   = factors.back().first;
     const auto largestPrimeIt = seq.lower_bound(largestPrime);

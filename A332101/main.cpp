@@ -34,8 +34,8 @@ static constexpr std::size_t active_limit(uint64_t n) { return static_cast<std::
 template <uint64_t MaxN> class Solver
 {
 public:
-  // Initializes at exponent 1 and silently advances to start.
-  explicit Solver(uint64_t start) : mExp{1}, mActiveLimit{active_limit(1)}, mKpow{}
+  explicit Solver(uint64_t start)
+      : mLogger{logging::Env{}.logger(loggers::normal)}, mExp{1}, mActiveLimit{active_limit(1)}, mKpow{}
   {
     for (std::size_t k = 1; k <= mActiveLimit; ++k) mKpow[k] = k;
     for (uint64_t n = 2; n <= start; ++n) advance();
@@ -63,8 +63,10 @@ private:
     const std::size_t newlimit = active_limit(mExp);
     for (std::size_t k = mActiveLimit + 1; k <= newlimit; ++k) mKpow[k] = math::pow(BigInt(k), mExp);
     mActiveLimit = newlimit;
+    Log(LL::Debug, "registered power array exp($) limit($)"_f, mExp, mActiveLimit);
   }
 
+  logging::Scope mLogger;
   Exp mExp;
   std::size_t mActiveLimit;
   std::array<BigInt, MaxN + 1> mKpow;

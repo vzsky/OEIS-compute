@@ -99,5 +99,5 @@ TEST(PrimeIntTest, Divide)
 
   PrimeInt x = 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19;
   PrimeInt y = 5 * 7 * 11 * 17 * 31;
-  ASSERT_THROW(x / y, std::invalid_argument);
+  ASSERT_THROW((void)(x / y), std::invalid_argument);
 }

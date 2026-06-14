@@ -37,7 +37,10 @@ int main()
     });
   };
 
-  // naive_run();
+  if constexpr (false)
+  {
+    naive_run();
+  }
 
   const auto genetic_run = []
   {
@@ -59,7 +62,8 @@ int main()
       GeneticSearcher<Gene> g{};
       g.config.elite_count     = 1000;
       g.config.population_size = 10000;
-      g.setGenerationCB([](const Gene& g, int generation)
+      // TODO tag
+      g.setGenerationCB([](const Gene& g, int /* generation */)
       { Log(LL::Info, g.get_score(), g.get_max_count()); });
 
       Gene best = g.search({adam}, 50).front();

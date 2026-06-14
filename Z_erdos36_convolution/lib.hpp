@@ -83,9 +83,9 @@ template <std::size_t M, typename T, std::size_t N>
 PiecewiseStep<M * N> expand(const PiecewiseStepView<T, N>& f)
 {
   std::array<double, M * N> heights;
-  for (int i = 0; i < N; i++)
+  for (size_t i = 0; i < N; i++)
   {
-    for (int j = 0; j < M; j++)
+    for (size_t j = 0; j < M; j++)
     {
       heights[i * M + j] = f[i];
     }
@@ -117,8 +117,8 @@ template <typename T, typename U, std::size_t N>
 std::vector<double> convolute(const PiecewiseStepView<T, N>& f, const PiecewiseStepView<U, N>& g)
 {
   alignas(32) std::array<double, N> arr_f, arr_g;
-  for (int i = 0; i < N; i++) arr_f[i] = f[i];
-  for (int i = 0; i < N; i++) arr_g[i] = g[i];
+  for (size_t i = 0; i < N; i++) arr_f[i] = f[i];
+  for (size_t i = 0; i < N; i++) arr_g[i] = g[i];
 
   constexpr int n = N; // casting from std::size_t
   std::vector<double> result(2 * n - 1);

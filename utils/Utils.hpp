@@ -24,6 +24,7 @@ read_bfile(const std::string& relative_path,
 
   fs::path base = fs::path(loc.file_name()).parent_path();
   fs::path path = base / relative_path;
+  Log(LL::Infra, "reading b-file from $"_f, path);
 
   std::ifstream in(path);
   if (!in) throw std::runtime_error("cannot open file");

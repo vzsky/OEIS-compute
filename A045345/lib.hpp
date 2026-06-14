@@ -12,11 +12,11 @@ template <int N> std::vector<int> answers_upto()
   Prime<N> p;
   auto primes = p.all_primes();
   std::vector<BigInt> sum(primes.size());
-  for (int i = 1; i < primes.size(); i++)
+  for (size_t i = 1; i < primes.size(); i++)
   {
     sum[i] = sum[i - 1] + primes[i - 1];
   }
-  for (int i = 1; i < primes.size(); i++)
+  for (size_t i = 1; i < primes.size(); i++)
   {
     if (sum[i] % i == 0)
     {

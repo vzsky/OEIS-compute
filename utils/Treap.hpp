@@ -266,7 +266,7 @@ public:
   Treap(Compare c) : mCmp{c}, mTop{nullptr} { srand(time(NULL)); }
   Treap(Treap<Value, Compare>&& t) : mCmp{std::move(t.mCmp)}, mTop{std::move(t.mTop)} { srand(time(NULL)); }
 
-  size_type size() const { return sz(mTop); }
+  [[nodiscard]] size_type size() const { return sz(mTop); }
 
   void insert(value_type&& v) { insert(mTop, std::make_unique<node>(std::move(v))); }
 
@@ -281,14 +281,14 @@ public:
     mTop = std::move(l);
   }
 
-  bool contains(const value_type& v) const
+  [[nodiscard]] bool contains(const value_type& v) const
   {
     bool found = false;
     find(mTop, v, found);
     return found;
   }
 
-  int indexOf(const value_type& v) const
+  [[nodiscard]] int indexOf(const value_type& v) const
   {
     bool found    = false;
     size_type ind = 0;
@@ -297,7 +297,7 @@ public:
     return ind;
   }
 
-  const value_type& operator[](size_type k) const { return kth(mTop, k + 1); }
+  [[nodiscard]] const value_type& operator[](size_type k) const { return kth(mTop, k + 1); }
 
   void merge(Treap<Value, Compare>&& other) { merge(mTop, std::move(mTop), std::move(other.mTop)); }
 
@@ -306,7 +306,7 @@ public:
   // like fmap but return is not sorted
   template <typename Func>
     requires nonVoidFunction<Func, value_type>
-  auto gather(Func f, size_t max_thread = 8, size_t min_tree_size = 1) const
+  [[nodiscard]] auto gather(Func f, size_t max_thread = 8, size_t min_tree_size = 1) const
   {
     using ResultType = std::invoke_result_t<Func, value_type>;
 
@@ -328,7 +328,7 @@ public:
 
   template <typename Func>
     requires nonVoidFunction<Func, value_type>
-  auto fmap(Func f, size_t max_thread = 8, size_t min_tree_size = 1) const
+  [[nodiscard]] auto fmap(Func f, size_t max_thread = 8, size_t min_tree_size = 1) const
   {
     using ResultType = std::invoke_result_t<Func, value_type>;
     std::vector<ResultType> mapped;
@@ -341,7 +341,7 @@ public:
     return mapped;
   }
 
-  template <typename Func> const value_type& max(Func f, const value_type& def) const
+  template <typename Func> [[nodiscard]] const value_type& max(Func f, const value_type& def) const
   {
     const value_type* best = &def;
     inorder([&](const value_type& v)

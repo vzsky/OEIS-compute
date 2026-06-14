@@ -49,25 +49,25 @@ public:
     return *this;
   }
 
-  friend Fraction operator*(const Fraction& a, const Fraction& b)
+  [[nodiscard]] friend Fraction operator*(const Fraction& a, const Fraction& b)
   {
     Fraction o = a;
     o *= b;
     return o;
   }
-  friend Fraction operator/(const Fraction& a, const Fraction& b)
+  [[nodiscard]] friend Fraction operator/(const Fraction& a, const Fraction& b)
   {
     Fraction o = a;
     o /= b;
     return o;
   }
-  friend Fraction operator+(const Fraction& a, const Fraction& b)
+  [[nodiscard]] friend Fraction operator+(const Fraction& a, const Fraction& b)
   {
     Fraction o = a;
     o += b;
     return o;
   }
-  friend Fraction operator-(const Fraction& a, const Fraction& b)
+  [[nodiscard]] friend Fraction operator-(const Fraction& a, const Fraction& b)
   {
     Fraction o = a;
     o -= b;
@@ -79,27 +79,27 @@ public:
     return os << '(' << b.mTop << '/' << b.mBot << ')';
   }
 
-  std::strong_ordering operator<=>(const Fraction& o) const
+  [[nodiscard]] std::strong_ordering operator<=>(const Fraction& o) const
   {
     Int lhs = mTop * o.mBot;
     Int rhs = o.mTop * mBot;
     return lhs <=> rhs;
   }
 
-  bool operator==(const Fraction& o) const = default;
+  [[nodiscard]] bool operator==(const Fraction& o) const = default;
 
-  double estimate() const { return (double)mTop / mBot; }
+  [[nodiscard]] double estimate() const { return (double)mTop / mBot; }
 
   // returns BigInt with #digits after floating point (returned digits can > digits)
-  template <slow_bigint::isBigInt BigIntT> BigIntT expansion(size_t digits) const
+  template <slow_bigint::isBigInt BigIntT> [[nodiscard]] BigIntT expansion(size_t digits) const
   {
     Int top = mTop;
     top *= math::pow(slow_bigint::DenseBigInt(BigIntT::Base), digits);
     return top /= slow_bigint::DenseBigInt(mBot);
   }
 
-  Int numerator() const { return mTop; }
-  Int denominator() const { return mBot; }
+  [[nodiscard]] Int numerator() const { return mTop; }
+  [[nodiscard]] Int denominator() const { return mBot; }
 
   template <typename Func> void normalize(Func gcd)
   {

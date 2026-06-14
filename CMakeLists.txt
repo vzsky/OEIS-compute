@@ -14,6 +14,8 @@ project(OEIS LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_options(-Wall -Wextra -Werror)
+
 include_directories(${PROJECT_SOURCE_DIR})
 
 include(FetchContent)
@@ -32,7 +34,7 @@ find_library(GMP_LIB gmp REQUIRED)
 find_library(GMPXX_LIB gmpxx REQUIRED)
 find_path(GMP_INCLUDE_DIR gmpxx.h REQUIRED)
 
-include_directories(${GMP_INCLUDE_DIR})
+include_directories(SYSTEM ${GMP_INCLUDE_DIR})
 
 file(GLOB children RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*)
 

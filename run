@@ -21,6 +21,9 @@ fi
 TARGET="$1"
 
 if [ "$TARGET" = "cmake" ]; then
+    if [ "$2" = "fresh" ]; then
+        rm -rf "$BUILD_DIR"
+    fi
     cmake --preset=default
     exit $?;
 fi
@@ -50,7 +53,7 @@ if [ "$TARGET" = "profile" ]; then
     exit 1
   fi
 
-  echo -e "then run 'pprof $EXEC $2.prof'"
+  echo -e "then run 'pprof $EXEC ./log/$2.prof'"
 
   exit 0
 fi

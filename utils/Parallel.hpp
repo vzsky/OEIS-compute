@@ -5,7 +5,6 @@
 #include <cassert>
 #include <chrono>
 #include <future>
-#include <iostream>
 #include <iterator>
 #include <mutex>
 #include <optional>

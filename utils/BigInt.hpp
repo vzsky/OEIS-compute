@@ -32,19 +32,19 @@ public:
 
   BigInt(const std::string& s, int base = 10) : mValue(s, base) {}
 
-  auto operator<=>(const BigInt& o) const
+  [[nodiscard]] auto operator<=>(const BigInt& o) const
   {
     int cmp = mpz_cmp(mValue.get_mpz_t(), o.mValue.get_mpz_t());
     if (cmp < 0) return std::strong_ordering::less;
     if (cmp > 0) return std::strong_ordering::greater;
     return std::strong_ordering::equal;
   }
-  bool operator==(const BigInt& o) const { return mValue == o.mValue; }
+  [[nodiscard]] bool operator==(const BigInt& o) const { return mValue == o.mValue; }
 
-  bool is_neg() const { return mpz_sgn(mValue.get_mpz_t()) < 0; }
-  bool is_zero() const { return mpz_sgn(mValue.get_mpz_t()) == 0; }
+  [[nodiscard]] bool is_neg() const { return mpz_sgn(mValue.get_mpz_t()) < 0; }
+  [[nodiscard]] bool is_zero() const { return mpz_sgn(mValue.get_mpz_t()) == 0; }
 
-  std::vector<uint8_t> digits() const
+  [[nodiscard]] std::vector<uint8_t> digits() const
   {
     if (is_zero()) return {0};
     std::string s = mValue.get_str(10);
@@ -55,7 +55,7 @@ public:
     return d;
   }
 
-  BigInt abs() const { return BigInt(::abs(mValue)); }
+  [[nodiscard]] BigInt abs() const { return BigInt(::abs(mValue)); }
 
 #define MAKE_BINARY_OP(op)                                                                                   \
   BigInt& operator op## = (const BigInt& o)                                                                  \
@@ -63,7 +63,7 @@ public:
     mValue op## = o.mValue;                                                                                  \
     return *this;                                                                                            \
   }                                                                                                          \
-  friend BigInt operator op(BigInt a, const BigInt& b)                                                       \
+  [[nodiscard]] friend BigInt operator op(BigInt a, const BigInt& b)                                        \
   {                                                                                                          \
     a op## = b;                                                                                              \
     return a;                                                                                                \
@@ -81,7 +81,7 @@ public:
 
 #undef MAKE_BINARY_OP
 
-  BigInt operator-() const
+  [[nodiscard]] BigInt operator-() const
   {
     BigInt result = *this;
     mpz_neg(result.mValue.get_mpz_t(), result.mValue.get_mpz_t());

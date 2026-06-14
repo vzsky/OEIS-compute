@@ -27,7 +27,7 @@ public:
 
     auto child_mask = parent.get_mask();
     std::vector<int> ones, zeros;
-    for (int i = 0; i < child_mask.size(); ++i) (child_mask[i] ? ones : zeros).push_back(i);
+    for (size_t i = 0; i < child_mask.size(); ++i) (child_mask[i] ? ones : zeros).push_back(static_cast<int>(i));
 
     for (int i = 0; i < num_swaps; i++)
     { // we can swap 1 with 1 doing this but who cares
@@ -42,7 +42,7 @@ public:
     std::vector<int> p1_ones_indices;
     std::vector<int> p2_ones_indices;
 
-    for (int i = 0; i < p1.get_mask().size(); ++i)
+    for (size_t i = 0; i < p1.get_mask().size(); ++i)
     {
       if (p1.get_mask()[i] == 1 && p2.get_mask()[i] == 0)
         p1_ones_indices.push_back(i);
@@ -66,7 +66,7 @@ private:
   void _calculate_score()
   {
     std::vector<int> A, B;
-    for (int i = 0; i < mMask.size(); i++)
+    for (size_t i = 0; i < mMask.size(); i++)
     {
       if (mMask[i])
         A.push_back(i + 1);

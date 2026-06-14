@@ -78,7 +78,7 @@ template <int Dim> bool can_add(const Elems<Dim>& parent, const Elem<Dim>& next)
   const size_t n = parent.size();
   for (size_t i = 0; i < n; i++)
   {
-    for (int j = i + 1; j < n; j++)
+    for (size_t j = i + 1; j < n; j++)
     {
       if (isSet(parent[i], parent[j], next)) return false;
     }
@@ -122,8 +122,7 @@ template <int Dim> Elems<Dim> greedyCapSet()
 }
 
 template <int Dim, typename Heuristic, typename PruneFunc>
-Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smaller_output = false,
-                                bool show_progress = false)
+Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg)
 {
   using Frontier = Treap<Elems<Dim>, Heuristic>;
 
@@ -132,8 +131,6 @@ Elems<Dim> frontierSearchCapSet(Heuristic h, PruneFunc prune_alg, bool show_smal
 
   auto all_elems = allElems<Dim>();
   std::shuffle(all_elems.begin(), all_elems.end(), std::mt19937{std::random_device{}()});
-
-  int smaller_output_cnt = 1;
 
   // looping from 0 up ensures bit containment ordering.
   // and ensure we get all the smaller N solutions

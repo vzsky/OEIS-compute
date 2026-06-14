@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <functional>
 #include <random>
 
@@ -33,7 +34,7 @@ private:
 
   class RouletteSelector;
 
-  SearchContext mCtx{mRng};
+  SearchContext mCtx{mRng, 0};
 
 public:
   struct Config
@@ -46,7 +47,7 @@ public:
   void setGenerationCB(std::function<void(const Gene&, int)> f) { mGenerationCallback = f; }
 
 public:
-  std::vector<Gene> search(const std::vector<Gene>& adams, int generations = 50)
+  [[nodiscard]] std::vector<Gene> search(const std::vector<Gene>& adams, size_t generations = 50)
   {
     std::vector<Gene> population = adams;
 
@@ -73,7 +74,7 @@ public:
         new_population.push_back(Gene::mutate(child, mCtx));
       }
 
-      for (int i = 0; i < config.elite_count && i < population.size(); ++i)
+      for (size_t i = 0; i < config.elite_count && i < population.size(); ++i)
         new_population.push_back(population[i]);
 
       population = std::move(new_population);
@@ -102,7 +103,7 @@ public:
     mDist = std::uniform_real_distribution(0.0, mCumulativeFitness.back());
   }
 
-  int roll(std::mt19937& rng) const
+  [[nodiscard]] int roll(std::mt19937& rng) const
   {
     double r = mDist(rng);
     auto it  = std::lower_bound(mCumulativeFitness.begin(), mCumulativeFitness.end(), r);
