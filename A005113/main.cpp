@@ -7,7 +7,7 @@
 std::set<uint64_t> primes_in_class[20];
 
 constexpr size_t Prime_N = 1'00'000'000;
-Prime<Prime_N> primeFact;
+PrimeSieve<Prime_N> primeFact;
 
 int get_prime_class(size_t p)
 {

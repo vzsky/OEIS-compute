@@ -46,8 +46,6 @@ TEST(PrimeIntTest, isDivisibleBy)
 
 TEST(PrimeIntTest, Multiply)
 {
-  Prime<500> prime;
-
   PrimeInt one{};
   PrimeInt a(2);
   PrimeInt b(45);
@@ -69,8 +67,6 @@ TEST(PrimeIntTest, Multiply)
 
 TEST(PrimeIntTest, Divide)
 {
-  Prime<500> prime;
-
   PrimeInt one{};
   PrimeInt a(60);
 

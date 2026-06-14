@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <utils/PrimeInt.hpp>
 
-const Prime<PrimeInt::SmallN> PrimeInt::factorizer{};
+const PrimeSieve<PrimeInt::SmallN> PrimeInt::factorizer{};
 
 std::ostream& operator<<(std::ostream& out, const PrimeInt& m)
 {

@@ -52,7 +52,7 @@ int main()
 
   Log(LL::Info, "N=$  minN=$  sieveLimit=$"_f, N, minN, sieveLimit);
 
-  Prime<N> allPrimes;
+  PrimeSieve<N> allPrimes;
   std::vector<uint8_t> valid(N + 1, 1);
 
   {

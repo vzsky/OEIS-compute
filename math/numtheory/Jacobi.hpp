@@ -8,7 +8,7 @@ namespace math::numtheory {
 
 inline int legendre_symbol(int a, int p)
 {
-  assert(p > 2 && Prime<3>{}.is_prime(p));
+  assert(p > 2 && is_prime(p));
   a %= p;
   if (a < 0) a += p;
   if (a == 0) return 0;

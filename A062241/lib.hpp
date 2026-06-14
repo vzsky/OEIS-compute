@@ -22,12 +22,12 @@ public:
     }
   }
 
-  const Prime<N>& prime() const { return mPrime; }
+  const PrimeSieve<N>& prime() const { return mPrime; }
   const std::vector<int>& highestPrimeDiv() const { return mHighestPrimeDiv; }
   const std::map<int, std::vector<int>>& groupByHighestDiv() const { return mGroupByHighestDiv; }
 
 private:
-  Prime<N> mPrime;
+  PrimeSieve<N> mPrime;
   std::vector<int> mHighestPrimeDiv;
   std::map<int, std::vector<int>> mGroupByHighestDiv;
 };

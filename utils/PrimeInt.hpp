@@ -12,12 +12,12 @@ class PrimeInt
 {
   // support auto factorization of primes using Prime<SmallN>
   static constexpr size_t SmallN = 500;
-  static const Prime<SmallN> factorizer;
+  static const PrimeSieve<SmallN> factorizer;
 
 public:
   PrimeInt() = default;
-  PrimeInt(std::vector<std::pair<size_t, size_t>>&& f) : mFactors(std::move(f)) {}
-  PrimeInt(const std::vector<std::pair<size_t, size_t>>& f) : mFactors(f) {}
+  PrimeInt(std::vector<std::pair<uint64_t, uint64_t>>&& f) : mFactors(std::move(f)) {}
+  PrimeInt(const std::vector<std::pair<uint64_t, uint64_t>>& f) : mFactors(f) {}
   PrimeInt(size_t v)
   {
     Log(LL::Infra, "Constructing prime int with Prime<N=$> factorization"_f, SmallN);
@@ -44,10 +44,10 @@ public:
     return ans;
   }
 
-  [[nodiscard]] const std::vector<std::pair<size_t, size_t>>& factors() const { return mFactors; }
+  [[nodiscard]] const std::vector<std::pair<uint64_t, uint64_t>>& factors() const { return mFactors; }
 
 private:
   // sorted pair of prime and exponent, TODO: tag
-  std::vector<std::pair<size_t, size_t>> mFactors;
-  std::vector<std::pair<size_t, size_t>> mTmp;
+  std::vector<std::pair<uint64_t, uint64_t>> mFactors;
+  std::vector<std::pair<uint64_t, uint64_t>> mTmp;
 };

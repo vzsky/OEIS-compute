@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <functional>
 #include <random>
+#include <utils/maya/Tagged.hpp>
 
 namespace genetic {
 
@@ -25,12 +26,14 @@ template <typename Gene_>
   requires IsGene<Gene_>
 class GeneticSearcher
 {
-  using Gene = Gene_;
+public:
+  using Gene       = Gene_;
+  using Generation = maya::Tagged<struct generation_tag, size_t>;
 
 private:
   std::mt19937 mRng{std::random_device{}()};
   std::uniform_real_distribution<double> mDie{0.0, 1.0};
-  std::function<void(const Gene&, int)> mGenerationCallback = [](auto, auto) {};
+  std::function<void(const Gene&, Generation)> mGenerationCallback = [](auto, auto) {};
 
   class RouletteSelector;
 
@@ -44,7 +47,7 @@ public:
     uint64_t population_size = 10;
   } config;
 
-  void setGenerationCB(std::function<void(const Gene&, int)> f) { mGenerationCallback = f; }
+  void setGenerationCB(std::function<void(const Gene&, Generation)> f) { mGenerationCallback = f; }
 
 public:
   [[nodiscard]] std::vector<Gene> search(const std::vector<Gene>& adams, size_t generations = 50)
@@ -79,7 +82,7 @@ public:
 
       population = std::move(new_population);
       std::ranges::sort(population, std::greater{}, &Gene::get_fitness);
-      mGenerationCallback(population.front(), g);
+      mGenerationCallback(population.front(), Generation{g});
     }
 
     return population;

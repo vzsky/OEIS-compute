@@ -27,6 +27,8 @@
 
 int main()
 {
+  logging::Scope _l = logging::Env{}.module("A393584");
+
   const auto naive_run = []
   {
     constexpr int N = 30;
@@ -62,8 +64,7 @@ int main()
       GeneticSearcher<Gene> g{};
       g.config.elite_count     = 1000;
       g.config.population_size = 10000;
-      // TODO tag
-      g.setGenerationCB([](const Gene& g, int /* generation */)
+      g.setGenerationCB([](const Gene& g, GeneticSearcher<Gene>::Generation)
       { Log(LL::Info, g.get_score(), g.get_max_count()); });
 
       Gene best = g.search({adam}, 50).front();

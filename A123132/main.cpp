@@ -29,10 +29,10 @@ public:
     return static_cast<int>(std::log10(std::abs(x))) + 1;
   }
 
-  const Prime<N>& getFactorizer() const { return factorizer; }
+  const PrimeSieve<N>& getFactorizer() const { return factorizer; }
 
 private:
-  Prime<N> factorizer;
+  PrimeSieve<N> factorizer;
 };
 
 int main()

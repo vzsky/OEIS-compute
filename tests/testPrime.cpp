@@ -6,7 +6,7 @@ using prime = size_t;
 
 TEST(PrimeTest, SmallNumbers)
 {
-  Prime<20> pf{};
+  PrimeSieve<20> pf{};
 
   auto factors7 = pf.factors(7);
   ASSERT_EQ(factors7.size(), 1);
@@ -37,7 +37,7 @@ TEST(PrimeTest, SmallNumbers)
 
 TEST(PrimeTest, EdgeCases)
 {
-  Prime<10> pf;
+  PrimeSieve<10> pf;
 
   auto factors2 = pf.factors(2);
   ASSERT_EQ(factors2.size(), 1);
@@ -55,7 +55,7 @@ TEST(PrimeTest, EdgeCases)
 
 TEST(PrimeTest, WorksForOutOfRange)
 {
-  Prime<10> pf;
+  PrimeSieve<10> pf;
 
   ASSERT_TRUE(pf.factors(1).empty());
   ASSERT_EQ(pf.factors(11), std::vector<prime>{11});
@@ -68,7 +68,7 @@ TEST(PrimeTest, WorksForOutOfRange)
 TEST(PrimeTest, Factors)
 {
   // give me 5 large examples, say millions ++
-  Prime<1000> pf;
+  PrimeSieve<1000> pf;
 
   ASSERT_EQ(pf.factors(1000000007ULL), std::vector<size_t>{1000000007ULL});
   ASSERT_EQ(pf.factors(1000000000000ULL),
@@ -83,7 +83,7 @@ TEST(PrimeTest, Factors)
 
 TEST(PrimeTest, IsPrime)
 {
-  Prime<100> pf;
+  PrimeSieve<100> pf;
 
   ASSERT_THROW((void)pf.is_prime(0), std::invalid_argument);
   ASSERT_FALSE(pf.is_prime(1));

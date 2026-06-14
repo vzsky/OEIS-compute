@@ -4,7 +4,7 @@
 #include <utils/PrimeInt.hpp>
 #include <vector>
 
-Prime<10000> p{};
+PrimeSieve<10000> p{};
 
 PrimeInt pi(int64_t n) { return p.vector_factors_freq(n); }
 

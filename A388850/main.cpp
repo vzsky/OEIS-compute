@@ -3,7 +3,7 @@
 #include <utils/PrimeInt.hpp>
 #include <utils/Utils.hpp>
 
-Prime<5000000> p;
+PrimeSieve<5000000> p;
 
 // prime: 3^2 = 9           -> 1 8
 // prime: 7^2 = 49          -> 2 48

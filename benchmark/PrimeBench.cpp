@@ -1,7 +1,7 @@
 #include <benchmark/benchmark.h>
 #include <utils/Prime.hpp>
 
-Prime<5000> p;
+PrimeSieve<5000> p;
 
 static void BM_is_prime_until(benchmark::State& state)
 {

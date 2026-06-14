@@ -284,7 +284,7 @@ private:
 
 public:
   std::set<BigInt> consecCache = std::set<BigInt>();
-  Prime<N> primeFactorizer{};
+  PrimeSieve<N> primeFactorizer{};
 
   Vector seq{};
   size_t seqSize = 0;
