@@ -4,18 +4,24 @@
 #include <string>
 #include <type_traits>
 #include <utility>
-#include <utils/maya/String.hpp>
 
 namespace maya {
 
-template <typename T_, IsMayaStrT auto Tag_> struct Tagged
+template <typename Tag_, typename T> struct Tagged
 {
-  using Type = T_;
+  using Type = T;
 
   constexpr Tagged()
     requires std::default_initializable<Type>
   = default;
-  constexpr explicit Tagged(Type&& val) : mVal(std::move(val)) {}
+
+  constexpr explicit Tagged(Type val) : mVal(std::move(val)) {}
+
+  constexpr Tagged& operator=(Type val) noexcept(std::is_nothrow_move_assignable_v<Type>)
+  {
+    mVal = std::move(val);
+    return *this;
+  }
 
   constexpr operator const Type&() const noexcept { return mVal; }
   constexpr operator Type&() noexcept { return mVal; }
@@ -34,14 +40,17 @@ private:
 } // namespace maya
 
 namespace {
-using _DTag = maya::Tagged<double, "test"_ms>;
+struct _test_tag
+{
+};
+using _DTag = maya::Tagged<_test_tag, double>;
 
 static_assert(std::is_default_constructible_v<_DTag>);
 static_assert(std::is_invocable_v<void (*)(double), _DTag>);
 static_assert(!std::is_invocable_v<void (*)(_DTag), double>);
-static_assert(std::is_convertible_v<maya::Tagged<int, "test"_ms>, int>);
-static_assert(std::is_convertible_v<maya::Tagged<std::string, "test"_ms>, std::string>);
-static_assert(!std::is_convertible_v<int, maya::Tagged<int, "test"_ms>>);
-static_assert(!std::is_convertible_v<std::string, maya::Tagged<std::string, "test"_ms>>);
-static_assert(std::is_convertible_v<maya::Tagged<int, "test"_ms>, uint32_t>);
+static_assert(std::is_convertible_v<maya::Tagged<_test_tag, int>, int>);
+static_assert(std::is_convertible_v<maya::Tagged<_test_tag, std::string>, std::string>);
+static_assert(!std::is_convertible_v<int, maya::Tagged<_test_tag, int>>);
+static_assert(!std::is_convertible_v<std::string, maya::Tagged<_test_tag, std::string>>);
+static_assert(std::is_convertible_v<maya::Tagged<_test_tag, int>, uint32_t>);
 } // namespace

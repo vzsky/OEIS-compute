@@ -102,6 +102,8 @@ Include order: standard library headers with `<angle brackets>`, then project he
 
 Use `Log` instead of `std::cout` or `std::cerr` for all output.
 
+`maya::Tagged<T, tag>` carries implicit conversion operators to `T`, so let the context do the work — do not add `static_cast<T>` or other explicit casts just to extract the underlying value when an implicit conversion suffices (e.g. arithmetic, comparisons, function arguments).
+
 Scope-guard conventions: name a `logging::Scope` `_l` and a `utils::ScopeTimer` `_t`, and declare it
 as the **first statement** of its enclosing scope. If a scope has both, the timer (`_t`) comes first,
 then the log scope (`_l`).
