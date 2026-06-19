@@ -24,6 +24,7 @@ static_assert(IsMayaFormatT<decltype("x=$"_f)>);
 static_assert(!IsMayaFormatT<decltype("x=$"_ms)>);
 static_assert(!IsMayaFormatT<int>);
 
+// TODO uint8_t shenanigan 
 template <typename T>
 concept PrintableRange = std::ranges::range<std::remove_cvref_t<T>> &&
                          !std::convertible_to<std::remove_cvref_t<T>, std::string_view>;

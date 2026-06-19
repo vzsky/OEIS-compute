@@ -16,6 +16,7 @@ struct [[nodiscard]] ScopeTimer
 
   ~ScopeTimer()
   {
+    logging::Scope _l = logging::Env{}.module("timer").logger(loggers::normal);
     using namespace std::chrono;
     const auto us     = duration_cast<microseconds>(high_resolution_clock::now() - mStart).count();
     const auto sec    = us / 1'000'000;

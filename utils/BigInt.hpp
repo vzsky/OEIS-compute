@@ -44,7 +44,7 @@ public:
   [[nodiscard]] bool is_neg() const { return mpz_sgn(mValue.get_mpz_t()) < 0; }
   [[nodiscard]] bool is_zero() const { return mpz_sgn(mValue.get_mpz_t()) == 0; }
 
-  [[nodiscard]] std::vector<uint8_t> digits() const
+  [[nodiscard]] std::vector<uint8_t> digits() const // base 10
   {
     if (is_zero()) return {0};
     std::string s = mValue.get_str(10);
@@ -56,6 +56,8 @@ public:
   }
 
   [[nodiscard]] BigInt abs() const { return BigInt(::abs(mValue)); }
+  [[nodiscard]] size_t magnitude() const { return mpz_sizeinbase(mValue.get_mpz_t(), 2); }
+  [[nodiscard]] uint64_t to_uint64() const { return static_cast<uint64_t>(mpz_get_ui(mValue.get_mpz_t())); }
 
 #define MAKE_BINARY_OP(op)                                                                                   \
   BigInt& operator op## = (const BigInt& o)                                                                  \
@@ -63,7 +65,7 @@ public:
     mValue op## = o.mValue;                                                                                  \
     return *this;                                                                                            \
   }                                                                                                          \
-  [[nodiscard]] friend BigInt operator op(BigInt a, const BigInt& b)                                        \
+  [[nodiscard]] friend BigInt operator op(BigInt a, const BigInt& b)                                         \
   {                                                                                                          \
     a op## = b;                                                                                              \
     return a;                                                                                                \

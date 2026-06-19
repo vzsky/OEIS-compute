@@ -1,9 +1,11 @@
 #pragma once
 
+#include <atomic>
 #include <cassert>
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <mutex>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -58,10 +60,36 @@ inline void progress_write(std::string_view msg) { std::cout << '\r' << msg << "
 
 inline void progress_done() { std::cout << '\n' << std::flush; }
 
+template <size_t ThrottleFreq> struct Throttler
+{
+  inline static std::atomic<size_t> count{0};
+};
+
+template <size_t ThrottleFreq> void throttled_normal_write(std::string_view msg)
+{
+  using S = Throttler<ThrottleFreq>;
+  if ((S::count.fetch_add(1, std::memory_order_relaxed) + 1) % ThrottleFreq == 0)
+    std::cout << msg << '\n' << std::flush;
+}
+
+template <size_t ThrottleFreq> void throttled_progress_write(std::string_view msg)
+{
+  using S           = Throttler<ThrottleFreq>;
+  bool should_print = (S::count.fetch_add(1, std::memory_order_relaxed) + 1) % ThrottleFreq == 0;
+  if (should_print) std::cout << '\r' << msg << "\033[K" << std::flush;
+}
+
+template <size_t ThrottleFreq> void throttled_progress_done() { std::cout << '\n' << std::flush; }
+
 inline constexpr Logger normal{&normal_write};
 inline constexpr Logger noop{&noop_write};
 inline constexpr Logger timestamp{&timestamp_write};
 inline constexpr Logger progress{&progress_write, &progress_done};
+
+template <size_t ThrottleFreq> inline constexpr Logger throttled{&throttled_normal_write<ThrottleFreq>};
+template <size_t ThrottleFreq>
+inline constexpr Logger throttled_progress{&throttled_progress_write<ThrottleFreq>,
+                                           &throttled_progress_done<ThrottleFreq>};
 
 } // namespace loggers
 
@@ -169,6 +197,8 @@ namespace loggers {
 using logging::detail::loggers::noop;
 using logging::detail::loggers::normal;
 using logging::detail::loggers::progress;
+using logging::detail::loggers::throttled;
+using logging::detail::loggers::throttled_progress;
 using logging::detail::loggers::timestamp;
 
 } // namespace loggers

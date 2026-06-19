@@ -135,6 +135,37 @@ TEST(BigIntTest, LargeMultiply)
   EXPECT_EQ(btop.digits(), digits);
 }
 
+TEST(BigIntTest, Magnitude)
+{
+  EXPECT_EQ(BigInt(0).magnitude(), 1u);
+  EXPECT_EQ(BigInt(1).magnitude(), 1u);
+  EXPECT_EQ(BigInt(-1).magnitude(), 1u);
+  EXPECT_EQ(BigInt(2).magnitude(), 2u);
+  EXPECT_EQ(BigInt(3).magnitude(), 2u);
+  EXPECT_EQ(BigInt(4).magnitude(), 3u);
+  EXPECT_EQ(BigInt(7).magnitude(), 3u);
+  EXPECT_EQ(BigInt(8).magnitude(), 4u);
+  EXPECT_EQ(BigInt(-5).magnitude(), 3u); // |-5| = 101b
+  EXPECT_EQ(BigInt(1023).magnitude(), 10u);
+  EXPECT_EQ(BigInt(1024).magnitude(), 11u);
+  // 2^64 needs 65 bits
+  BigInt two64 = BigInt(1);
+  for (int i = 0; i < 64; ++i) two64 *= 2;
+  EXPECT_EQ(two64.magnitude(), 65u);
+  EXPECT_EQ((two64 - BigInt(1)).magnitude(), 64u);
+}
+
+TEST(BigIntTest, Digits)
+{
+  EXPECT_EQ(BigInt(0).digits(), (std::vector<uint8_t>{0}));
+  EXPECT_EQ(BigInt(1).digits(), (std::vector<uint8_t>{1}));
+  EXPECT_EQ(BigInt(9).digits(), (std::vector<uint8_t>{9}));
+  EXPECT_EQ(BigInt(123).digits(), (std::vector<uint8_t>{1, 2, 3}));
+  EXPECT_EQ(BigInt(-456).digits(), (std::vector<uint8_t>{4, 5, 6}));
+  EXPECT_EQ(BigInt(1000).digits(), (std::vector<uint8_t>{1, 0, 0, 0}));
+  EXPECT_EQ(BigInt(10).digits(), (std::vector<uint8_t>{1, 0}));
+}
+
 TEST(SlowBigIntTest, BaseConversion)
 {
   using DecBI   = slow_bigint::BigInt<uint16_t, 10>;
