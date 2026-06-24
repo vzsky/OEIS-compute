@@ -96,7 +96,18 @@ Benchmarks live in `benchmark/` and use Google Benchmark (fetched via CMake `Fet
 Each benchmark target is named `<name>_bench`. 
 Running via `./run bench <name>` automatically compares against local baselines in `benchmark/local_baseline/` using `scripts/regression_test.py`.
 
+## Optimization philosophy
+
+Correctness is non-negotiable and must be provable mathematically, not from
+assumptions about the sequence's behavior / empirical data.
+
+Empirical observations about how a sequence behaves are allowed — and encouraged — as
+performance assumptions, as long as violating them degrades gracefully (slower or an
+error return) and never silently produces wrong output.
+
 ## Coding style
+
+COMMENTS ARE DISCORAGED EXCEPT WHEN THEY ARE ABSOLUTELY CRUCIAL
 
 Prefer modern C++ over C idioms:
 - Lambdas over function pointers
