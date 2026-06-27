@@ -8,6 +8,16 @@ FLAGS=""
 
 mkdir -p "$LOG_DIR"
 
+build() {
+  local t0=$SECONDS
+  ninja -C "$BUILD_DIR" "$@"
+  local status=$?
+  if [ $status -eq 0 ]; then
+    echo "Compilation success ($(( SECONDS - t0 ))s)"
+  fi
+  return $status
+}
+
 if [ ! -d "$BUILD_DIR" ]; then
     cmake --preset=default
 fi
@@ -29,18 +39,17 @@ if [ "$TARGET" = "cmake" ]; then
 fi
 
 if [ "$TARGET" = "all" ]; then
-  ninja -C "$BUILD_DIR"
+  build
   exit $?;
 fi
 
-if [ "$TARGET" = "tests" ]; then 
-  ninja -C "$BUILD_DIR"
-  ninja -C "$BUILD_DIR" test
+if [ "$TARGET" = "tests" ]; then
+  build && ninja -C "$BUILD_DIR" test
   exit $?;
 fi
 
 if [ "$TARGET" = "profile" ]; then 
-  ninja -C "$BUILD_DIR" "$2" && echo "Compilation success"
+  build "$2"
   EXEC="$BUILD_DIR/bin/$2"
   if [ -x "$EXEC" ]; then
     echo "Start: $(date)"
@@ -66,7 +75,7 @@ if [ "$TARGET" = "bench" ]; then
 
   name=$(echo "$2" | tr '[:upper:]' '[:lower:]')
   TARGET="${name}_bench"
-  ninja -C "$BUILD_DIR" "$TARGET" && echo "Compilation success"
+  build "$TARGET"
 
   EXEC="$BUILD_DIR/bin/$TARGET"
   FLAGS="--benchmark_out=$LOG_DIR/$TARGET.json --benchmark_out_format=json"
@@ -95,7 +104,7 @@ if [ "$TARGET" = "test" ]; then
   TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
 fi
 
-ninja -C "$BUILD_DIR" "$TARGET" && echo "Compilation success"
+build "$TARGET"
 
 # Run executable if it exists
 EXEC="$BUILD_DIR/bin/$TARGET"

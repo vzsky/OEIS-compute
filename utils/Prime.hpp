@@ -6,16 +6,6 @@
 #include <utils/Logging.hpp>
 #include <vector>
 
-[[nodiscard]] constexpr bool is_prime(uint32_t n)
-{
-  if (n < 2) return false;
-  for (uint64_t i = 2; i * i <= n; ++i)
-    if (n % i == 0) return false;
-  return true;
-}
-
-[[nodiscard]] constexpr bool is_coprime(uint32_t a, uint32_t b) { return math::gcd(a, b) == 1; }
-
 template <uint64_t N> class PrimeSieve
 {
   static_assert(N > 2);
@@ -86,6 +76,8 @@ private:
 template <uint64_t N> PrimeSieve<N>::PrimeSieve()
 {
   Log(LL::Infra, "constructing a prime helper with N=$", N);
+
+  mAllPrimes.reserve(N / std::log(N));
 
   for (uint64_t i = 0; i <= N; ++i) mLowestPrimeDiv[i] = i;
 
