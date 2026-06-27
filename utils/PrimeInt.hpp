@@ -47,7 +47,7 @@ public:
   [[nodiscard]] const std::vector<std::pair<uint64_t, uint64_t>>& factors() const { return mFactors; }
 
 private:
-  // sorted pair of prime and exponent, TODO: tag
+  // sorted pair of prime and exponent
   std::vector<std::pair<uint64_t, uint64_t>> mFactors;
   std::vector<std::pair<uint64_t, uint64_t>> mTmp;
 };

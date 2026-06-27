@@ -3,34 +3,34 @@
 #include <cstdint>
 #include <vector>
 
-template <uint64_t PrimeBound> struct LazyFactors
+template <size_t Bound_, typename ValueT> struct PrimeVector
 {
-  // contains all factors that are proven to be prime.
-  // all prime factors <= PrimeBound are in, but a element can be >= PrimeBound
-  std::vector<uint64_t> primes;
-  // so remainder = product of factor > PrimeBound, thus remainder >= PrimeBound^2
-  uint64_t remainder = 1;
+  static constexpr size_t Bound = Bound_;
 
-  [[nodiscard]] std::vector<uint64_t> remaining_distinct_factors() const
+  explicit PrimeVector(ValueT defaultVal = ValueT{})
   {
-    std::vector<uint64_t> factors;
-    uint64_t n = remainder;
-    for (uint64_t d = PrimeBound + 1 + (PrimeBound % 2); d * d <= n; d += 2)
-    {
-      if (n % d == 0)
-      {
-        factors.push_back(d);
-        while (n % d == 0) n /= d;
-      }
-    }
-    if (n > 1) factors.push_back(n);
-    return factors;
+    std::vector<bool> sieve(Bound, true);
+    sieve[0] = sieve[1] = false;
+    for (uint64_t i = 2; i * i < Bound; i++)
+      if (sieve[i])
+        for (uint64_t j = i * i; j < Bound; j += i) sieve[j] = false;
+    uint32_t rank = 0;
+    for (uint64_t i = 2; i < Bound; i++)
+      if (sieve[i]) mRank[i] = rank++;
+    mData.assign(rank, defaultVal);
   }
+
+  [[nodiscard]] ValueT& operator[](uint64_t prime) noexcept { return mData[mRank[prime]]; }
+  [[nodiscard]] const ValueT& operator[](uint64_t prime) const noexcept { return mData[mRank[prime]]; }
+
+private:
+  std::vector<uint32_t> mRank = std::vector<uint32_t>(Bound, 0);
+  std::vector<ValueT> mData;
 };
 
-template <uint64_t PrimeBound> struct LazyPrimeSieve
+template <uint64_t PrimeBound> struct FastPrimeSieve
 {
-  LazyPrimeSieve()
+  FastPrimeSieve()
   {
     std::vector<bool> sieve(PrimeBound + 1, true);
     sieve[0] = sieve[1] = false;
@@ -41,25 +41,36 @@ template <uint64_t PrimeBound> struct LazyPrimeSieve
       if (sieve[i]) mPrimes.push_back(i);
   }
 
-  [[nodiscard]] LazyFactors<PrimeBound> distinct_factors(uint64_t n) const
+  [[nodiscard]] std::vector<uint64_t> distinct_factors(uint64_t n) const
   {
-    LazyFactors<PrimeBound> result;
+    std::vector<uint64_t> result;
     for (uint64_t p : mPrimes)
     {
       if (p * p > n) break;
       if (n % p == 0)
       {
-        result.primes.push_back(p);
+        result.push_back(p);
         while (n % p == 0) n /= p;
       }
     }
-    if (n > 1)
+
+    if (n > 1 && n <= PrimeBound)
     {
-      if (n < PrimeBound * PrimeBound)
-        result.primes.push_back(n);
-      else
-        result.remainder = n;
+      result.push_back(n);
+      return result;
     }
+
+    for (uint64_t d = PrimeBound + 1 + (PrimeBound % 2); d * d <= n; d += 2)
+    {
+      if (n % d == 0)
+      {
+        result.push_back(d);
+        while (n % d == 0) n /= d;
+      }
+    }
+
+    if (n > 1) result.push_back(n);
+
     return result;
   }
 
