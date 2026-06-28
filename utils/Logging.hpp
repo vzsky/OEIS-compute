@@ -5,7 +5,6 @@
 #include <chrono>
 #include <format>
 #include <iostream>
-#include <mutex>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -27,7 +26,7 @@ enum class LogLevel
 struct Logger
 {
   void (*write)(std::string_view);
-  void (*on_log_done)() = nullptr;
+  void (*on_yield)() = nullptr;
 };
 
 namespace print {
@@ -173,21 +172,23 @@ class Scope
 public:
   Scope(const Env& delta)
   {
+    if (delta.mLogger)
+      if (auto fn = detail::current().mLogger->on_yield) fn();
     detail::env_stack().push_back(detail::current() + delta);
-    if (delta.mLogger) mOnExit = detail::current().mLogger->on_log_done;
+    if (delta.mLogger) mOnYield = detail::current().mLogger->on_yield;
   }
 
   ~Scope()
   {
     detail::env_stack().pop_back();
-    if (mOnExit) mOnExit();
+    if (mOnYield) mOnYield();
   }
 
   Scope(const Scope&)            = delete;
   Scope& operator=(const Scope&) = delete;
 
 private:
-  void (*mOnExit)() = nullptr;
+  void (*mOnYield)() = nullptr;
 };
 
 } // namespace logging

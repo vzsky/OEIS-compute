@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-#include <utils/Prime.hpp>
+#include <utils/maya/Prime.hpp>
 
 // A CRT residue vector: an integer tracked simultaneously as its residue mod
 // each Mod. When the moduli are pairwise coprime this is exactly Z/lcm(Mods)
@@ -24,7 +24,7 @@ template <uint32_t... Mods> constexpr bool pairwise_coprime()
   constexpr std::array<uint32_t, n> mods{Mods...};
   for (size_t i = 0; i < n; i++)
     for (size_t j = i + 1; j < n; j++)
-      if (!is_coprime(mods[i], mods[j])) return false;
+      if (!maya::is_coprime(mods[i], mods[j])) return false;
   return true;
 }
 } // namespace modint_detail
@@ -36,7 +36,7 @@ template <uint32_t... Mods> class ModInt
   static_assert(modint_detail::pairwise_coprime<Mods...>(), "All Mods must be pairwise coprime");
   static constexpr size_t K = sizeof...(Mods);
 
-  static constexpr bool cModAreAllPrimes = (... && is_prime(Mods));
+  static constexpr bool cModAreAllPrimes = (... && maya::is_prime(Mods));
 
 public:
   [[nodiscard]] ModInt() { mVals.fill(0); }

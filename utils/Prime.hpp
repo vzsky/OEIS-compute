@@ -3,8 +3,34 @@
 #include <map>
 #include <math/Basic.hpp>
 #include <stdexcept>
+#include <utility>
 #include <utils/Logging.hpp>
 #include <vector>
+
+namespace prime::detail {
+
+struct Wheel6
+{
+  explicit Wheel6(uint64_t start)
+  {
+    uint64_t next = start;
+    while (next % 6 != 1 && next % 6 != 5) ++next;
+    mFirst = next - start;
+    mStep  = (next % 6 == 5) ? 2 : 4;
+  }
+
+  uint64_t advance()
+  {
+    if (mFirst != 0) return std::exchange(mFirst, 0);
+    return std::exchange(mStep, 6 - mStep);
+  }
+
+private:
+  uint64_t mFirst;
+  uint64_t mStep;
+};
+
+} // namespace prime::detail
 
 template <uint64_t N> class PrimeSieve
 {
@@ -97,14 +123,15 @@ template <uint64_t N> bool PrimeSieve<N>::is_prime(uint64_t n) const
   if (n <= N) return mLowestPrimeDiv[n] == n;
 
   for (prime_t p : mAllPrimes)
-    if (n % p == 0) return false;
-
-  prime_t next = mAllPrimes.back() + 1;
-  while (next * next <= n)
   {
-    if (n % next == 0) return false;
-    next++;
+    if (p * p > n) return true;
+    if (n % p == 0) return false;
   }
+
+  uint64_t candidate = mAllPrimes.back() + 2;
+  prime::detail::Wheel6 w(candidate);
+  for (; candidate * candidate <= n; candidate += w.advance())
+    if (n % candidate == 0) return false;
 
   return true;
 }
@@ -122,24 +149,31 @@ template <uint64_t N> void PrimeSieve<N>::emit_factors(uint64_t n, auto callback
 
   if (n <= N) return fastFactor(n);
 
-  auto checkDivisor = [&](uint64_t& n, uint64_t d)
+  for (prime_t p : mAllPrimes)
   {
-    if (n == 1) return;
-    while (n != 1 && n % d == 0)
+    if (p * p > n)
     {
-      callback(d);
-      n /= d;
-      if (n <= N) fastFactor(n);
+      callback(n);
+      return;
     }
-  };
+    while (n % p == 0)
+    {
+      callback(p);
+      n /= p;
+      if (n <= N) return fastFactor(n);
+    }
+  }
 
-  for (prime_t p : mAllPrimes) checkDivisor(n, p);
-
-  uint64_t next = mAllPrimes.back() + 2;
-  while (next * next <= n)
+  uint64_t candidate = mAllPrimes.back() + 2;
+  prime::detail::Wheel6 w(candidate);
+  for (; candidate * candidate <= n; candidate += w.advance())
   {
-    checkDivisor(n, next);
-    next += 2;
+    while (n % candidate == 0)
+    {
+      callback(candidate);
+      n /= candidate;
+      if (n <= N) return fastFactor(n);
+    }
   }
 
   if (n != 1) callback(n);
