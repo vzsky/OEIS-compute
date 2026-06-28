@@ -25,6 +25,8 @@ private:
   uint64_t mVal = UINT64_MAX;
 };
 
+// checked in c3299eef49af2be3727e99042cf5d3ad73661fcc - took 16700 secs
+// also conjectures (5,7,8,fixedPoint) hold
 static constexpr uint64_t N = 10'000'000'000;
 // the two numbers below only affect performance
 static constexpr uint64_t kSieveBound = 100'000'000;
