@@ -32,13 +32,6 @@ static constexpr uint64_t N = 10'000'000'000;
 static constexpr uint64_t kSieveBound = 100'000'000;
 static constexpr uint64_t kFrontBound = 100'000'000;
 
-static uint64_t next_prime(uint64_t p)
-{
-  uint64_t c = (p < 2) ? 2 : p + 1;
-  while (!maya::is_prime(c)) ++c;
-  return c;
-}
-
 // Conjectures 5, 7, 8, fixedPoint
 struct ConjectureChecker
 {
@@ -46,49 +39,47 @@ struct ConjectureChecker
   {
     mHistory.push(a);
 
-    bool conj7 =
-        n >= 2 && static_cast<double>(a) > (std::numbers::pi / 2.0) * std::log(n) * static_cast<double>(n);
+    double conj7Bound = (std::numbers::pi / 2.0) * std::log(n) * n;
+    if (n >= 2 && a > conj7Bound) reportBreach("Conj7 broken n=$: a=$, bound*n=$"_f, n, a, conj7Bound);
 
-    static constexpr std::array kKnownFixedPoints = {1ULL, 2ULL, 3ULL, 4ULL, 12ULL, 50ULL, 86ULL};
-    bool newFixedPt = a == n && std::ranges::find(kKnownFixedPoints, n) == kKnownFixedPoints.end();
+    if (a == n && n > 100) reportBreach("New fixed point: n=$"_f, n);
 
-    bool isPrime = maya::is_prime(a);
-
-    uint64_t nextExpected = 0;
-    bool conj8            = false;
-    if (isPrime)
+    if (maya::is_prime(a))
     {
-      nextExpected = next_prime(mLastPrime);
-      conj8        = (a != nextExpected);
-    }
+      uint64_t nextExpected = next_prime(mLastPrime);
+      if (a != nextExpected)
+        reportBreach("Conj8 broken at n=$: a(n)=$ skipping over a prime $"_f, n, a, nextExpected);
 
-    bool conj5   = false;
-    uint64_t nm2 = 0, nm4 = 0;
-    if (isPrime && a > 97 && mHistory.has(4))
-    {
-      nm2         = mHistory[2];
-      nm4         = mHistory[4];
-      bool twoOk  = nm2 == 2 * a;
-      bool fourOk = nm4 % 2 == 0 && math::gcd(nm4 / 2, a) == uint64_t{1};
-      conj5       = !twoOk || !fourOk;
-    }
+      if (a > 97)
+      {
+        uint64_t prev2 = mHistory[2];
+        uint64_t prev4 = mHistory[4];
+        bool twoOk     = prev2 == 2 * a;
+        bool fourOk    = prev4 % 2 == 0 && math::gcd(prev4 / 2, a) == 1;
+        if (!twoOk || !fourOk)
+          reportBreach("Conj5 broken at n=$: p=$, a(n-2)=$, a(n-4)=$"_f, n, a, prev2, prev4);
+      }
 
-    if (conj7 || newFixedPt || conj8 || conj5)
-    {
-      logging::Scope _l = logging::Env{}.module("conj").logger(loggers::normal);
-      if (conj7)
-        Log(LL::Warn, "Conj7 broken n=$: a=$, bound*n=$"_f, n, a,
-            (std::numbers::pi / 2.0) * std::log(n) * static_cast<double>(n));
-      if (newFixedPt) Log(LL::Warn, "New fixed point: n=$"_f, n);
-      if (conj8)
-        Log(LL::Warn, "Conj8 broken at n=$: a(n)=$ but next expected prime was $"_f, n, a, nextExpected);
-      if (conj5) Log(LL::Warn, "Conj5 broken at n=$: p=$, a(n-2)=$, a(n-4)=$"_f, n, a, nm2, nm4);
+      mLastPrime = a;
     }
-
-    if (isPrime) mLastPrime = a;
   }
 
 private:
+  static uint64_t next_prime(uint64_t p)
+  {
+    if (p < 2) return 2;
+    if (p == 2) return 3;
+    uint64_t c = p + 2;
+    while (!maya::is_prime(c)) c += 2;
+    return c;
+  }
+
+  template <typename... Args> static void reportBreach(Args&&... args)
+  {
+    logging::Scope _l = logging::Env{}.module("conj").logger(loggers::normal);
+    Log(LL::Warn, std::forward<Args>(args)...);
+  }
+
   RingBuffer<8> mHistory;
   uint64_t mLastPrime = 0;
 };
